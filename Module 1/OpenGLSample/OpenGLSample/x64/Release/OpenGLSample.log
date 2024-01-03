@@ -1,28 +1,30 @@
-﻿  Source.cpp
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\shader.h(57,34): warning C4101: 'e': unreferenced local variable
+﻿  glad.c
+  shader.cpp
+  Source.cpp
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\shader.h(57,34): warning C4101: 'e': unreferenced local variable
   (compiling source file 'Source.cpp')
   
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\Source.cpp(206,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\Source.cpp(241,52): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\Source.cpp(242,55): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\Source.cpp(249,52): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\Source.cpp(250,55): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\Source.cpp(257,52): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\Source.cpp(258,55): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\Source.cpp(265,52): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\Source.cpp(266,55): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\Source.cpp(274,47): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\Source.cpp(275,50): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\Source.cpp(377,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\Source.cpp(378,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\Source.cpp(382,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\Source.cpp(383,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\Source.cpp(385,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\Source.cpp(386,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Github Repo\SNHU-CS-330\OpenGLSample\OpenGLSample\Source.cpp(395,28): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\Source.cpp(206,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\Source.cpp(241,52): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\Source.cpp(242,55): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\Source.cpp(249,52): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\Source.cpp(250,55): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\Source.cpp(257,52): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\Source.cpp(258,55): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\Source.cpp(265,52): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\Source.cpp(266,55): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\Source.cpp(274,47): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\Source.cpp(275,50): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\Source.cpp(377,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\Source.cpp(378,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\Source.cpp(382,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\Source.cpp(383,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\Source.cpp(385,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\Source.cpp(386,10): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\OpenGLSample\Source.cpp(395,28): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   Generating code
-  1 of 455 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    8 functions had inline decision re-evaluated but remain unchanged
+  441 of 455 functions (96.9%) were compiled, the rest were copied from previous compilation.
+    1 functions were new in current compilation
+    2 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
-  OpenGLSample.vcxproj -> C:\Github Repo\SNHU-CS-330\OpenGLSample\x64\Release\OpenGLSample.exe
+  OpenGLSample.vcxproj -> C:\Github Repo\SNHU-CS-330\Module 1\OpenGLSample\x64\Release\OpenGLSample.exe
