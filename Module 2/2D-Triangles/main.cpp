@@ -7,20 +7,27 @@
  * 
  */
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <iostream>
+#include "utils.h"
+
+#define numVAOs 1
 
 using namespace std;
 
+GLuint renderingProgram;
+GLuint vao[numVAOs];
+
 // Places application-specific initialization tasks
-void init(GLFWwindow* window) {};
+void init(GLFWwindow* window) {
+	renderingProgram = createShaderProgram();
+	glGenVertexArrays(numVAOs, vao);
+	glBindVertexArray(vao[0]);
+}
 
 // Draws to GLFW display window
 void display(GLFWwindow* window, double currentTime) {
-
-	glClearColor(1.0, 0.0, 0.0, 1.0); // Specifies color value when clearing the background - RGB plus opacity
-	glClear(GL_COLOR_BUFFER_BIT);
+	glUseProgram(renderingProgram); // loads compiled shaders into openGL pipeline
+	glPointSize(30.0f);
+	glDrawArrays(GL_TRIANGLES, 0, 3); // initiates pipeline processing
 }
 
 int main(void) {
