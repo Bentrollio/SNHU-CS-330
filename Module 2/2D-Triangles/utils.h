@@ -35,4 +35,8 @@ GLuint createShaderProgram(const char* vp, const char* fp);
 
 GLuint createShaderProgram(const char* vp, const char* gp, const char* fp);
 
+void UProcessInput(GLFWwindow* window);
+
+void UResizeWindow(GLFWwindow* window, int width, int height);
+
 #endif /* UTILS_H */

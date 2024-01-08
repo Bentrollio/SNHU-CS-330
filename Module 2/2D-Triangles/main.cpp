@@ -38,9 +38,12 @@ int main(void) {
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(600, 600, "Chapter2 - program1", NULL, NULL);
+
+	GLFWwindow* window = glfwCreateWindow(600, 600, "2-3 Assignment - 2D Triangles", NULL, NULL);
 	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, UResizeWindow);
 
 	if (glewInit() != GLEW_OK) {
 		exit(EXIT_FAILURE);
@@ -52,8 +55,13 @@ int main(void) {
 
 	// Rendering loop
 	while (!glfwWindowShouldClose(window)) {
+
+		// input
+		UProcessInput(window);
 		
 		display(window, glfwGetTime()); // glfwGetTime gets elapsed time since GLFW was initialized
+
+		// glfw swap buffers and poll IO events
 		glfwSwapBuffers(window); // Paints window
 		glfwPollEvents(); // Handles window-related events like key-presses
 	}

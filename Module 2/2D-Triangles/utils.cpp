@@ -121,3 +121,17 @@ GLuint createShaderProgram() { // creates vertex and fragment shaders
 
 	return vfProgram;
 }
+
+// Process input by querying GLFW for each key press/release
+
+void UProcessInput(GLFWwindow* window) {
+
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+		glfwSetWindowShouldClose(window, true);
+	}
+}
+
+// glfw - function executes when window is resized
+void UResizeWindow(GLFWwindow* window, int width, int height) {
+	glViewport(0, 0, width, height);
+}
