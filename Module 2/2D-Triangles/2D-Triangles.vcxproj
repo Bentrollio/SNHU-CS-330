@@ -145,6 +145,7 @@
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GLmesh.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>

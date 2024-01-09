@@ -13,8 +13,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include "GLmesh.h"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -38,5 +37,9 @@ GLuint createShaderProgram(const char* vp, const char* gp, const char* fp);
 void UProcessInput(GLFWwindow* window);
 
 void UResizeWindow(GLFWwindow* window, int width, int height);
+
+void UCreateMesh(GLmesh& mesh);
+
+void UDestroyMesh(GLmesh& mesh);
 
 #endif /* UTILS_H */

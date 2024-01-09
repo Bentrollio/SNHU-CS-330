@@ -135,3 +135,29 @@ void UProcessInput(GLFWwindow* window) {
 void UResizeWindow(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 }
+
+// Creates the mesh
+void UCreateMesh(GLmesh& mesh) {
+
+	// Specifies Normalized Device Coordinates for triangle vertices
+	GLfloat verts[] =
+	{
+		0.0f, 1.0f, 0.0f, // top-center of the screen
+		-1.0f, -1.0f, 0.0f, // bottom-left of the screen
+		1.0f, -1.0f, 0.0f // bottom-right of the screen
+	};
+
+	mesh.numVertices = 3;
+
+	glGenVertexArrays(1, &mesh.vao); // can also generate multiple VAOs or buffers at once
+	glGenBuffers(1, &mesh.vbo); // Create 1 single buffer
+	glBindVertexArray(mesh.vao);
+	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo); // Activates buffer
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW); // sends vertex or coordinate data to GPU
+}
+
+void UDestroyMesh(GLmesh& mesh) {
+
+	glDeleteVertexArrays(1, &mesh.vao);
+	glDeleteBuffers(1, &mesh.vbo);
+}

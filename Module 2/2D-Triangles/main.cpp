@@ -8,26 +8,28 @@
  */
 
 #include "utils.h"
+#include "GLmesh.h"
 
 #define numVAOs 1
 
 using namespace std;
 
 GLuint renderingProgram;
-GLuint vao[numVAOs];
+//FIXME GLuint vao[numVAOs];
 
 // Places application-specific initialization tasks
 void init(GLFWwindow* window) {
 	renderingProgram = createShaderProgram();
-	glGenVertexArrays(numVAOs, vao);
-	glBindVertexArray(vao[0]);
+	//FIXME: glGenVertexArrays(numVAOs, vao);
+	//FIXME: glBindVertexArray(vao[0]);
 }
 
 // Draws to GLFW display window
 void display(GLFWwindow* window, double currentTime) {
 	glUseProgram(renderingProgram); // loads compiled shaders into openGL pipeline
-	glPointSize(30.0f);
-	glDrawArrays(GL_TRIANGLES, 0, 3); // initiates pipeline processing
+	glClearColor(1.0, 0.0, 0.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	//glDrawArrays(GL_TRIANGLES, 0, 3); // initiates pipeline processing
 }
 
 int main(void) {
@@ -53,6 +55,14 @@ int main(void) {
 
 	init(window);
 
+	// MESH STuFF - Triangle mesh data
+	GLmesh mesh;
+
+	// Create mesh
+	UCreateMesh(mesh); // Creates the VBO
+
+
+
 	// Rendering loop
 	while (!glfwWindowShouldClose(window)) {
 
@@ -66,6 +76,7 @@ int main(void) {
 		glfwPollEvents(); // Handles window-related events like key-presses
 	}
 
+	UDestroyMesh(mesh);
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	exit(EXIT_SUCCESS);
