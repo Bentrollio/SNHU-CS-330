@@ -141,10 +141,15 @@ void UCreateMesh(GLmesh& mesh) {
 
 	// Specifies Normalized Device Coordinates for triangle vertices
 	GLfloat verts[] =
-	{
+	{	// positions		
 		0.0f, 1.0f, 0.0f, // top-center of the screen
+		1.0f, 0.0f, 0.0f, 1.0f, // red
+
 		-1.0f, -1.0f, 0.0f, // bottom-left of the screen
-		1.0f, -1.0f, 0.0f // bottom-right of the screen
+		0.0f, 1.0f, 0.0f, 1.0f, // green
+
+		1.0f, -1.0f, 0.0f, // bottom-right of the screen
+		0.0f, 0.0f, 1.0f, 1.0f // blue
 	};
 
 	mesh.numVertices = 3;
@@ -154,6 +159,23 @@ void UCreateMesh(GLmesh& mesh) {
 	glBindVertexArray(mesh.vao);
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo); // Activates buffer
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW); // sends vertex or coordinate data to GPU
+
+	// Creates the Vertex Attribute Pointer for the screen coordinates
+	const GLuint floatsPerVertex = 3; // Number of coordinates per vertex
+	const GLuint floatsPerColor = 4; // (r, g, b, a)
+
+	// Strides between vertex coordinates is 6 (xyz rgba)
+	GLint stride = sizeof(float) * (floatsPerVertex + floatsPerColor);
+
+	// Instructs the GPU on how to handle the vbo data
+	// Parameters: attribPointerPosition | coordinates per vertex is 2, ie x and y | data type | deactivate normalization | 0
+	glVertexAttribPointer(0, floatsPerVertex, GL_FLOAT, GL_FALSE, stride, 0);
+	glEnableVertexAttribArray(0);
+
+	// Parameters: attribPointerPosition 1 | floats per color is 4, ie rgba | data type | deactivate normalization 
+	// | 6 strides till next color | 2 floats til beginning of each color
+	glVertexAttribPointer(1, floatsPerColor, GL_FLOAT, GL_FALSE, stride, (char*)(sizeof(float) * floatsPerVertex));
+	glEnableVertexAttribArray(1);
 }
 
 void UDestroyMesh(GLmesh& mesh) {

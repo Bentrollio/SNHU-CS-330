@@ -14,6 +14,7 @@
 
 using namespace std;
 
+GLmesh mesh; // Triangle mesh data
 GLuint renderingProgram;
 //FIXME GLuint vao[numVAOs];
 
@@ -27,9 +28,19 @@ void init(GLFWwindow* window) {
 // Draws to GLFW display window
 void display(GLFWwindow* window, double currentTime) {
 	glUseProgram(renderingProgram); // loads compiled shaders into openGL pipeline
-	glClearColor(1.0, 0.0, 0.0, 1.0);
+	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	//glDrawArrays(GL_TRIANGLES, 0, 3); // initiates pipeline processing
+
+	//Activate VBOs contained within mesh
+	glBindVertexArray(mesh.vao);
+
+	// Draw triangle
+	glDrawArrays(GL_TRIANGLES, 0, mesh.numVertices); // Draws triangle
+
+	// Deactivate VAO
+	glBindVertexArray(0);
+
 }
 
 int main(void) {
@@ -54,9 +65,6 @@ int main(void) {
 	glfwSwapInterval(1);
 
 	init(window);
-
-	// MESH STuFF - Triangle mesh data
-	GLmesh mesh;
 
 	// Create mesh
 	UCreateMesh(mesh); // Creates the VBO
