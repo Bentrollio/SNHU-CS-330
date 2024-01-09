@@ -9,8 +9,8 @@
 struct GLmesh 
 {
 	GLuint vao; // Handle for the Vertex Array Object
-	GLuint vbo; // Handle for the Vertex Buffer Object
-	GLuint numVertices; // number of vertices of the mesh
+	GLuint vbos[2]; // Handle for the Vertex Buffer Objects
+	GLuint numIndices; // number of vertices of the mesh
 };
 
 #endif /* GLMESH_H */

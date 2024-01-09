@@ -141,24 +141,45 @@ void UCreateMesh(GLmesh& mesh) {
 
 	// Specifies Normalized Device Coordinates for triangle vertices
 	GLfloat verts[] =
-	{	// positions		
-		0.0f, 1.0f, 0.0f, // top-center of the screen
+	{	
+		// The two triangles will be drawn using indices.
+		// Left triangle indices: 0, 1, 2
+		// Right triangle indices: 3, 2, 4
+
+		// index 0
+		-0.5f, 0.0f, 0.0f,	// top-first third of screen
 		1.0f, 0.0f, 0.0f, 1.0f, // red
 
-		-1.0f, -1.0f, 0.0f, // bottom-left of the screen
+		// index 1
+		-1.0f, -1.0f, 0.0f, // bottom-left of screen
+		0.0f, 0.0f, 1.0f, 1.0f, // blue
+
+		// index 2
+		0.0f, -1.0f, 0.0f,	// bottom-center of screen
 		0.0f, 1.0f, 0.0f, 1.0f, // green
 
-		1.0f, -1.0f, 0.0f, // bottom-right of the screen
-		0.0f, 0.0f, 1.0f, 1.0f // blue
+		// index 3
+		0.5f, 0.0f, 0.0f,	// top-second third of the screen
+		1.0f, 0.0f, 0.0f, 1.0f, // red
+
+		// index 4
+		1.0f, -1.0f, 0.0f,	// bottom-right of screen
+		0.0f, 1.0f, 0.0f, 1.0f // green
 	};
 
-	mesh.numVertices = 3;
-
 	glGenVertexArrays(1, &mesh.vao); // can also generate multiple VAOs or buffers at once
-	glGenBuffers(1, &mesh.vbo); // Create 1 single buffer
 	glBindVertexArray(mesh.vao);
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo); // Activates buffer
+
+	glGenBuffers(2, mesh.vbos); // Create 1 single buffer
+	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbos[0]); // Activates buffer
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW); // sends vertex or coordinate data to GPU
+
+	// Creates a buffer object for the indices
+	GLushort indices[] = { 0, 1, 2, 3, 2, 4 }; // Using idex 2 twice
+	mesh.numIndices = sizeof(indices) / sizeof(indices[0]);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.vbos[1]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	// Creates the Vertex Attribute Pointer for the screen coordinates
 	const GLuint floatsPerVertex = 3; // Number of coordinates per vertex
@@ -181,5 +202,5 @@ void UCreateMesh(GLmesh& mesh) {
 void UDestroyMesh(GLmesh& mesh) {
 
 	glDeleteVertexArrays(1, &mesh.vao);
-	glDeleteBuffers(1, &mesh.vbo);
+	glDeleteBuffers(2, mesh.vbos);
 }

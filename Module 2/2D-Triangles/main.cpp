@@ -36,7 +36,7 @@ void display(GLFWwindow* window, double currentTime) {
 	glBindVertexArray(mesh.vao);
 
 	// Draw triangle
-	glDrawArrays(GL_TRIANGLES, 0, mesh.numVertices); // Draws triangle
+	glDrawElements(GL_TRIANGLES, mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
 
 	// Deactivate VAO
 	glBindVertexArray(0);
