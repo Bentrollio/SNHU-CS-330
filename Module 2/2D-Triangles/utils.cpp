@@ -147,23 +147,23 @@ void UCreateMesh(GLmesh& mesh) {
 		// Right triangle indices: 3, 2, 4
 
 		// index 0
-		-0.5f, 0.0f, 0.0f,	// top-first third of screen
+		-1.0f, 1.0f, 0.0f,	// top-first third of screen
 		1.0f, 0.0f, 0.0f, 1.0f, // red
 
 		// index 1
-		-1.0f, -1.0f, 0.0f, // bottom-left of screen
+		-1.0f, 0.0f, 0.0f, // bottom-left of screen
 		0.0f, 0.0f, 1.0f, 1.0f, // blue
 
 		// index 2
-		0.0f, -1.0f, 0.0f,	// bottom-center of screen
+		-0.5f, 0.0f, 0.0f,	// bottom-center of screen
 		0.0f, 1.0f, 0.0f, 1.0f, // green
 
 		// index 3
-		0.5f, 0.0f, 0.0f,	// top-second third of the screen
+		0.0f, 0.0f, 0.0f,	// top-second third of the screen
 		1.0f, 0.0f, 0.0f, 1.0f, // red
 
 		// index 4
-		1.0f, -1.0f, 0.0f,	// bottom-right of screen
+		0.0f, -1.0f, 0.0f,	// bottom-right of screen
 		0.0f, 1.0f, 0.0f, 1.0f // green
 	};
 
