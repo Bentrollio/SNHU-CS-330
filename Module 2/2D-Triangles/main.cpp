@@ -10,19 +10,15 @@
 #include "utils.h"
 #include "GLmesh.h"
 
-#define numVAOs 1
-
 using namespace std;
 
 GLmesh mesh; // Triangle mesh data
 GLuint renderingProgram;
-//FIXME GLuint vao[numVAOs];
 
 // Places application-specific initialization tasks
 void init(GLFWwindow* window) {
-	renderingProgram = createShaderProgram();
-	//FIXME: glGenVertexArrays(numVAOs, vao);
-	//FIXME: glBindVertexArray(vao[0]);
+	renderingProgram = createShaderProgram(); // Reads from and compiles GLSL shader files
+	createMesh(mesh); // Creates VAO and VBO
 }
 
 // Draws to GLFW display window
@@ -30,7 +26,6 @@ void display(GLFWwindow* window, double currentTime) {
 	glUseProgram(renderingProgram); // loads compiled shaders into openGL pipeline
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
-	//glDrawArrays(GL_TRIANGLES, 0, 3); // initiates pipeline processing
 
 	//Activate VBOs contained within mesh
 	glBindVertexArray(mesh.vao);
@@ -45,19 +40,22 @@ void display(GLFWwindow* window, double currentTime) {
 
 int main(void) {
 
+	// GLFW: Initialize and configure
 	if (!glfwInit()) {
 		exit(EXIT_FAILURE);
 	}
 
+	// Using OpenGL 4.3 Core
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-
-	GLFWwindow* window = glfwCreateWindow(600, 600, "2-3 Assignment - 2D Triangles", NULL, NULL);
+	// GLFW: Window creation
+	GLFWwindow* window = glfwCreateWindow(800, 600, "2-3 Assignment - 2D Triangles", NULL, NULL);
 	glfwMakeContextCurrent(window);
-	glfwSetFramebufferSizeCallback(window, UResizeWindow);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+	// GLEW: load all OpenGL function pointers
 	if (glewInit() != GLEW_OK) {
 		exit(EXIT_FAILURE);
 	}
@@ -66,16 +64,11 @@ int main(void) {
 
 	init(window);
 
-	// Create mesh
-	UCreateMesh(mesh); // Creates the VBO
-
-
-
 	// Rendering loop
 	while (!glfwWindowShouldClose(window)) {
 
 		// input
-		UProcessInput(window);
+		processInput(window);
 		
 		display(window, glfwGetTime()); // glfwGetTime gets elapsed time since GLFW was initialized
 
@@ -84,7 +77,7 @@ int main(void) {
 		glfwPollEvents(); // Handles window-related events like key-presses
 	}
 
-	UDestroyMesh(mesh);
+	destroyMesh(mesh);
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	exit(EXIT_SUCCESS);

@@ -4,6 +4,8 @@
  * 
  * Reusable OpenGL functions for error checking and reading GLSL shader programs
  * 
+ * 
+ * 
  * Adapted from:
  * Computer Graphics Programming in OpenGL with C++
  * By Gordon and Clevenger
@@ -34,12 +36,8 @@ GLuint createShaderProgram(const char* vp, const char* fp);
 
 GLuint createShaderProgram(const char* vp, const char* gp, const char* fp);
 
-void UProcessInput(GLFWwindow* window);
+void processInput(GLFWwindow* window);
 
-void UResizeWindow(GLFWwindow* window, int width, int height);
-
-void UCreateMesh(GLmesh& mesh);
-
-void UDestroyMesh(GLmesh& mesh);
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 #endif /* UTILS_H */
