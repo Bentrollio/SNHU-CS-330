@@ -14,7 +14,8 @@ struct GLmesh
 {
 	GLuint vao; // Handle for the Vertex Array Object
 	GLuint vbo[numVBOs]; // Handle for the Vertex Buffer Objects
-	GLuint numIndices; // number of vertices of the mesh
+	GLuint numVertices; // Number of vertices for the mesh
+	GLuint numIndices; // Number of indices of the mesh
 };
 
 void createMesh(GLmesh& mesh);
