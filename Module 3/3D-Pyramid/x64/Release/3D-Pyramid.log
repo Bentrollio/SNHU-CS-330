@@ -1,0 +1,8 @@
+﻿  GLmesh.cpp
+  main.cpp
+  utils.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 237 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  3D-Pyramid.vcxproj -> C:\Github Repo\SNHU-CS-330\Module 3\3D-Pyramid\x64\Release\3D-Pyramid.exe

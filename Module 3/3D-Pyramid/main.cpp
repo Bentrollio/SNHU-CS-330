@@ -77,6 +77,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	mMat = translation * rotation * scale;
 
+	// copy projection, model and view matrices to the uniform variables for the shaders
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mMat));
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(vMat));
