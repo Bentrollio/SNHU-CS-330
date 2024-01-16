@@ -3,12 +3,12 @@
 // Creates the mesh
 void createMesh(GLmesh& mesh) { // 5 vertices, 6 triangles, makes pyramid placed at origin
 	GLfloat verts[] // Pyramid positions 5 vertices, 6 triangles
-	{
-		-1.0f, -1.0f, 1.0f, // Bottom front left vertex 0
-		1.0f, -1.0f, -1.0f, // Bottom rear right vertex 1
-		0.0f, 1.0f, 0.0f, // Top center point vertex 2
-		1.0f, -1.0f, 1.0f, // Bottom front right vertex 3
-		-1.0f, -1.0f, -1.0f, // Bottom rear left vertex 4
+	{	// Vertices				// Colors
+		-1.0f, -1.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f, // Bottom front left vertex 0
+		1.0f, -1.0f, -1.0f,		0.0f, 1.0f, 0.0f, 1.0f,	// Bottom rear right vertex 1
+		0.0f, 1.0f, 0.0f,		0.0f, 0.0f, 1.0f, 1.0f,	// Top center point vertex 2
+		1.0f, -1.0f, 1.0f,		1.0f, 0.0f, 1.0f, 1.0f,	// Bottom front right vertex 3
+		-1.0f, -1.0f, -1.0f,	0.5f, 1.0f, 0.5f, 1.0f,	// Bottom rear left vertex 4
 	};
 
 	glGenVertexArrays(numVAOs, mesh.vao); // can also generate multiple VAOs or buffers at once
@@ -36,7 +36,7 @@ void createMesh(GLmesh& mesh) { // 5 vertices, 6 triangles, makes pyramid placed
 
 	// Creates the Vertex Attribute Pointer for the screen coordinates
 	const GLuint floatsPerVertex = 3; // Number of coordinates per vertex
-	const GLuint floatsPerColor = 0; // (r, g, b, a) THIS IS SET TO 0 FOR NOW
+	const GLuint floatsPerColor = 4; // (r, g, b, a) THIS IS SET TO 0 FOR NOW
 
 	// Strides between vertex coordinates is 3 (xyz rgba)
 	GLint stride = sizeof(float) * (floatsPerVertex + floatsPerColor);

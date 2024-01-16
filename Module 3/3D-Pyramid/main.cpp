@@ -1,9 +1,10 @@
 /*
- * 3D Practice
- * 
- * Creating a 3D cube.
- * 
- * 
+ * SNHU CS-330
+ * Module 3 Assignment - 3D Pyramid
+ *
+ * Alex Baires
+ * 1-28-24
+ *
  */
 
 #include "utils.h"
@@ -74,7 +75,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 3. Place object at the origin (0, 0, 0)
 	translation = glm::translate(glm::mat4(1.0f), glm::vec3(cubeLocX, cubeLocY, cubeLocZ));
 
-	//mvMat = vMat * mMat;
 	mMat = translation * rotation * scale;
 
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
@@ -83,14 +83,18 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// associate VBO with the corresponding vertex attribute in the vertex shader
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glEnableVertexAttribArray(0);
+	
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.vbo[1]);
+	glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
+	glEnableVertexAttribArray(0); // Enables VAO
+
 
 	// adjust OpenGL settings and draw model
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //ENABLES WIREFRAME
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //ENABLES WIREFRAME
 
 	// Draw triangle
 	glDrawElements(GL_TRIANGLES, mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
