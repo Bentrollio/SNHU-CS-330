@@ -37,10 +37,10 @@ void init(GLFWwindow* window) {
 
 	// camera positioning
 	cameraX = 0.0f;
-	cameraY = 0.0f;
-	cameraZ = 3.0f;
+	cameraY = -0.2f;
+	cameraZ = 5.0f;
 	cubeLocX = 0.0f;
-	cubeLocY = -2.0f; // shift down Y to reveal perspective
+	cubeLocY = 2.0f; // shift down Y to reveal perspective
 	cubeLocZ = 0.0f; 
 
 	createMesh(mesh); // Creates VAO and VBO
@@ -60,12 +60,10 @@ void display(GLFWwindow* window, double currentTime) { // FIX ME AKA URENDER
 	modelLoc = glGetUniformLocation(renderingProgram, "model_matrix");
 	viewLoc = glGetUniformLocation(renderingProgram, "view_matrix");
 
-
 	// build perspective matrix
 	glfwGetFramebufferSize(window, &width, &height);
 	aspect = (float)width / (float)height;
-	//pMat = glm::perspective(1.0472f, aspect, 0.1f, 1000.0f); // 1.0472 radians = 60 degrees
-	pMat = glm::perspective(45.0f, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 100.0f);
+	pMat = glm::perspective(1.22f, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 1000.0f); // 1.0472 radians = 60 degrees
 
 	// build view matrix, model matrix, and model-view matrix
 	vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
@@ -73,11 +71,11 @@ void display(GLFWwindow* window, double currentTime) { // FIX ME AKA URENDER
 	//mMat = glm::translate(glm::mat4(1.0f), glm::vec3(cubeLocX, cubeLocY, cubeLocZ));
 
 	// 1. Scale object by 2
-	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 0.75f, 0.75));
+	scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.5f, 1.5f, 1.5f));
 	// 2. Rotate shape by 90 degrees along y axis
-	rotation = glm::rotate(glm::mat4(1.0f), 90.0f, glm::vec3(0.0, 1.0f, 0.0f));
-	// 3. Place object at origin
-	translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	rotation = glm::rotate(glm::mat4(1.0f), 35.1f, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(glm::mat4(1.0f), 0.1f, glm::vec3(1.0f, 0.0f, 0.0f));
+	// 3. Place object to reveal perspective
+	translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.25f, 0.0f));
 
 	//mvMat = vMat * mMat;
 	mMat = translation * rotation * scale;
@@ -97,7 +95,7 @@ void display(GLFWwindow* window, double currentTime) { // FIX ME AKA URENDER
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //ENABLES WIREFRAME
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //ENABLES WIREFRAME
 
 	// Draw triangle
 	glDrawElements(GL_TRIANGLES, mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
