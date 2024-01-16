@@ -28,7 +28,7 @@ void display(GLFWwindow* window, double currentTime) {
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	//Activate VBOs contained within mesh
-	glBindVertexArray(mesh.vao);
+	glBindVertexArray(mesh.vao[0]);
 
 	// Draw triangle
 	glDrawElements(GL_TRIANGLES, mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle

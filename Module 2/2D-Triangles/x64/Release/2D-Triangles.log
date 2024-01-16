@@ -1,0 +1,8 @@
+﻿  GLmesh.cpp
+  main.cpp
+  utils.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 191 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  2D-Triangles.vcxproj -> C:\Github Repo\SNHU-CS-330\Module 2\2D-Triangles\x64\Release\2D-Triangles.exe

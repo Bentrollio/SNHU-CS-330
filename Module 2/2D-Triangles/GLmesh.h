@@ -12,7 +12,7 @@
 
 struct GLmesh 
 {
-	GLuint vao; // Handle for the Vertex Array Object
+	GLuint vao[numVAOs]; // Handle for the Vertex Array Object
 	GLuint vbo[numVBOs]; // Handle for the Vertex Buffer Objects
 	GLuint numVertices; // Number of vertices for the mesh
 	GLuint numIndices; // Number of indices of the mesh

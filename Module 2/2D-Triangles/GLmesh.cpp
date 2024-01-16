@@ -31,8 +31,8 @@ void createMesh(GLmesh& mesh) {
 		0.0f, 1.0f, 0.0f, 1.0f // green
 	};
 
-	glGenVertexArrays(numVAOs, &mesh.vao); // can also generate multiple VAOs or buffers at once
-	glBindVertexArray(mesh.vao);
+	glGenVertexArrays(numVAOs, mesh.vao); // can also generate multiple VAOs or buffers at once
+	glBindVertexArray(mesh.vao[0]);
 
 	glGenBuffers(numVBOs, mesh.vbo); // Creates buffers
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]); // Activates buffer
@@ -65,6 +65,6 @@ void createMesh(GLmesh& mesh) {
 
 void destroyMesh(GLmesh& mesh) {
 
-	glDeleteVertexArrays(numVAOs, &mesh.vao);
+	glDeleteVertexArrays(numVAOs, mesh.vao);
 	glDeleteBuffers(numVBOs, mesh.vbo);
 }
