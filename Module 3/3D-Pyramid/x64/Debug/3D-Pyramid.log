@@ -1,3 +1,5 @@
-﻿  main.cpp
+﻿  GLmesh.cpp
+  main.cpp
+  Generating Code...
 LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   3D-Pyramid.vcxproj -> C:\Github Repo\SNHU-CS-330\Module 3\3D-Pyramid\x64\Debug\3D-Pyramid.exe

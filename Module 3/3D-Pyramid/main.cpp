@@ -26,10 +26,9 @@ GLmesh mesh; // Triangle mesh data
 GLuint renderingProgram;
 
 // Variables to be used in display() function to prevent allocation during rendering
-GLuint mvLoc, projLoc, viewLoc, modelLoc;
+GLuint projLoc, viewLoc, modelLoc;
 int width, height;
-float aspect;
-glm::mat4 pMat, vMat, mMat, mvMat, scale, rotation, translation;
+glm::mat4 pMat, vMat, mMat, scale, rotation, translation;
 
 // Places application-specific initialization tasks
 void init(GLFWwindow* window) {
@@ -39,49 +38,45 @@ void init(GLFWwindow* window) {
 	cameraX = 0.0f;
 	cameraY = -0.2f;
 	cameraZ = 5.0f;
+
+	// pyramid location coordinates
 	cubeLocX = 0.0f;
-	cubeLocY = 2.0f; // shift down Y to reveal perspective
+	cubeLocY = 0.0f;
 	cubeLocZ = 0.0f; 
 
-	createMesh(mesh); // Creates VAO and VBO
+	createMesh(mesh); // Creates VAO and VBO for pyramid mesh
 
 }
 
 // Draws to GLFW display window
-void display(GLFWwindow* window, double currentTime) { // FIX ME AKA URENDER
+void display(GLFWwindow* window, double currentTime) { // AKA urender function in tutorial
 
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(renderingProgram); // loads compiled shaders into openGL pipeline
 
-	// get the uniform variables for the MV and projection matrices
-	mvLoc = glGetUniformLocation(renderingProgram, "mv_matrix"); // model view matrix
+	// get the uniform variables for the projection, model and view matrices
 	projLoc = glGetUniformLocation(renderingProgram, "proj_matrix"); // projection
-	modelLoc = glGetUniformLocation(renderingProgram, "model_matrix");
-	viewLoc = glGetUniformLocation(renderingProgram, "view_matrix");
+	modelLoc = glGetUniformLocation(renderingProgram, "model_matrix"); // model
+	viewLoc = glGetUniformLocation(renderingProgram, "view_matrix"); // view
 
 	// build perspective matrix
 	glfwGetFramebufferSize(window, &width, &height);
-	aspect = (float)width / (float)height;
-	pMat = glm::perspective(1.22f, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 1000.0f); // 1.0472 radians = 60 degrees
+	
+	pMat = glm::perspective(1.0472f, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 1000.0f); // 1.0472 radians = 60 degrees
 
 	// build view matrix, model matrix, and model-view matrix
 	vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
-	//glm::mat4 vMat = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
-	//mMat = glm::translate(glm::mat4(1.0f), glm::vec3(cubeLocX, cubeLocY, cubeLocZ));
-
-	// 1. Scale object by 2
-	scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.5f, 1.5f, 1.5f));
-	// 2. Rotate shape by 90 degrees along y axis
-	rotation = glm::rotate(glm::mat4(1.0f), 35.1f, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::rotate(glm::mat4(1.0f), 0.1f, glm::vec3(1.0f, 0.0f, 0.0f));
-	// 3. Place object to reveal perspective
-	translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.25f, 0.0f));
+	// 1. Scale object by 1 (I built my mesh with different vertices than the tutorial)
+	scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	// 2. Rotate shape by 25 degrees along y axis (to match screenshot of the rubric. Used glm::radians as an argument to convert 25 degrees to radians
+	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	// 3. Place object at the origin (0, 0, 0)
+	translation = glm::translate(glm::mat4(1.0f), glm::vec3(cubeLocX, cubeLocY, cubeLocZ));
 
 	//mvMat = vMat * mMat;
 	mMat = translation * rotation * scale;
 
-	// copy perspective and MV matrices to corresponding uniform variables
-	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mMat));
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(vMat));

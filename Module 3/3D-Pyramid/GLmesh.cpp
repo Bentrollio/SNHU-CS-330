@@ -19,6 +19,7 @@ void createMesh(GLmesh& mesh) { // 5 vertices, 6 triangles, makes pyramid placed
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW); // sends vertex or coordinate data to GPU
 	
 	GLushort indices[] = {
+		
 		0, 2, 3, // Triangle 1
 		0, 2, 4, // Triangle 2
 		1, 2, 3, // Triangle 3
