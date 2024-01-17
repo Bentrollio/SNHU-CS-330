@@ -18,6 +18,7 @@
 using namespace std;
 
 float cameraX, cameraY, cameraZ;
+float pyrLocX, pyrLocY, pyrLocZ;
 float cubeLocX, cubeLocY, cubeLocZ;
 
 const int WINDOW_WIDTH = 800;
@@ -39,9 +40,14 @@ void init(GLFWwindow* window) {
 	// camera positioning
 	cameraX = 0.0f;
 	cameraY = 2.0f;
-	cameraZ = 9.0f;
+	cameraZ = 5.0f;
 
 	// pyramid location coordinates
+	pyrLocX = 0.0f;
+	pyrLocY = 3.0f;
+	pyrLocZ = 0.0f;
+
+	// cube location coordinates
 	cubeLocX = 0.0f;
 	cubeLocY = 1.0f;
 	cubeLocZ = 0.0f; 
@@ -55,6 +61,11 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// adjust OpenGL settings
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //ENABLES WIREFRAME
+
 	glUseProgram(renderingProgram); // loads compiled shaders into openGL pipeline
 
 	// get the uniform variables for the projection, model and view matrices
@@ -70,13 +81,13 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// View matrix calculated once and used for all objects
 	vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
 
+	// ***DRAW PLANE***
 	glBindVertexArray(meshes.planeMesh.vao);
-	//DRAW PLANE
 	// 1. Scale object
 	scale = glm::scale(glm::mat4(1.0f), glm::vec3(6.0f, 1.0f, 6.0f));
 	// 2. Rotate object
 	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-	// 3. Place object at origin
+	// 3. Place plane at origin
 	translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)); // FIX ME: planeLoc variable?
 
 	mMat = translation * rotation * scale;
@@ -92,60 +103,43 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
 	glEnableVertexAttribArray(0); // Enables VAO
 
-
-	// adjust OpenGL settings and draw model
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //ENABLES WIREFRAME
-
 	// Draw triangles
 	glDrawElements(GL_TRIANGLES, meshes.planeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
 	glBindVertexArray(0);
 
-
-	////// DRAW PYRAMID
-	//// 1. Scale object 
-	//scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-	//// 2. Rotate shape by 25 degrees along y axis. Used glm::radians as an argument to convert degrees to radians
-	//rotation = glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	//// 3. Place object at the origin (0, 0, 0)
-	//translation = glm::translate(glm::mat4(1.0f), glm::vec3(cubeLocX, cubeLocY, cubeLocZ));
-
-	//mMat = translation * rotation * scale;
-
-	//// copy projection, model and view matrices to the uniform variables for the shaders
-	//glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
-	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mMat));
-	//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(vMat));
-
-	//// associate VBO with the corresponding vertex attribute in the vertex shader
-	//glBindBuffer(GL_ARRAY_BUFFER, meshes.pyramid4Mesh.vbo[0]);
-	//
-
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes.pyramid4Mesh.vbo[1]);
-	//glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
-	//glEnableVertexAttribArray(0); // Enables VAO
-
-
-	//// adjust OpenGL settings and draw model
-	//glEnable(GL_DEPTH_TEST);
-	//glDepthFunc(GL_LEQUAL);
-	//
-	////glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //ENABLES WIREFRAME
-
-	//// Draw triangles
-	//glDrawElements(GL_TRIANGLES, meshes.pyramid4Mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
-
-
-	
-	//// DRAW CUBE
-	glBindVertexArray(meshes.cubeMesh.vao);
+	// ***DRAW PYRAMID***
+	glBindVertexArray(meshes.pyramid4Mesh.vao);
 	// 1. Scale object 
-	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.5f));
+	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 1.0f, 0.5f));
 	// 2. Rotate shape by 25 degrees along y axis. Used glm::radians as an argument to convert degrees to radians
 	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	// 3. Place object at the origin (0, 0, 0)
+	// 3. Place object
+	translation = glm::translate(glm::mat4(1.0f), glm::vec3(pyrLocX, pyrLocY, pyrLocZ));
+
+	mMat = translation * rotation * scale;
+
+	// copy projection, model and view matrices to the uniform variables for the shaders
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mMat));
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(vMat));
+
+	// associate VBO with the corresponding vertex attribute in the vertex shader
+	glBindBuffer(GL_ARRAY_BUFFER, meshes.pyramid4Mesh.vbo[0]);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes.pyramid4Mesh.vbo[1]);
+	glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
+	glEnableVertexAttribArray(0); // Enables VAO
+
+	// Draw triangles
+	glDrawElements(GL_TRIANGLES, meshes.pyramid4Mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
+	glBindVertexArray(0);
+
+	// ***DRAW CUBE***
+	glBindVertexArray(meshes.cubeMesh.vao);
+	// 1. Scale object 
+	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 1.0f, 0.5f));
+	// 2. Rotate shape by 25 degrees along y axis. Used glm::radians as an argument to convert degrees to radians
+	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	// 3. Place object
 	translation = glm::translate(glm::mat4(1.0f), glm::vec3(cubeLocX, cubeLocY, cubeLocZ));
 
 	mMat = translation * rotation * scale;
@@ -157,18 +151,9 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// associate VBO with the corresponding vertex attribute in the vertex shader
 	glBindBuffer(GL_ARRAY_BUFFER, meshes.cubeMesh.vbo[0]);
-
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes.cubeMesh.vbo[1]);
 	glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
 	glEnableVertexAttribArray(0); // Enables VAO
-
-
-	// adjust OpenGL settings and draw model
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //ENABLES WIREFRAME
 
 	// Draw triangles
 	glDrawElements(GL_TRIANGLES, meshes.cubeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
@@ -190,7 +175,7 @@ int main(void) {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// GLFW: Window creation
-	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "3-3 Assignment - Building a 3D Pyramid", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "3-5 Milestone - Beginning a 3D Scene", NULL, NULL);
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 

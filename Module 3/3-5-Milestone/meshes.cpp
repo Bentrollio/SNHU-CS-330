@@ -70,13 +70,13 @@ void Meshes::CreateCubeMesh(GLmesh& mesh) {
 	GLfloat verts[] = // vertexPositions in the book
 	{	
 		// Vertices				// Colors
-		-1.0f, 1.0f, -1.0f,		1.0f, 0.0f, 0.0f, 1.0f, // Top rear left vertex 0
-		-1.0f, -1.0f, -1.0f,	1.0f, 0.0f, 0.0f, 1.0f, // Bottom rear left vertex 1
-		1.0f, -1.0f, -1.0f,		1.0f, 0.0f, 0.0f, 1.0f, // Bottom rear right vertex 2
+		-1.0f, 1.0f, -1.0f,		0.0f, 1.0f, 0.50196078f, 1.0f, // Top rear left vertex 0
+		-1.0f, -1.0f, -1.0f,	1.0f, 1.0f, 0.0f, 1.0f, // Bottom rear left vertex 1
+		1.0f, -1.0f, -1.0f,		1.0f, 0.50196078f, 0.0f, 1.0f, // Bottom rear right vertex 2
 		1.0f, 1.0f, -1.0f,		1.0f, 0.0f, 0.0f, 1.0f, // Top rear right vertex 3
-		1.0f, -1.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f, // Bottom front right vertex 4
-		1.0f, 1.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f, // Top front right vertex 5
-		-1.0f, -1.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f, // Bottom front left vertex 6
+		1.0f, -1.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f, // Bottom front right vertex 4
+		1.0f, 1.0f, 1.0f,		1.0f, 0.0f, 1.0f, 1.0f, // Top front right vertex 5
+		-1.0f, -1.0f, 1.0f,		0.50196078f, 0.0f, 1.0f, 1.0f, // Bottom front left vertex 6
 		-1.0f, 1.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f, // Top front left vertex 7
 
 	};
@@ -138,10 +138,10 @@ void Meshes::CreatePlaneMesh(GLmesh& mesh) {
 	GLfloat verts[]
 	{	
 		// Vertices				// Colors
-		-1.0f, 0.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, -1.0f,		0.0f, 0.0f, 1.0f, 1.0f,
-		-1.0f, 0.0f, -1.0f,		0.0f, 0.0f, 1.0f, 1.0f,
+		-1.0f, 0.0f, 1.0f,		0.0f, 0.50196078f, 1.0f, 1.0f,
+		1.0f, 0.0f, 1.0f,		0.0f, 0.50196078f, 1.0f, 1.0f,
+		1.0f, 0.0f, -1.0f,		0.0f, 0.50196078f, 1.0f, 1.0f,
+		-1.0f, 0.0f, -1.0f,		0.0f, 0.50196078f, 1.0f, 1.0f,
 
 	};
 
