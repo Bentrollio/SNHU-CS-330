@@ -18,7 +18,7 @@
 using namespace std;
 
 float cameraX, cameraY, cameraZ;
-float cubeLocX, cubeLocY, cubeLocZ;
+float pyrLocX, pyrLocY, pyrLocZ;
 
 const int WINDOW_WIDTH = 800;
 const int WINDOW_HEIGHT = 600;
@@ -41,9 +41,9 @@ void init(GLFWwindow* window) {
 	cameraZ = 5.0f;
 
 	// pyramid location coordinates
-	cubeLocX = 0.0f;
-	cubeLocY = 0.0f;
-	cubeLocZ = 0.0f; 
+	pyrLocX = 0.0f;
+	pyrLocY = 0.0f;
+	pyrLocZ = 0.0f; 
 
 	createMesh(mesh); // Creates VAO and VBO for pyramid mesh
 
@@ -73,7 +73,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 2. Rotate shape by 25 degrees along y axis (to match screenshot of the rubric. Used glm::radians as an argument to convert 25 degrees to radians
 	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	// 3. Place object at the origin (0, 0, 0)
-	translation = glm::translate(glm::mat4(1.0f), glm::vec3(cubeLocX, cubeLocY, cubeLocZ));
+	translation = glm::translate(glm::mat4(1.0f), glm::vec3(pyrLocX, pyrLocY, pyrLocZ));
 
 	mMat = translation * rotation * scale;
 
@@ -98,7 +98,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //ENABLES WIREFRAME
 
 	// Draw triangle
-	glDrawElements(GL_TRIANGLES, mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
+	glDrawElements(GL_TRIANGLES, mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangles
 }
 
 int main(void) {

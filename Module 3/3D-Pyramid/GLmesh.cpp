@@ -36,18 +36,18 @@ void createMesh(GLmesh& mesh) { // 5 vertices, 6 triangles, makes pyramid placed
 
 	// Creates the Vertex Attribute Pointer for the screen coordinates
 	const GLuint floatsPerVertex = 3; // Number of coordinates per vertex
-	const GLuint floatsPerColor = 4; // (r, g, b, a) THIS IS SET TO 0 FOR NOW
+	const GLuint floatsPerColor = 4; // (r, g, b, a)
 
-	// Strides between vertex coordinates is 3 (xyz rgba)
+	// Strides between vertex coordinates is 7 (xyz rgba)
 	GLint stride = sizeof(float) * (floatsPerVertex + floatsPerColor);
 
 	// Instructs the GPU on how to handle the vbo data
-	// Parameters: attribPointerPosition | coordinates per vertex is 2, ie x and y | data type | deactivate normalization | 0
+	// Parameters: attribPointerPosition | coordinates per vertex is 3, ie x and y and z | data type | deactivate normalization | 0
 	glVertexAttribPointer(0, floatsPerVertex, GL_FLOAT, GL_FALSE, stride, 0);
 	glEnableVertexAttribArray(0);
 
-	// Parameters: attribPointerPosition 1 | floats per color is temporarily 0, ie rgba | data type | deactivate normalization 
-	// | 0 strides till next color | 2 floats til beginning of each color
+	// Parameters: attribPointerPosition 1 | floats per color is 4, ie rgba | data type | deactivate normalization 
+	// | 0 strides till next color | 3 floats til beginning of each color
 	glVertexAttribPointer(1, floatsPerColor, GL_FLOAT, GL_FALSE, stride, (char*)(sizeof(float) * floatsPerVertex));
 	glEnableVertexAttribArray(1);
 }
