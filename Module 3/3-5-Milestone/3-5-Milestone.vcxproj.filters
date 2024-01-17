@@ -21,7 +21,7 @@
     <ClCompile Include="utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GLmesh.cpp">
+    <ClCompile Include="meshes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,7 +29,7 @@
     <ClInclude Include="utils.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="GLmesh.h">
+    <ClInclude Include="meshes.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

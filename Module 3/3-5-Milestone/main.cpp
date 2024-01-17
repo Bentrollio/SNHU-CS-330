@@ -8,7 +8,7 @@
  */
 
 #include "utils.h"
-#include "GLmesh.h"
+#include "meshes.h"
 
 #include <cmath>
 #include <glm/glm.hpp>
@@ -23,7 +23,8 @@ float cubeLocX, cubeLocY, cubeLocZ;
 const int WINDOW_WIDTH = 800;
 const int WINDOW_HEIGHT = 600;
 
-GLmesh mesh; // Triangle mesh data
+//GLmesh mesh; // Triangle mesh data
+Meshes meshes;
 GLuint renderingProgram;
 
 // Variables to be used in display() function to prevent allocation during rendering
@@ -39,14 +40,16 @@ void init(GLFWwindow* window) {
 	cameraX = 0.0f;
 	cameraY = -0.2f;
 	cameraZ = 5.0f;
+	//cameraY = -4.0f;
+	//cameraZ = -12.0f;
 
 	// pyramid location coordinates
 	cubeLocX = 0.0f;
 	cubeLocY = 0.0f;
 	cubeLocZ = 0.0f; 
 
-	createMesh(mesh); // Creates VAO and VBO for pyramid mesh
-
+	//createMesh(mesh); // Creates VAO and VBO for pyramid mesh
+	meshes.CreateMeshes();
 }
 
 // Draws to GLFW display window
@@ -66,11 +69,81 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	
 	pMat = glm::perspective(1.0472f, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 1000.0f); // 1.0472 radians = 60 degrees
 
-	// build view matrix, model matrix, and model-view matrix
+	// View matrix calculated once and used for all objects
 	vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
-	// 1. Scale object by 1 (I built my mesh with different vertices than the tutorial)
+
+	//DRAW PLANE
+	//// 1. Scale object
+	//scale = glm::scale(glm::mat4(1.0f), glm::vec3(6.0f, 1.0f, 6.0f));
+	//// 2. Rotate object
+	//rotation = glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	//// 3. Place object at origin
+	//translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)); // FIX ME: planeLoc variable?
+
+	//mMat = translation * rotation * scale;
+
+	//// copy projection, model and view matrices to the uniform variables for the shaders
+	//glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mMat));
+	//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(vMat));
+
+	//// associate VBO with the corresponding vertex attribute in the vertex shader
+	//glBindBuffer(GL_ARRAY_BUFFER, meshes.planeMesh.vbo[0]);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes.planeMesh.vbo[1]);
+	//glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
+	//glEnableVertexAttribArray(0); // Enables VAO
+
+
+	//// adjust OpenGL settings and draw model
+	//glEnable(GL_DEPTH_TEST);
+	//glDepthFunc(GL_LEQUAL);
+
+	////glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //ENABLES WIREFRAME
+
+	//// Draw triangles
+	//glDrawElements(GL_TRIANGLES, meshes.planeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
+
+
+	////// DRAW PYRAMID
+	//// 1. Scale object 
+	//scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	//// 2. Rotate shape by 25 degrees along y axis. Used glm::radians as an argument to convert degrees to radians
+	//rotation = glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	//// 3. Place object at the origin (0, 0, 0)
+	//translation = glm::translate(glm::mat4(1.0f), glm::vec3(cubeLocX, cubeLocY, cubeLocZ));
+
+	//mMat = translation * rotation * scale;
+
+	//// copy projection, model and view matrices to the uniform variables for the shaders
+	//glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mMat));
+	//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(vMat));
+
+	//// associate VBO with the corresponding vertex attribute in the vertex shader
+	//glBindBuffer(GL_ARRAY_BUFFER, meshes.pyramid4Mesh.vbo[0]);
+	//
+
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes.pyramid4Mesh.vbo[1]);
+	//glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
+	//glEnableVertexAttribArray(0); // Enables VAO
+
+
+	//// adjust OpenGL settings and draw model
+	//glEnable(GL_DEPTH_TEST);
+	//glDepthFunc(GL_LEQUAL);
+	//
+	////glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //ENABLES WIREFRAME
+
+	//// Draw triangles
+	//glDrawElements(GL_TRIANGLES, meshes.pyramid4Mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
+
+
+	
+	//// DRAW CUBE
+	glBindVertexArray(meshes.cubeMesh.vao);
+	// 1. Scale object 
 	scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-	// 2. Rotate shape by 25 degrees along y axis (to match screenshot of the rubric. Used glm::radians as an argument to convert 25 degrees to radians
+	// 2. Rotate shape by 25 degrees along y axis. Used glm::radians as an argument to convert degrees to radians
 	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	// 3. Place object at the origin (0, 0, 0)
 	translation = glm::translate(glm::mat4(1.0f), glm::vec3(cubeLocX, cubeLocY, cubeLocZ));
@@ -83,10 +156,10 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(vMat));
 
 	// associate VBO with the corresponding vertex attribute in the vertex shader
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]);
-	
+	glBindBuffer(GL_ARRAY_BUFFER, meshes.cubeMesh.vbo[0]);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.vbo[1]);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes.cubeMesh.vbo[1]);
 	glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
 	glEnableVertexAttribArray(0); // Enables VAO
 
@@ -94,11 +167,14 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// adjust OpenGL settings and draw model
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-	
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //ENABLES WIREFRAME
 
-	// Draw triangle
-	glDrawElements(GL_TRIANGLES, mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //ENABLES WIREFRAME
+
+	// Draw triangles
+	glDrawElements(GL_TRIANGLES, meshes.cubeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
+
+	glBindVertexArray(0);
+	
 }
 
 int main(void) {
@@ -140,7 +216,7 @@ int main(void) {
 		glfwPollEvents(); // Handles window-related events like key-presses
 	}
 
-	destroyMesh(mesh);
+	meshes.DestroyMeshes();
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	exit(EXIT_SUCCESS);

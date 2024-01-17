@@ -15,7 +15,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include "GLmesh.h"
+#include "meshes.h"
 #include <string>
 #include <iostream>
 #include <fstream>

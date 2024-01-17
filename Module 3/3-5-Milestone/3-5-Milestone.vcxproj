@@ -141,12 +141,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GLmesh.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="meshes.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GLmesh.h" />
+    <ClInclude Include="meshes.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
