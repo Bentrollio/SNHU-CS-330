@@ -11,6 +11,7 @@
 #include "meshes.h"
 
 #include <cmath>
+#include <stack>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -29,13 +30,21 @@ Meshes meshes;
 GLuint renderingProgram;
 
 // Variables to be used in display() function to prevent allocation during rendering
-GLuint projLoc, viewLoc, modelLoc;
+GLuint projLoc, viewLoc, modelLoc, mvLoc;
 int width, height;
-glm::mat4 pMat, vMat, mMat, scale, rotation, translation;
+glm::mat4 pMat, vMat, mMat, mvMat, scale, rotation, translation;
+
+// Hierarchal Matrix Stack for Parent-Child Objects
+stack<glm::mat4> mvStack;
+
 
 // Places application-specific initialization tasks
 void init(GLFWwindow* window) {
 	renderingProgram = createShaderProgram(); // Reads from and compiles GLSL shader files
+
+	// build perspective matrix
+	glfwGetFramebufferSize(window, &width, &height);
+	pMat = glm::perspective(1.0472f, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 1000.0f); // 1.0472 radians = 60 degrees
 
 	// camera positioning
 	cameraX = 0.0f;
@@ -69,20 +78,19 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glUseProgram(renderingProgram); // loads compiled shaders into openGL pipeline
 
 	// get the uniform variables for the projection, model and view matrices
+	mvLoc = glGetUniformLocation(renderingProgram, "mv_matrix");
 	projLoc = glGetUniformLocation(renderingProgram, "proj_matrix"); // projection
-	modelLoc = glGetUniformLocation(renderingProgram, "model_matrix"); // model
-	viewLoc = glGetUniformLocation(renderingProgram, "view_matrix"); // view
-
-	// build perspective matrix
-	glfwGetFramebufferSize(window, &width, &height);
-	
-	pMat = glm::perspective(1.0472f, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 1000.0f); // 1.0472 radians = 60 degrees
 
 	// View matrix calculated once and used for all objects
 	vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
+	mvStack.push(vMat);
 
-	// ***DRAW PLANE***
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+
+	// --------------DRAWS THE PLANE-----------------
+	mvStack.push(mvStack.top());
 	glBindVertexArray(meshes.planeMesh.vao);
+	//mvStack.push(mvStack.top());
 	// 1. Scale object
 	scale = glm::scale(glm::mat4(1.0f), glm::vec3(6.0f, 1.0f, 6.0f));
 	// 2. Rotate object
@@ -91,11 +99,9 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)); // FIX ME: planeLoc variable?
 
 	mMat = translation * rotation * scale;
+	mvStack.top() *= mMat;
 
-	// copy projection, model and view matrices to the uniform variables for the shaders
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mMat));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(vMat));
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	// associate VBO with the corresponding vertex attribute in the vertex shader
 	glBindBuffer(GL_ARRAY_BUFFER, meshes.planeMesh.vbo[0]);
@@ -106,22 +112,22 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Draw triangles
 	glDrawElements(GL_TRIANGLES, meshes.planeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
 	glBindVertexArray(0);
+	mvStack.pop();
 
-	// ***DRAW PYRAMID***
+	// --------------DRAWS THE PYRAMID-----------------
+	mvStack.push(mvStack.top()); // Makes copy of view matrix
 	glBindVertexArray(meshes.pyramid4Mesh.vao);
 	// 1. Scale object 
-	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 1.0f, 0.5f));
-	// 2. Rotate shape by 25 degrees along y axis. Used glm::radians as an argument to convert degrees to radians
-	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 1.0f, 0.5f));
+	// 2. Rotate shape by 30 degrees along y axis. Used glm::radians as an argument to convert degrees to radians
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	// 3. Place object
+	mvStack.push(mvStack.top()); // Makes PARENT copy of model matrix with scale and rotation
 	translation = glm::translate(glm::mat4(1.0f), glm::vec3(pyrLocX, pyrLocY, pyrLocZ));
+	mvStack.top() *= translation;
 
-	mMat = translation * rotation * scale;
-
-	// copy projection, model and view matrices to the uniform variables for the shaders
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mMat));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(vMat));
+	// copy model and view matrices to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	// associate VBO with the corresponding vertex attribute in the vertex shader
 	glBindBuffer(GL_ARRAY_BUFFER, meshes.pyramid4Mesh.vbo[0]);
@@ -132,22 +138,19 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Draw triangles
 	glDrawElements(GL_TRIANGLES, meshes.pyramid4Mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
 	glBindVertexArray(0);
+	mvStack.pop(); // Pops the Pyramid MV matrix
 
-	// ***DRAW CUBE***
+	// --------------DRAWS THE CUBE-----------------
 	glBindVertexArray(meshes.cubeMesh.vao);
-	// 1. Scale object 
-	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 1.0f, 0.5f));
-	// 2. Rotate shape by 25 degrees along y axis. Used glm::radians as an argument to convert degrees to radians
-	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	// 3. Place object
+	mvStack.push(mvStack.top()); // Makes copy of PARENT model matrix with scale and rotation
+	// Places the object
 	translation = glm::translate(glm::mat4(1.0f), glm::vec3(cubeLocX, cubeLocY, cubeLocZ));
 
-	mMat = translation * rotation * scale;
+	// Concatenates cube translation matrix to the Parent Pyramid MV matrix
+	mvStack.top() *= translation;
 
 	// copy projection, model and view matrices to the uniform variables for the shaders
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mMat));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(vMat));
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	// associate VBO with the corresponding vertex attribute in the vertex shader
 	glBindBuffer(GL_ARRAY_BUFFER, meshes.cubeMesh.vbo[0]);
@@ -159,6 +162,9 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glDrawElements(GL_TRIANGLES, meshes.cubeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
 
 	glBindVertexArray(0);
+	mvStack.pop(); // Erases child MV matrix
+	mvStack.pop(); // Erases parent MV matrix
+	mvStack.pop(); // Erases view matrix
 	
 }
 
