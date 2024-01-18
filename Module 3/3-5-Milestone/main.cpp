@@ -76,10 +76,15 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	projLoc = glGetUniformLocation(renderingProgram, "proj_matrix"); // projection
 	modelLoc = glGetUniformLocation(renderingProgram, "model_matrix"); // model
 	viewLoc = glGetUniformLocation(renderingProgram, "view_matrix"); // view
-	objectColorLoc = glGetUniformLocation(renderingProgram, "objectColor");
+	//objectColorLoc = glGetUniformLocation(renderingProgram, "objectColor");
 
 	// View matrix calculated once and used for all objects
 	vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
+	// Copy view matrix to the uniform variable
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(vMat));
+	
+	// Copy projection matrix to the uniform variable
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 
 	// --------------DRAWS THE PLANE-----------------
 	glBindVertexArray(meshes.planeMesh.vao);
@@ -92,12 +97,10 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	mMat = translation * rotation * scale;
 
-	// copy projection, model and view matrices to the uniform variables for the shaders
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mMat));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(vMat));
 
-	// associate VBO with the corresponding vertex attribute in the vertex shader
+	// Associate VBO with the corresponding vertex attribute in the vertex shader
 	glBindBuffer(GL_ARRAY_BUFFER, meshes.planeMesh.vbo[0]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes.planeMesh.vbo[1]);
 	glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
@@ -125,10 +128,8 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	mMat = translation * rotation * scale;
 
-	// copy projection, model and view matrices to the uniform variables for the shaders
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mMat));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(vMat));
 
 	// associate VBO with the corresponding vertex attribute in the vertex shader
 	glBindBuffer(GL_ARRAY_BUFFER, meshes.pyramid4Mesh.vbo[0]);
@@ -151,10 +152,8 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	mMat = translation * rotation * scale;
 
-	// copy projection, model and view matrices to the uniform variables for the shaders
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mMat));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(vMat));
 
 	// associate VBO with the corresponding vertex attribute in the vertex shader
 	glBindBuffer(GL_ARRAY_BUFFER, meshes.cubeMesh.vbo[0]);
@@ -189,6 +188,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	
 	mMat = translation * rotation * scale;
 
+	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mMat));
 	// Have the vertex shader color this object
 	//glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 1.0f, 0.0f, 1.0f);
@@ -216,10 +216,8 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	mMat = translation * rotation * scale;
 
-	// copy projection, model and view matrices to the uniform variables for the shaders
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mMat));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(vMat));
 
 	// associate VBO with the corresponding vertex attribute in the vertex shader
 	glBindBuffer(GL_ARRAY_BUFFER, meshes.cubeMesh.vbo[0]);

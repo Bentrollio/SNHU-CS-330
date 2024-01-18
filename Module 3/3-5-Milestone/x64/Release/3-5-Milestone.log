@@ -1,0 +1,15 @@
+﻿  main.cpp
+  meshes.cpp
+  utils.cpp
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone\meshes.cpp(257,12): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone\meshes.cpp(265,13): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone\meshes.cpp(386,4): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone\meshes.cpp(495,13): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone\meshes.cpp(503,14): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone\meshes.cpp(1045,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone\meshes.cpp(1046,22): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 291 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  3-5-Milestone.vcxproj -> C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone\x64\Release\3-5-Milestone.exe
