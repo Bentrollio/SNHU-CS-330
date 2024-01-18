@@ -185,7 +185,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 2. Rotate the object
 	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 	// 3. Position the object
-	translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 2.0f, 4.0f));
+	translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.75f, 4.2f));
 	
 	mMat = translation * rotation * scale;
 
@@ -212,7 +212,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 2. Rotate shape by 25 degrees along y axis. Used glm::radians as an argument to convert degrees to radians
 	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	// 3. Place object
-	translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 4.0f));
+	translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.75f, 4.2f));
 
 	mMat = translation * rotation * scale;
 
