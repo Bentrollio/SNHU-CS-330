@@ -61,7 +61,7 @@ private:
 		void CreateTorusMesh(GLmesh &mesh);
 		void CreatePyramid3Mesh(GLmesh &mesh);*/
 		void CreatePyramid4Mesh(GLmesh& mesh);
-		//void CreateSphereMesh(GLmesh& mesh);
+		void CreateSphereMesh(GLmesh& mesh);
 
 		void DestroyMesh(GLmesh& mesh);
 
