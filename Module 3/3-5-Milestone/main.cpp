@@ -44,22 +44,22 @@ void init(GLFWwindow* window) {
 
 	// build perspective matrix
 	glfwGetFramebufferSize(window, &width, &height);
-	pMat = glm::perspective(1.0472f, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 1000.0f); // 1.0472 radians = 60 degrees
+	pMat = glm::perspective(glm::radians(60.0f), (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 1000.0f); // 1.0472 radians = 60 degrees
 
 	// camera positioning
 	cameraX = 0.0f;
-	cameraY = 2.0f;
-	cameraZ = 5.0f;
+	cameraY = 4.0f;
+	cameraZ = 14.0f;
 
 	// pyramid location coordinates
-	pyrLocX = 0.0f;
-	pyrLocY = 3.0f;
-	pyrLocZ = 0.0f;
+	pyrLocX = 4.0f;
+	pyrLocY = 2.75f;
+	pyrLocZ = 8.0f;
 
 	// cube location coordinates
-	cubeLocX = 0.0f;
-	cubeLocY = 1.0f;
-	cubeLocZ = 0.0f; 
+	cubeLocX = 4.0f;
+	cubeLocY = 0.75f;
+	cubeLocZ = 8.0f; 
 
 	//createMesh(mesh); // Creates VAO and VBO for pyramid mesh
 	meshes.CreateMeshes();
@@ -118,10 +118,12 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.push(mvStack.top()); // Makes copy of view matrix
 	glBindVertexArray(meshes.pyramid4Mesh.vao);
 	// 1. Scale object 
-	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 1.0f, 0.5f));
+	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.75f, 0.5f));
 	// 2. Rotate shape by 30 degrees along y axis. Used glm::radians as an argument to convert degrees to radians
-	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	// 3. Place object
+	mMat = rotation * scale;
+	mvStack.top() *= mMat;
 	mvStack.push(mvStack.top()); // Makes PARENT copy of model matrix with scale and rotation
 	translation = glm::translate(glm::mat4(1.0f), glm::vec3(pyrLocX, pyrLocY, pyrLocZ));
 	mvStack.top() *= translation;
@@ -143,11 +145,13 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// --------------DRAWS THE CUBE-----------------
 	glBindVertexArray(meshes.cubeMesh.vao);
 	mvStack.push(mvStack.top()); // Makes copy of PARENT model matrix with scale and rotation
+	// Scale to Shrink object height slightly
+	scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 	// Places the object
 	translation = glm::translate(glm::mat4(1.0f), glm::vec3(cubeLocX, cubeLocY, cubeLocZ));
 
-	// Concatenates cube translation matrix to the Parent Pyramid MV matrix
-	mvStack.top() *= translation;
+	// Concatenates cube scale and translation matrices to the Parent Pyramid MV matrix
+	mvStack.top() *= translation * scale;
 
 	// copy projection, model and view matrices to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
