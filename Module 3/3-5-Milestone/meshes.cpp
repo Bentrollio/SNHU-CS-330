@@ -30,12 +30,12 @@ void Meshes::CreateMeshes()
 {
 	CreateCubeMesh(cubeMesh);
 	CreatePlaneMesh(planeMesh);
-	/*CreatePrismMesh(prismMesh);
-	CreateBoxMesh(boxMesh);
+	CreatePrismMesh(prismMesh);
+	/*CreateBoxMesh(boxMesh);
 	CreateConeMesh(coneMesh);
 	CreateCylinderMesh(cylinderMesh);
-	CreateTaperedCylinderMesh(taperedCylinderMesh);
-	CreatePyramid3Mesh(pyramid3Mesh);*/
+	CreateTaperedCylinderMesh(taperedCylinderMesh);*/
+	CreatePyramid3Mesh(pyramid3Mesh);
 	CreatePyramid4Mesh(pyramid4Mesh);
 	CreateSphereMesh(sphereMesh);
 	//CreateTorusMesh(torusMesh);
@@ -186,6 +186,69 @@ void Meshes::CreatePlaneMesh(GLmesh& mesh) {
 	// | 0 strides till next color | 2 floats til beginning of each color
 	glVertexAttribPointer(1, floatsPerColor, GL_FLOAT, GL_FALSE, stride, (char*)(sizeof(float) * floatsPerVertex));
 	glEnableVertexAttribArray(1);
+}
+
+void Meshes::CreatePrismMesh(GLmesh& mesh) {
+
+}
+
+void Meshes::CreatePyramid3Mesh(GLmesh& mesh) {
+
+	// Vertex data
+	GLfloat verts[]{
+		// Vertex Positions		// Normals			// Texture coords
+		//left side
+		0.0f, 0.5f, 0.0f,		-0.894427180f, 0.0f, -0.447213590f,	0.5f, 1.0f,		//top point	
+		0.0f, -0.5f, -0.5f,		-0.894427180f, 0.0f, -0.447213590f,	0.0f, 0.0f,		//back center
+		-0.5f, -0.5f, 0.5f,		-0.894427180f, 0.0f, -0.447213590f,	1.0f, 0.0f,     //front bottom left
+		0.0f, 0.5f, 0.0f,		-0.894427180f, 0.0f, -0.447213590f,	0.5f, 1.0f,		//top point	
+		//right side
+		0.0f, 0.5f, 0.0f,		0.894427180f, 0.0f, -0.447213590f,	0.5f, 1.0f,		//top point	
+		0.5f, -0.5f, 0.5f,		0.894427180f, 0.0f, -0.447213590f,	0.0f, 0.0f,     //front bottom right
+		0.0f, -0.5f, -0.5f,		0.894427180f, 0.0f, -0.447213590f,	1.0f, 0.0f,		//back center	
+		0.0f, 0.5f, 0.0f,		0.894427180f, 0.0f, -0.447213590f,	0.5f, 1.0f,		//top point	
+		//front side
+		0.0f, 0.5f, 0.0f,		0.0f, 0.0f, 1.0f,	0.5f, 1.0f,		//top point			
+		-0.5f, -0.5f, 0.5f,		0.0f, 0.0f, 1.0f,	0.0f, 0.0f,     //front bottom left	
+		0.5f, -0.5f, 0.5f,		0.0f, 0.0f, 1.0f,	1.0f, 0.0f,     //front bottom right
+		0.0f, 0.5f, 0.0f,		0.0f, 0.0f, 1.0f,	0.5f, 1.0f,		//top point	
+		//bottom side
+		-0.5f, -0.5f, 0.5f,		0.0f, -1.0f, 0.0f,	0.0f, 1.0f,     //front bottom left
+		0.5f, -0.5f, 0.5f,		0.0f, -1.0f, 0.0f,	1.0f, 1.0f,     //front bottom right
+		0.0f, -0.5f, -0.5f,		0.0f, -1.0f, 0.0f,	0.5f, 0.0f,		//back center	
+		-0.5f, -0.5f, 0.5f,		0.0f, -1.0f, 0.0f,	0.0f, 1.0f,     //front bottom left
+	};
+
+	// Float values per type
+	const GLuint floatsPerVertex = 3; // Number of coordinates per vertex
+	const GLuint floatsPerColor = 3; // (r, g, b)
+	const GLuint floatsPerUV = 2;
+
+	mesh.numVertices = sizeof(verts) / (sizeof(verts[0]) * (floatsPerVertex + floatsPerColor + floatsPerUV));
+
+	glGenVertexArrays(numVAOs, &mesh.vao); // can also generate multiple VAOs or buffers at once
+	glBindVertexArray(mesh.vao);
+	glGenBuffers(numVBOs, mesh.vbo); // Creates buffers
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]); // Activates buffer
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW); // sends vertex or coordinate data to GPU
+
+	// Strides between vertex coordinates
+	GLint stride = sizeof(float) * (floatsPerVertex + floatsPerColor + floatsPerUV);
+
+	// Instructs the GPU on how to handle the vbo data
+	// Parameters: attribPointerPosition | coordinates per vertex is 2, ie x and y | data type | deactivate normalization | 0
+	glVertexAttribPointer(0, floatsPerVertex, GL_FLOAT, GL_FALSE, stride, 0);
+	glEnableVertexAttribArray(0);
+
+	// Parameters: attribPointerPosition 1 | floats per color is temporarily 0, ie rgba | data type | deactivate normalization 
+	// | 0 strides till next color | 2 floats til beginning of each color
+	glVertexAttribPointer(1, floatsPerColor, GL_FLOAT, GL_FALSE, stride, (char*)(sizeof(float) * floatsPerVertex));
+	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, floatsPerUV, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * (floatsPerVertex + floatsPerColor)));
+	glEnableVertexAttribArray(2);
+
 }
 
 void Meshes::CreatePyramid4Mesh(GLmesh& mesh) {

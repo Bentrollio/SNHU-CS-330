@@ -53,19 +53,19 @@ private:
 		// FIX ME: Might want to be private.
 		void CreateCubeMesh(GLmesh &mesh);
 		void CreatePlaneMesh(GLmesh &mesh);
-		/*void CreatePrismMesh(GLmesh& mesh);
-		void CreateBoxMesh(GLmesh &mesh);
+		void CreatePrismMesh(GLmesh& mesh);
+		/*void CreateBoxMesh(GLmesh& mesh);
 		void CreateConeMesh(GLmesh &mesh);
 		void CreateCylinderMesh(GLmesh &mesh);
 		void CreateTaperedCylinderMesh(GLmesh &mesh);
-		void CreateTorusMesh(GLmesh &mesh);
-		void CreatePyramid3Mesh(GLmesh &mesh);*/
+		void CreateTorusMesh(GLmesh &mesh); */
+		void CreatePyramid3Mesh(GLmesh &mesh);
 		void CreatePyramid4Mesh(GLmesh& mesh);
 		void CreateSphereMesh(GLmesh& mesh);
 
 		void DestroyMesh(GLmesh& mesh);
 
-		//void CalculateTriangleNormal(glm::vec3 px, glm::vec3 py, glm::vec3 pz);
+		void CalculateTriangleNormal(glm::vec3 px, glm::vec3 py, glm::vec3 pz);
 
 };
 
