@@ -1,9 +1,9 @@
 /*
  * SNHU CS-330
- * Module 3 Assignment - 3D Pyramid
+ * Module 4 Assignment - Basic Camera Movement
  *
  * Alex Baires
- * 1-28-24
+ * 2-4-24
  *
  */
 
@@ -35,6 +35,10 @@ glm::mat4 pMat, vMat, mMat, scale, rotation, translation;
 void init(GLFWwindow* window) {
 	renderingProgram = createShaderProgram(); // Reads from and compiles GLSL shader files
 
+	// build perspective matrix
+	glfwGetFramebufferSize(window, &width, &height);
+	pMat = glm::perspective(1.0472f, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 1000.0f); // 1.0472 radians = 60 degrees
+
 	// camera positioning
 	cameraX = 0.0f;
 	cameraY = -0.2f;
@@ -43,7 +47,7 @@ void init(GLFWwindow* window) {
 	// pyramid location coordinates
 	pyrLocX = 0.0f;
 	pyrLocY = 0.0f;
-	pyrLocZ = 0.0f; 
+	pyrLocZ = 0.0f;
 
 	createMesh(mesh); // Creates VAO and VBO for pyramid mesh
 
@@ -54,6 +58,13 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// adjust OpenGL settings and draw model
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //ENABLES WIREFRAME
+
+
 	glUseProgram(renderingProgram); // loads compiled shaders into openGL pipeline
 
 	// get the uniform variables for the projection, model and view matrices
@@ -61,13 +72,15 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	modelLoc = glGetUniformLocation(renderingProgram, "model_matrix"); // model
 	viewLoc = glGetUniformLocation(renderingProgram, "view_matrix"); // view
 
-	// build perspective matrix
-	glfwGetFramebufferSize(window, &width, &height);
-	
-	pMat = glm::perspective(1.0472f, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 1000.0f); // 1.0472 radians = 60 degrees
-
-	// build view matrix, model matrix, and model-view matrix
+	// *** build view matrix, model matrix, and model-view matrix.
+	// View Matrix calculated once
 	vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
+
+	// Copy projection matrix to the uniform variable
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+
+	// --------------DRAWS THE PYRAMID-----------------
+	glBindVertexArray(mesh.vao[0]);
 	// 1. Scale object by 1 (I built my mesh with different vertices than the tutorial)
 	scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 	// 2. Rotate shape by 25 degrees along y axis (to match screenshot of the rubric. Used glm::radians as an argument to convert 25 degrees to radians
@@ -77,28 +90,20 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	mMat = translation * rotation * scale;
 
-	// copy projection, model and view matrices to the uniform variables for the shaders
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+	// Copy model and view matrices to the uniform variables for the shaders
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mMat));
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(vMat));
 
 	// associate VBO with the corresponding vertex attribute in the vertex shader
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]);
-	
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.vbo[1]);
 	glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
 	glEnableVertexAttribArray(0); // Enables VAO
 
-
-	// adjust OpenGL settings and draw model
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-	
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //ENABLES WIREFRAME
-
-	// Draw triangle
-	glDrawElements(GL_TRIANGLES, mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangles
+	// Draw pyramid
+	glDrawElements(GL_TRIANGLES, mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
+	glBindVertexArray(0);
 }
 
 int main(void) {
@@ -124,7 +129,6 @@ int main(void) {
 	}
 
 	glfwSwapInterval(1);
-
 	init(window);
 
 	// Rendering loop
@@ -132,7 +136,7 @@ int main(void) {
 
 		// input
 		processInput(window);
-		
+
 		display(window, glfwGetTime()); // glfwGetTime gets elapsed time since GLFW was initialized
 
 		// glfw swap buffers and poll IO events
