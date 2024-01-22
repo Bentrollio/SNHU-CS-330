@@ -151,6 +151,14 @@ void processInput(GLFWwindow* window, Camera &camera, float &deltaTime) {
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		camera.ProcessKeyboard(RIGHT, deltaTime);
 	}
+
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+		camera.ProcessKeyboard(UP, deltaTime);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+		camera.ProcessKeyboard(DOWN, deltaTime);
+	}
 }
 
 void mousePositionCallback(GLFWwindow* window, double xPos, double yPos, Camera &camera) {
@@ -172,6 +180,7 @@ void mousePositionCallback(GLFWwindow* window, double xPos, double yPos, Camera 
 
 void mouseScrollCallback(GLFWwindow* window, double xOffset, double yOffset, Camera &camera) {
 	camera.ProcessMouseScroll(yOffset);
+	cout << "Mouse wheel" << yOffset << endl;
 }
 
 // Handles mouse button events.

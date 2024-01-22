@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <GL/glew.h>
 
+#include <iostream>
 #include <vector>
 
 // Defines serveral possible options for camera movement.
@@ -14,7 +15,9 @@ enum Camera_Movement {
 	FORWARD,
 	BACKWARD,
 	LEFT,
-	RIGHT
+	RIGHT,
+	UP,
+	DOWN
 };
 
 // Default camera values
@@ -75,7 +78,7 @@ public:
 	void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
 		float velocity = MovementSpeed * deltaTime;
 
-		if (direction == FORWARD)
+		if (direction == FORWARD) 
 			Position += Front * velocity;
 
 		if (direction == BACKWARD)
@@ -86,6 +89,12 @@ public:
 
 		if (direction == RIGHT)
 			Position += Right * velocity;
+
+		if (direction == UP) // Upward motion added
+			Position += Up * velocity;
+
+		if (direction == DOWN) // Downward motion added
+			Position -= Up * velocity;
 	}
 
 	// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
@@ -109,12 +118,13 @@ public:
 	}
 
 	// Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
-	void ProcessMouseScroll(float yoffset) {
-		Zoom -= (float)yoffset;;
+	void ProcessMouseScroll(float yOffset) {
+		Zoom -= (float)yOffset;;
 		if (Zoom < 1.0f)
 			Zoom = 1.0f;
 		if (Zoom > 45.0f)
 			Zoom = 45.0f;
+		std::cout << "Zoom: " << Zoom << std::endl;
 	}
 
 private:

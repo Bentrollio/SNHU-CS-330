@@ -50,11 +50,6 @@ void init(GLFWwindow* window) {
 
 	pMat = glm::perspective(glm::radians(gCamera.Zoom), (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 1000.0f);
 
-	// camera positioning
-	cameraX = 0.0f;
-	cameraY = -0.2f;
-	cameraZ = 5.0f;
-
 	// pyramid location coordinates
 	pyrLocX = 0.0f;
 	pyrLocY = 0.0f;
@@ -85,13 +80,15 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// *** build view matrix, model matrix, and model-view matrix.
 	// View Matrix calculated once
 	vMat = gCamera.GetViewMatrix();
+	// Projection matrix
+	pMat = glm::perspective(glm::radians(gCamera.Zoom), (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 1000.0f);
 	// Copy projection matrix to the uniform variable
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 
 	// --------------DRAWS THE PYRAMID-----------------
 	glBindVertexArray(mesh.vao[0]);
 	// 1. Scale object by 1 (I built my mesh with different vertices than the tutorial)
-	scale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.5f));
 	// 2. Rotate shape by 25 degrees along y axis (to match screenshot of the rubric. Used glm::radians as an argument to convert 25 degrees to radians
 	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	// 3. Place object at the origin (0, 0, 0)
