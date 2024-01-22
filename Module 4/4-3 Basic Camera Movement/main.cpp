@@ -20,6 +20,18 @@ using namespace std;
 float cameraX, cameraY, cameraZ;
 float pyrLocX, pyrLocY, pyrLocZ;
 
+// Camera Control Axes
+// Location
+glm::vec3 gCameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+// Camera Forward/Backward
+glm::vec3 gCameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+// Camera Upward/Downward
+glm::vec3 gCameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+// Timing
+float gDeltatime{}; // time between current time and last frame
+float gLastFrame{};
+
 const int WINDOW_WIDTH = 800;
 const int WINDOW_HEIGHT = 600;
 
@@ -34,6 +46,12 @@ glm::mat4 pMat, vMat, mMat, scale, rotation, translation;
 // Places application-specific initialization tasks
 void init(GLFWwindow* window) {
 	renderingProgram = createShaderProgram(); // Reads from and compiles GLSL shader files
+
+	// Mouse events
+	glfwSetCursorPosCallback(window, mousePositionCallback);
+	glfwSetScrollCallback(window, mouseScrollCallback);
+	glfwSetMouseButtonCallback(window, mouseButtonCallback);
+
 
 	// build perspective matrix
 	glfwGetFramebufferSize(window, &width, &height);
@@ -74,7 +92,8 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// *** build view matrix, model matrix, and model-view matrix.
 	// View Matrix calculated once
-	vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
+	//vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
+	vMat = glm::lookAt(gCameraPos, gCameraPos + gCameraFront, gCameraUp);
 
 	// Copy projection matrix to the uniform variable
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
@@ -134,8 +153,12 @@ int main(void) {
 	// Rendering loop
 	while (!glfwWindowShouldClose(window)) {
 
+		float currentFrame = glfwGetTime();
+		gDeltatime = currentFrame - gLastFrame;
+		gLastFrame = currentFrame;
+
 		// input
-		processInput(window);
+		processInput(window, gDeltatime, gCameraPos, gCameraFront, gCameraUp);
 		
 		display(window, glfwGetTime()); // glfwGetTime gets elapsed time since GLFW was initialized
 

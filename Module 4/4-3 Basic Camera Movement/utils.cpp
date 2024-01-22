@@ -124,10 +124,75 @@ GLuint createShaderProgram() { // creates vertex and fragment shaders
 
 // Process input by querying GLFW for each key press/release
 
-void processInput(GLFWwindow* window) {
+void processInput(GLFWwindow* window, float &deltaTime, glm::vec3 &cameraPos, glm::vec3 &cameraFront, glm::vec3 &cameraUp) {
+
+	static const float cameraSpeed = 2.5f;
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
+	}
+
+	float cameraOffset = cameraSpeed * deltaTime;
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		cameraPos += cameraOffset * cameraFront;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		cameraPos -= cameraOffset * cameraFront;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraOffset;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraOffset;
+
+	}
+}
+
+void mousePositionCallback(GLFWwindow* window, double xPos, double yPos) {
+	cout << "Mouse at (" << xPos << ", " << yPos << ")" << endl;
+}
+
+void mouseScrollCallback(GLFWwindow* window, double xOffset, double yOffset) {
+	cout << "Mouse wheel (" << xOffset << ", " << yOffset << ")" << endl;
+}
+
+// Handles mouse button events.
+void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+	switch (button) {
+		case GLFW_MOUSE_BUTTON_LEFT:
+		{
+			if (action == GLFW_PRESS)
+				cout << "Left mouse button pressed" << endl;
+			else
+				cout << "Left mouse button released" << endl;
+		}
+		break;
+
+		case GLFW_MOUSE_BUTTON_MIDDLE:
+		{
+			if (action == GLFW_PRESS)
+				cout << "Middle mouse button pressed" << endl;
+			else
+				cout << "Middle mouse button released" << endl;
+		}
+		break;
+
+		case GLFW_MOUSE_BUTTON_RIGHT:
+		{
+			if (action == GLFW_PRESS)
+				cout << "Right mouse button pressed" << endl;
+			else
+				cout << "Right mouse button released" << endl;
+		}
+		break;
+
+		default:
+			cout << "Unhandled mouse button event" << endl;
+			break;
 	}
 }
 
