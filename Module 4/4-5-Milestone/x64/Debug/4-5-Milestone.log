@@ -1,0 +1,3 @@
+﻿  main.cpp
+C:\Github Repo\SNHU-CS-330\Module 4\4-5-Milestone\main.cpp(302,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  4-5-Milestone.vcxproj -> C:\Github Repo\SNHU-CS-330\Module 4\4-5-Milestone\x64\Debug\4-5-Milestone.exe
