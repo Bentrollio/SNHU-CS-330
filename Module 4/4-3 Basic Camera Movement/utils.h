@@ -15,7 +15,10 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <GL/glew.h>
+#include <GLFW/glfw3.h> 
 #include "GLmesh.h"
+#include "Camera.h"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -24,6 +27,18 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+namespace
+{
+	const int WINDOW_WIDTH = 800;
+	const int WINDOW_HEIGHT = 600;
+
+	// Camera Control Axes
+	// Location
+	float gLastX = WINDOW_WIDTH / 2.0f;
+	float gLastY = WINDOW_HEIGHT / 2.0f;
+	bool gFirstMouse = true;
+}
 
 using namespace std;
 
@@ -41,13 +56,18 @@ GLuint createShaderProgram(const char* vp, const char* fp);
 
 GLuint createShaderProgram(const char* vp, const char* gp, const char* fp);
 
-void processInput(GLFWwindow* window, float &deltaTime, glm::vec3 &cameraPos, glm::vec3 &cameraFront, glm::vec3 &cameraUp);
+void processInput(GLFWwindow* window, Camera &camera, float &deltaTime);
 
-void mousePositionCallback(GLFWwindow* window, double xPos, double yPos);
+void mousePositionCallback(GLFWwindow* window, double xPos, double yPos, Camera& camera);
 
-void mouseScrollCallback(GLFWwindow* window, double xOffset, double yOffset);
+void mouseScrollCallback(GLFWwindow* window, double xOffset, double yOffset, Camera &camera);
 
-void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods, Camera &camera);
+
+// Wrapper functions for mouse
+void glfwMousePositionCallbackWrapper(GLFWwindow* window, double xPos, double yPos);
+void glfwMouseScrollCallbackWrapper(GLFWwindow* window, double xOffset, double yOffset);
+void glfwMouseButtonCallbackWrapper(GLFWwindow* window, int button, int action, int mods);
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 

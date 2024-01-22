@@ -7,7 +7,9 @@
  */
 
 #include "utils.h"
+#include "Camera.h"
 
+extern Camera gCamera; // decalres global camera variable from main
 // Error checking functions
 
 void printShaderLog(GLuint shader) {
@@ -124,7 +126,7 @@ GLuint createShaderProgram() { // creates vertex and fragment shaders
 
 // Process input by querying GLFW for each key press/release
 
-void processInput(GLFWwindow* window, float &deltaTime, glm::vec3 &cameraPos, glm::vec3 &cameraFront, glm::vec3 &cameraUp) {
+void processInput(GLFWwindow* window, Camera &camera, float &deltaTime) {
 
 	static const float cameraSpeed = 2.5f;
 
@@ -135,33 +137,45 @@ void processInput(GLFWwindow* window, float &deltaTime, glm::vec3 &cameraPos, gl
 	float cameraOffset = cameraSpeed * deltaTime;
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		cameraPos += cameraOffset * cameraFront;
+		camera.ProcessKeyboard(FORWARD, deltaTime);
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		cameraPos -= cameraOffset * cameraFront;
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraOffset;
+		camera.ProcessKeyboard(LEFT, deltaTime);
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraOffset;
-
+		camera.ProcessKeyboard(RIGHT, deltaTime);
 	}
 }
 
-void mousePositionCallback(GLFWwindow* window, double xPos, double yPos) {
-	cout << "Mouse at (" << xPos << ", " << yPos << ")" << endl;
+void mousePositionCallback(GLFWwindow* window, double xPos, double yPos, Camera &camera) {
+	if (gFirstMouse) {
+		gLastX = xPos;
+		gLastY = yPos;
+		gFirstMouse = false;
+	}
+
+	float xOffset = xPos - gLastX;
+	float yOffset = gLastY - yPos; // Reversed since y-coordinates go from bottom to top
+
+	gLastX = xPos;
+	gLastY = yPos;
+
+	camera.ProcessMouseMovement(xOffset, yOffset);
+
 }
 
-void mouseScrollCallback(GLFWwindow* window, double xOffset, double yOffset) {
-	cout << "Mouse wheel (" << xOffset << ", " << yOffset << ")" << endl;
+void mouseScrollCallback(GLFWwindow* window, double xOffset, double yOffset, Camera &camera) {
+	camera.ProcessMouseScroll(yOffset);
 }
 
 // Handles mouse button events.
-void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods, Camera &camera) {
 	switch (button) {
 		case GLFW_MOUSE_BUTTON_LEFT:
 		{
@@ -196,6 +210,18 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
 	}
 }
 
+// Wrapper functions
+void glfwMousePositionCallbackWrapper(GLFWwindow* window, double xPos, double yPos) {
+	mousePositionCallback(window, xPos, yPos, gCamera);
+}
+
+void glfwMouseScrollCallbackWrapper(GLFWwindow* window, double xOffset, double yOffset) {
+	mouseScrollCallback(window, xOffset, yOffset, gCamera);
+}
+
+void glfwMouseButtonCallbackWrapper(GLFWwindow* window, int button, int action, int mods) {
+	mouseButtonCallback(window, button, action, mods, gCamera);
+}
 // glfw - function executes when window is resized
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);

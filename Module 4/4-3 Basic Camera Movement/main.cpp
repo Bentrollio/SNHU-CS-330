@@ -15,28 +15,21 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+
+Camera gCamera(glm::vec3(0.0f, 0.0f, 3.0f));
+
+
 using namespace std;
 
 float cameraX, cameraY, cameraZ;
 float pyrLocX, pyrLocY, pyrLocZ;
 
-// Camera Control Axes
-// Location
-glm::vec3 gCameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-// Camera Forward/Backward
-glm::vec3 gCameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-// Camera Upward/Downward
-glm::vec3 gCameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
-// Timing
-float gDeltatime{}; // time between current time and last frame
-float gLastFrame{};
-
-const int WINDOW_WIDTH = 800;
-const int WINDOW_HEIGHT = 600;
-
 GLmesh mesh; // Triangle mesh data
 GLuint renderingProgram;
+
+// Timing
+float gDeltatime = 0.0f; // time between current time and last frame
+float gLastFrame = 0.0f;
 
 // Variables to be used in display() function to prevent allocation during rendering
 GLuint projLoc, viewLoc, modelLoc;
@@ -47,15 +40,15 @@ glm::mat4 pMat, vMat, mMat, scale, rotation, translation;
 void init(GLFWwindow* window) {
 	renderingProgram = createShaderProgram(); // Reads from and compiles GLSL shader files
 
-	// Mouse events
-	glfwSetCursorPosCallback(window, mousePositionCallback);
-	glfwSetScrollCallback(window, mouseScrollCallback);
-	glfwSetMouseButtonCallback(window, mouseButtonCallback);
-
-
 	// build perspective matrix
 	glfwGetFramebufferSize(window, &width, &height);
-	pMat = glm::perspective(1.0472f, (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 1000.0f); // 1.0472 radians = 60 degrees
+	// Mouse events
+	glfwSetCursorPosCallback(window, glfwMousePositionCallbackWrapper);
+	glfwSetScrollCallback(window, glfwMouseScrollCallbackWrapper);
+	glfwSetMouseButtonCallback(window, glfwMouseButtonCallbackWrapper);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	pMat = glm::perspective(glm::radians(gCamera.Zoom), (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 1000.0f);
 
 	// camera positioning
 	cameraX = 0.0f;
@@ -82,7 +75,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glDepthFunc(GL_LEQUAL);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //ENABLES WIREFRAME
 
-
 	glUseProgram(renderingProgram); // loads compiled shaders into openGL pipeline
 
 	// get the uniform variables for the projection, model and view matrices
@@ -92,9 +84,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// *** build view matrix, model matrix, and model-view matrix.
 	// View Matrix calculated once
-	//vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
-	vMat = glm::lookAt(gCameraPos, gCameraPos + gCameraFront, gCameraUp);
-
+	vMat = gCamera.GetViewMatrix();
 	// Copy projection matrix to the uniform variable
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 
@@ -158,8 +148,7 @@ int main(void) {
 		gLastFrame = currentFrame;
 
 		// input
-		processInput(window, gDeltatime, gCameraPos, gCameraFront, gCameraUp);
-		
+		processInput(window, gCamera, gDeltatime);
 		display(window, glfwGetTime()); // glfwGetTime gets elapsed time since GLFW was initialized
 
 		// glfw swap buffers and poll IO events

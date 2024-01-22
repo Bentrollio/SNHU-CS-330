@@ -3,9 +3,9 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <GL/glew.h>
 
 #include <vector>
 
@@ -89,12 +89,12 @@ public:
 	}
 
 	// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-	void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true) {
-		xoffset *= MouseSensitivity;
-		yoffset *= MouseSensitivity;
+	void ProcessMouseMovement(float xOffset, float yOffset, GLboolean constrainPitch = true) {
+		xOffset *= MouseSensitivity;
+		yOffset *= MouseSensitivity;
 
-		Yaw += xoffset;
-		Pitch += yoffset;
+		Yaw += xOffset;
+		Pitch += yOffset;
 
 		// Make sure that when the pitch is out of bounds, screen doesn't get flipped
 		if (constrainPitch) {
