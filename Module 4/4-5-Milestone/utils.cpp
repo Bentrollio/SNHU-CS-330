@@ -7,7 +7,6 @@
  */
 
 #include "utils.h"
-#include "Camera.h"
 
 extern Camera camera; // decalres global camera variable from main
 // Error checking functions
@@ -128,6 +127,8 @@ GLuint createShaderProgram() { // creates vertex and fragment shaders
 
 void processInput(GLFWwindow* window, Camera& camera, float& deltaTime) {
 
+	//bool keypress = false; // For events
+
 	static const float cameraSpeed = 2.5f;
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -161,6 +162,13 @@ void processInput(GLFWwindow* window, Camera& camera, float& deltaTime) {
 	}
 }
 
+void activateOrtho(GLFWwindow* window, glm::mat4 &pMat) {
+	// Orthographic matrix (If user presses P key)
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+		pMat = camera.GetOrthoMatrix();
+	}
+}
+
 void mousePositionCallback(GLFWwindow* window, double xPos, double yPos, Camera& camera) {
 	if (gFirstMouse) {
 		gLastX = xPos;
@@ -180,7 +188,6 @@ void mousePositionCallback(GLFWwindow* window, double xPos, double yPos, Camera&
 
 void mouseScrollCallback(GLFWwindow* window, double xOffset, double yOffset, Camera& camera) {
 	camera.ProcessMouseScroll(yOffset);
-	cout << "Mouse wheel" << yOffset << endl;
 }
 
 // Handles mouse button events.

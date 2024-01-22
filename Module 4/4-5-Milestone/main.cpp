@@ -12,15 +12,10 @@
 
 #include <cmath>
 #include <stack> // For matrix stack
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
-Camera camera(glm::vec3(0.0f, 5.0f, 15.0f)); // Needs work.
+Camera camera(glm::vec3(2.0f, 4.0f, 15.0f)); // Needs work.
 
 using namespace std;
-
-float cameraX, cameraY, cameraZ;
 
 //GLmesh mesh; // Triangle mesh data
 Meshes meshes;
@@ -33,7 +28,7 @@ float lastFrame = 0.0f;
 // Variables to be used in display() function to prevent allocation during rendering
 GLuint projLoc, viewLoc, modelLoc, objectColorLoc, mvLoc;
 int width, height;
-glm::mat4 pMat, vMat, mMat, scale, rotation, translation;
+glm::mat4 pMat, vMat, mMat;
 
 // Hierarchal Matrix Stack for Parent-Child Objects
 stack<glm::mat4> mvStack;
@@ -49,11 +44,6 @@ void init(GLFWwindow* window) {
 	glfwSetScrollCallback(window, glfwMouseScrollCallbackWrapper);
 	glfwSetMouseButtonCallback(window, glfwMouseButtonCallbackWrapper);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	// camera positioning
-	cameraX = 0.0f;
-	cameraY = 4.0f;
-	cameraZ = 10.0f;
 
 	//createMesh(mesh); // Creates VAO and VBO for pyramid mesh
 	meshes.CreateMeshes();
@@ -78,9 +68,11 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// View matrix calculated once and used for all objects
 	vMat = camera.GetViewMatrix();
-	// Projection matrix
+	// Projection matrix (DEFAULT)
 	pMat = glm::perspective(glm::radians(camera.Zoom), (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 1000.0f);
-
+	// Orthographic matrix (If user presses P key)
+	activateOrtho(window, pMat);
+	
 	// Copy view matrix to stack
 	mvStack.push(vMat);
 	
@@ -98,7 +90,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// 3. Scales Plane
-	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(15.0f, 1.0f, 10.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 1.0f, 10.0f));
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));

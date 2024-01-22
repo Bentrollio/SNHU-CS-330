@@ -60,6 +60,8 @@ GLuint createShaderProgram(const char* vp, const char* gp, const char* fp);
 
 void processInput(GLFWwindow* window, Camera& camera, float& deltaTime);
 
+void activateOrtho(GLFWwindow* window, glm::mat4 &pMat);
+
 void mousePositionCallback(GLFWwindow* window, double xPos, double yPos, Camera& camera);
 
 void mouseScrollCallback(GLFWwindow* window, double xOffset, double yOffset, Camera& camera);

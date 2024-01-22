@@ -74,6 +74,11 @@ public:
 		return glm::lookAt(Position, Position + Front, Up);
 	}
 
+	// Returns the orthogonal matrix
+	glm::mat4 GetOrthoMatrix() {
+		return glm::ortho(-12.0f, 10.0f, -4.0f, 10.0f, 0.1f, 100.0f);
+	}
+
 	// Processes input received from any keyboard-like input system. Accepts the input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 	void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
 		float velocity = MovementSpeed * deltaTime;
