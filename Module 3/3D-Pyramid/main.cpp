@@ -99,7 +99,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.vbo[1]);
 	glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
-	glEnableVertexAttribArray(0); // Enables VAO
 
 	// Draw pyramid
 	glDrawElements(GL_TRIANGLES, mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
