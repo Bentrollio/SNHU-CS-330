@@ -28,6 +28,8 @@ GLuint projLoc, viewLoc, modelLoc;
 int width, height;
 glm::mat4 pMat, vMat, mMat, scale, rotation, translation;
 
+GLuint brickTexture;
+
 // Places application-specific initialization tasks
 void init(GLFWwindow* window) {
 	renderingProgram = createShaderProgram(); // Reads from and compiles GLSL shader files
@@ -48,7 +50,7 @@ void init(GLFWwindow* window) {
 	pyrLocZ = 0.0f; 
 
 	createMesh(mesh); // Creates VAO and VBO for pyramid mesh
-
+	brickTexture = loadTexture("brick1.jpg");
 }
 
 // Draws to GLFW display window
@@ -98,8 +100,12 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.vbo[1]);
-	glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
+	glVertexAttribPointer(0, 5, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
 	glEnableVertexAttribArray(0); // Enables VAO
+	//bind textures on corresponding texture units
+	glEnableVertexAttribArray(1);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, brickTexture);
 
 	// Draw pyramid
 	glDrawElements(GL_TRIANGLES, mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle

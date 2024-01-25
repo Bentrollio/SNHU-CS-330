@@ -3,12 +3,12 @@
 // Creates the mesh
 void createMesh(GLmesh& mesh) { // 5 vertices, 6 triangles, makes pyramid placed at origin
 	GLfloat verts[] // Pyramid positions 5 vertices, 6 triangles
-	{	// Vertices				// Colors
-		-1.0f, -1.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f, // Bottom front left vertex 0
-		1.0f, -1.0f, -1.0f,		0.0f, 1.0f, 0.0f, 1.0f,	// Bottom rear right vertex 1
-		0.0f, 1.0f, 0.0f,		0.0f, 0.0f, 1.0f, 1.0f,	// Top center point vertex 2
-		1.0f, -1.0f, 1.0f,		1.0f, 0.0f, 1.0f, 1.0f,	// Bottom front right vertex 3
-		-1.0f, -1.0f, -1.0f,	0.5f, 1.0f, 0.5f, 1.0f,	// Bottom rear left vertex 4
+	{	// Vertices					//texture coordinates					// Color coordinates
+		-1.0f, -1.0f, 1.0f,			0.0f, 0.0f,					//1.0f, 0.0f, 0.0f, 1.0f, // Bottom front left vertex 0
+		1.0f, -1.0f, -1.0f,			0.0f, 0.0f,					//0.0f, 1.0f, 0.0f, 1.0f,	// Bottom rear right vertex 1
+		0.0f, 1.0f, 0.0f,			0.5f, 1.0f,					//0.0f, 0.0f, 1.0f, 1.0f,	// Top center point vertex 2
+		1.0f, -1.0f, 1.0f,			1.0f, 0.0f,					//1.0f, 0.0f, 1.0f, 1.0f,	// Bottom front right vertex 3
+		-1.0f, -1.0f, -1.0f,		1.0f, 0.0f,					//0.5f, 1.0f, 0.5f, 1.0f,	// Bottom rear left vertex 4
 	};
 
 	glGenVertexArrays(numVAOs, mesh.vao); // can also generate multiple VAOs or buffers at once
@@ -32,23 +32,30 @@ void createMesh(GLmesh& mesh) { // 5 vertices, 6 triangles, makes pyramid placed
 	mesh.numIndices = sizeof(indices) / sizeof(indices[0]);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.vbo[1]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); // sends indices to GPU
 
+	// FIX ME: Texture buffer BINDS?
+	
 	// Creates the Vertex Attribute Pointer for the screen coordinates
 	const GLuint floatsPerVertex = 3; // Number of coordinates per vertex
-	const GLuint floatsPerColor = 4; // (r, g, b, a)
+	const GLuint floatsPerColor = 0; // (r, g, b, a)
+	const GLuint floatsPerUV = 2; // Texture coordinates
+
 
 	// Strides between vertex coordinates is 3 (xyz rgba)
-	GLint stride = sizeof(float) * (floatsPerVertex + floatsPerColor);
+	GLint stride = sizeof(float) * (floatsPerVertex + floatsPerColor + floatsPerUV);
 
 	// Instructs the GPU on how to handle the vbo data
 	// Parameters: attribPointerPosition | coordinates per vertex is 2, ie x and y | data type | deactivate normalization | 0
 	glVertexAttribPointer(0, floatsPerVertex, GL_FLOAT, GL_FALSE, stride, 0);
 	glEnableVertexAttribArray(0);
 
-	// Parameters: attribPointerPosition 1 | floats per color is temporarily 0, ie rgba | data type | deactivate normalization 
-	// | 0 strides till next color | 2 floats til beginning of each color
-	glVertexAttribPointer(1, floatsPerColor, GL_FLOAT, GL_FALSE, stride, (char*)(sizeof(float) * floatsPerVertex));
+	//// Parameters: attribPointerPosition 1 | floats per color is temporarily 0, ie rgba | data type | deactivate normalization 
+	//// | 0 strides till next color | 2 floats til beginning of each color
+	//glVertexAttribPointer(1, floatsPerColor, GL_FLOAT, GL_FALSE, stride, (char*)(sizeof(float) * floatsPerVertex));
+	//glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(1, floatsPerUV, GL_FLOAT, GL_FALSE, stride, (char*)(sizeof(float) * floatsPerVertex));
 	glEnableVertexAttribArray(1);
 }
 
