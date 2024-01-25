@@ -4,7 +4,9 @@
 // create meshes for various 3D primitives: plane, pyramid, cube, cylinder, torus, sphere
 //
 //  ORIGINAL AUTHOR: Brian Battersby - SNHU Instructor / Computer Science
-//	Modified and Adapted by Alex Baires
+// 
+//	Modified and Adapted by Alex Baires - cube and pyramid4 meshes are custom, 
+//	inspired by Computer Graphics Programming in OpenGL with C++ by Gordon and Clevenger
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "meshes.h"

@@ -1,11 +1,12 @@
 ///////////////////////////////////////////////////////////////////////////////
-// meshes.h
+// meshes.cpp
 // ========
 // create meshes for various 3D primitives: plane, pyramid, cube, cylinder, torus, sphere
 //
 //  ORIGINAL AUTHOR: Brian Battersby - SNHU Instructor / Computer Science
 // 
-//	Modified and Adapted by Alex Baires
+//	Modified and Adapted by Alex Baires - cube and pyramid4 meshes are custom, 
+//	inspired by Computer Graphics Programming in OpenGL with C++ by Gordon and Clevenger
 ///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -19,7 +20,7 @@
 
 // macros used to simplify adjusting vertex array and vertex buffer objects
 #define numVAOs 1 
-#define numVBOs 2
+#define numVBOs 3
 
 class Meshes
 {
@@ -50,7 +51,6 @@ public:
 		void DestroyMeshes();
 
 private:
-		// FIX ME: Might want to be private.
 		void CreateCubeMesh(GLmesh &mesh);
 		void CreatePlaneMesh(GLmesh &mesh);
 		void CreatePrismMesh(GLmesh& mesh);
