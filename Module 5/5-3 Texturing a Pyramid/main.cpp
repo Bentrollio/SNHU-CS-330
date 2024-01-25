@@ -137,6 +137,8 @@ int main(void) {
 	glfwSwapInterval(1);
 	init(window);
 
+	// FIX ME
+	//glUniform1i(glGetUniformLocation(renderingProgram, "samp"), 0);
 	// Rendering loop
 	while (!glfwWindowShouldClose(window)) {
 
