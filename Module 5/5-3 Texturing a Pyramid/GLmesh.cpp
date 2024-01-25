@@ -3,12 +3,44 @@
 // Creates the mesh
 void createMesh(GLmesh& mesh) { // 5 vertices, 6 triangles, makes pyramid placed at origin
 	GLfloat verts[] // Pyramid positions 5 vertices, 6 triangles
-	{	// Vertices					//texture coordinates					// Color coordinates
-		-1.0f, -1.0f, 1.0f,			0.0f, 0.0f,					//1.0f, 0.0f, 0.0f, 1.0f, // Bottom front left vertex 0
-		1.0f, -1.0f, -1.0f,			0.0f, 0.0f,					//0.0f, 1.0f, 0.0f, 1.0f,	// Bottom rear right vertex 1
-		0.0f, 1.0f, 0.0f,			0.5f, 1.0f,					//0.0f, 0.0f, 1.0f, 1.0f,	// Top center point vertex 2
-		1.0f, -1.0f, 1.0f,			1.0f, 0.0f,					//1.0f, 0.0f, 1.0f, 1.0f,	// Bottom front right vertex 3
-		-1.0f, -1.0f, -1.0f,		1.0f, 0.0f,					//0.5f, 1.0f, 0.5f, 1.0f,	// Bottom rear left vertex 4
+		//{	// Vertices					//texture coordinates					// Color coordinates
+		//	-1.0f, -1.0f, 1.0f,			0.0f, 0.0f,					//1.0f, 0.0f, 0.0f, 1.0f, // Bottom front left vertex 0
+		//	1.0f, -1.0f, -1.0f,			0.0f, 0.0f,					//0.0f, 1.0f, 0.0f, 1.0f,	// Bottom rear right vertex 1
+		//	0.0f, 1.0f, 0.0f,			0.5f, 1.0f,					//0.0f, 0.0f, 1.0f, 1.0f,	// Top center point vertex 2
+		//	1.0f, -1.0f, 1.0f,			1.0f, 0.0f,					//1.0f, 0.0f, 1.0f, 1.0f,	// Bottom front right vertex 3
+		//	-1.0f, -1.0f, -1.0f,		1.0f, 0.0f,					//0.5f, 1.0f, 0.5f, 1.0f,	// Bottom rear left vertex 4
+		//};
+	{	// Vertices
+		// front face
+		-1.0f, -1.0f, 1.0f,
+		1.0f, -1.0f, 1.0f,
+		0.0f, 1.0f, 0.0f,
+
+		// right face
+		1.0f, -1.0f, 1.0f,
+		1.0f, -1.0f, -1.0f,
+		0.0f, 1.0f, 0.0f,
+
+		// back face
+		1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		0.0f, 1.0f, 0.0f,
+
+		// left face
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f, 1.0f,
+		0.0f, 1.0f, 0.0f,
+
+		// base left front
+		-1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, 1.0f,
+		-1.0f, -1.0f, 1.0f,
+
+		// base right back
+		1.0f, -1.0f, 1.0f,
+		-1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+
 	};
 
 	glGenVertexArrays(numVAOs, mesh.vao); // can also generate multiple VAOs or buffers at once
@@ -18,21 +50,21 @@ void createMesh(GLmesh& mesh) { // 5 vertices, 6 triangles, makes pyramid placed
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]); // Activates buffer
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW); // sends vertex or coordinate data to GPU
 	
-	GLushort indices[] = {
-		
-		0, 2, 3, // Triangle 1
-		0, 2, 4, // Triangle 2
-		1, 2, 3, // Triangle 3
-		1, 2, 4, // Triangle 4
-		0, 1, 3, // Triangle 5
-		0, 1, 4 // Triangle 6
-		
-	};
+	//GLushort indices[] = {
+	//	
+	//	0, 2, 3, // Triangle 1
+	//	0, 2, 4, // Triangle 2
+	//	1, 2, 3, // Triangle 3
+	//	1, 2, 4, // Triangle 4
+	//	0, 1, 3, // Triangle 5
+	//	0, 1, 4 // Triangle 6
+	//	
+	//};
 
-	mesh.numIndices = sizeof(indices) / sizeof(indices[0]);
+	//mesh.numIndices = sizeof(indices) / sizeof(indices[0]);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.vbo[1]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); // sends indices to GPU
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.vbo[1]);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); // sends indices to GPU
 
 	// FIX ME: Texture buffer BINDS?
 	

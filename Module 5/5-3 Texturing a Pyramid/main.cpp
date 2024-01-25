@@ -99,7 +99,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// associate VBO with the corresponding vertex attribute in the vertex shader
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.vbo[1]);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.vbo[1]);
 	glVertexAttribPointer(0, 5, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
 	glEnableVertexAttribArray(0); // Enables VAO
 	//bind textures on corresponding texture units
@@ -108,7 +108,8 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindTexture(GL_TEXTURE_2D, brickTexture);
 
 	// Draw pyramid
-	glDrawElements(GL_TRIANGLES, mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
+	//glDrawElements(GL_TRIANGLES, mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
+	glDrawArrays(GL_TRIANGLES, 0, 18);
 	glBindVertexArray(0);
 }
 
