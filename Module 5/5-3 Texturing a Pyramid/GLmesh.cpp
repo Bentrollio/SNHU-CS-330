@@ -10,36 +10,36 @@ void createMesh(GLmesh& mesh) { // 5 vertices, 6 triangles, makes pyramid placed
 		//	1.0f, -1.0f, 1.0f,			1.0f, 0.0f,					//1.0f, 0.0f, 1.0f, 1.0f,	// Bottom front right vertex 3
 		//	-1.0f, -1.0f, -1.0f,		1.0f, 0.0f,					//0.5f, 1.0f, 0.5f, 1.0f,	// Bottom rear left vertex 4
 		//};
-	{	// Vertices
+	{	// Vertices				// texture coordinates
 		// front face
-		-1.0f, -1.0f, 1.0f,
-		1.0f, -1.0f, 1.0f,
-		0.0f, 1.0f, 0.0f,
+		-1.0f, -1.0f, 1.0f,		0.0f, 0.0f, // lower left corner
+		1.0f, -1.0f, 1.0f,		1.0f, 0.0f, // lower right corner
+		0.0f, 1.0f, 0.0f,		0.5f, 1.0f,	// tippy top
 
 		// right face
-		1.0f, -1.0f, 1.0f,
-		1.0f, -1.0f, -1.0f,
-		0.0f, 1.0f, 0.0f,
+		1.0f, -1.0f, 1.0f,		0.0f, 0.0f, // lower left corner
+		1.0f, -1.0f, -1.0f,		1.0f, 0.0f, // lower right corner
+		0.0f, 1.0f, 0.0f,		0.5f, 1.0f, // tippy top
 
 		// back face
-		1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		0.0f, 1.0f, 0.0f,
+		1.0f, -1.0f, -1.0f,		0.0f, 0.0f, // lower left corner
+		-1.0f, -1.0f, -1.0f,	1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.5f, 1.0f,
 
 		// left face
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f, 1.0f,
-		0.0f, 1.0f, 0.0f,
+		-1.0f, -1.0f, -1.0f,	0.0f, 0.0f,
+		-1.0f, -1.0f, 1.0f,		1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.5f, 1.0f,
 
 		// base left front
-		-1.0f, -1.0f, -1.0f,
-		1.0f, -1.0f, 1.0f,
-		-1.0f, -1.0f, 1.0f,
+		-1.0f, -1.0f, -1.0f,	0.0f, 0.0f,
+		1.0f, -1.0f, 1.0f,		1.0f, 1.0f,
+		-1.0f, -1.0f, 1.0f,		0.0f, 1.0f,
 
 		// base right back
-		1.0f, -1.0f, 1.0f,
-		-1.0f, -1.0f, -1.0f,
-		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, 1.0f,		1.0f, 1.0f,
+		-1.0f, -1.0f, -1.0f,	0.0f, 0.0f,
+		1.0f, -1.0f, -1.0f,		1.0f, 0.0f,
 
 	};
 

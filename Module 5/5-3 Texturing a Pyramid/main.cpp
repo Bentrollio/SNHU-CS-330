@@ -100,7 +100,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]);
 
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.vbo[1]);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
+	glVertexAttribPointer(0, 5, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
 	glEnableVertexAttribArray(0); // Enables VAO
 	//bind textures on corresponding texture units
 	glEnableVertexAttribArray(1);
