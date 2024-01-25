@@ -9,7 +9,7 @@
 #include "utils.h"
 #include "Camera.h"
 
-extern Camera camera; // decalres global camera variable from main
+extern Camera camera; // declares global camera variable from main
 // Error checking functions
 
 void printShaderLog(GLuint shader) {
@@ -167,6 +167,13 @@ void processInput(GLFWwindow* window, Camera &camera, float &deltaTime) {
 
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
 		camera.ProcessKeyboard(DOWN, deltaTime);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 }
 

@@ -14,13 +14,14 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 using namespace std;
 
+// Pyramid Location Variables
 float pyrLocX, pyrLocY, pyrLocZ;
 
 GLmesh mesh; // Triangle mesh data
 GLuint renderingProgram;
 
 // Timing
-float gDeltatime = 0.0f; // time between current time and last frame
+float gDeltatime = 0.0f; // Time between current time and last frame
 float gLastFrame = 0.0f;
 
 // Variables to be used in display() function to prevent allocation during rendering
@@ -62,7 +63,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// adjust OpenGL settings and draw model
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //ENABLES WIREFRAME
 
 	glUseProgram(renderingProgram); // loads compiled shaders into openGL pipeline
 
@@ -80,6 +80,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	activateOrtho(window, pMat);
 	// Copy projection matrix to the uniform variable
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+
 
 	// --------------DRAWS THE PYRAMID-----------------
 	glBindVertexArray(mesh.vao[0]);
@@ -101,15 +102,11 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.vbo[1]);
 	glVertexAttribPointer(0, 5, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
-	glEnableVertexAttribArray(0); // Enables VAO
 	//bind textures on corresponding texture units
-	glEnableVertexAttribArray(1);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, brickTexture);
 
-	// Draw pyramid
-	//glDrawElements(GL_TRIANGLES, mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
-	glDrawArrays(GL_TRIANGLES, 0, 18);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 18);
 	glBindVertexArray(0);
 }
 
@@ -138,8 +135,8 @@ int main(void) {
 	glfwSwapInterval(1);
 	init(window);
 
-	// FIX ME
-	//glUniform1i(glGetUniformLocation(renderingProgram, "samp"), 0);
+	glUniform1i(glGetUniformLocation(renderingProgram, "samp"), 0);
+
 	// Rendering loop
 	while (!glfwWindowShouldClose(window)) {
 
