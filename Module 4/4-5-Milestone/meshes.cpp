@@ -31,10 +31,11 @@ void Meshes::CreateMeshes()
 	CreateCubeMesh(cubeMesh);
 	CreatePlaneMesh(planeMesh);
 	CreatePrismMesh(prismMesh);
-	/*CreateBoxMesh(boxMesh);
+	//CreateBoxMesh(boxMesh);
 	CreateConeMesh(coneMesh);
-	CreateCylinderMesh(cylinderMesh);
+	/*CreateCylinderMesh(cylinderMesh);
 	CreateTaperedCylinderMesh(taperedCylinderMesh);*/
+	CreateTaperedPolygonMesh(taperedPolygonMesh);
 	CreatePyramid3Mesh(pyramid3Mesh);
 	CreatePyramid4Mesh(pyramid4Mesh);
 	CreateSphereMesh(sphereMesh);
@@ -50,6 +51,7 @@ void Meshes::DestroyMeshes()
 	DestroyMesh(boxMesh);
 	DestroyMesh(coneMesh);
 	DestroyMesh(cylinderMesh);
+	DestroyMesh(taperedPolygonMesh);
 	DestroyMesh(pyramid3Mesh);
 	DestroyMesh(pyramid4Mesh);
 	DestroyMesh(sphereMesh);
@@ -189,7 +191,339 @@ void Meshes::CreatePlaneMesh(GLmesh& mesh) {
 }
 
 void Meshes::CreatePrismMesh(GLmesh& mesh) {
+	// Vertex Data
+	GLfloat verts[] = {
+		//Positions				//Normals
+		// ------------------------------------------------------
 
+		//Back Face				//Negative Z Normal  
+		0.5f, 0.5f, -0.5f,		0.0f,  0.0f, -1.0f,		0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,		0.0f,  0.0f, -1.0f,		0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		1.0f, 0.0f,
+		0.5f, 0.5f, -0.5f,		0.0f,  0.0f, -1.0f,		0.0f, 1.0f,
+		0.5f,  0.5f, -0.5f,		0.0f,  0.0f, -1.0f,		0.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f,		0.0f,  0.0f, -1.0f,		0.0f, 1.0f,
+
+		//Bottom Face			//Negative Y Normal
+		0.5f, -0.5f, -0.5f,		0.0f, -1.0f,  0.0f,		0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,	0.0f, -1.0f,  0.0f,		1.0f, 0.0f,
+		0.0f, -0.5f,  0.5f,		0.0f, -1.0f,  0.0f,		0.5f, 1.0f,
+		-0.5f, -0.5f,  -0.5f,	0.0f, -1.0f,  0.0f,		0.0f, 0.0f,
+
+		//Left Face/slanted		//Normals
+		-0.5f, -0.5f, -0.5f,	0.894427180f,  0.0f,  -0.447213590f,	0.0f, 0.0f,
+		-0.5f, 0.5f,  -0.5f,	0.894427180f,  0.0f,  -0.447213590f,	0.0f, 1.0f,
+		0.0f, 0.5f,  0.5f,		0.894427180f,  0.0f,  -0.447213590f,	1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	0.894427180f,  0.0f,  -0.447213590f,	0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,	0.894427180f,  0.0f,  -0.447213590f,	0.0f, 0.0f,
+		0.0f, -0.5f,  0.5f,		0.894427180f,  0.0f,  -0.447213590f,	1.0f, 0.0f,
+		0.0f, 0.5f,  0.5f,		0.894427180f,  0.0f,  -0.447213590f,	1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	0.894427180f,  0.0f,  -0.447213590f,	0.0f, 0.0f,
+
+		//Right Face/slanted	//Normals
+		0.0f, 0.5f, 0.5f,		-0.894427180f,  0.0f,  -0.447213590f,		0.0f, 1.0f,
+		0.5f, 0.5f, -0.5f,		-0.894427180f,  0.0f,  -0.447213590f,		1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,		-0.894427180f,  0.0f,  -0.447213590f,		1.0f, 0.0f,
+		0.0f, 0.5f, 0.5f,		-0.894427180f,  0.0f,  -0.447213590f,		0.0f, 1.0f,
+		0.0f, 0.5f, 0.5f,		-0.894427180f,  0.0f,  -0.447213590f,		0.0f, 1.0f,
+		0.0f, -0.5f, 0.5f,		-0.894427180f,  0.0f,  -0.447213590f,		0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f,		-0.894427180f,  0.0f,  -0.447213590f,		1.0f, 0.0f,
+		0.0f, 0.5f, 0.5f,		-0.894427180f,  0.0f,  -0.447213590f,		0.0f, 1.0f,
+
+		//Top Face				//Positive Y Normal		//Texture Coords.
+		0.5f, 0.5f, -0.5f,		0.0f,  1.0f,  0.0f,		0.0f, 0.0f,
+		0.0f,  0.5f,  0.5f,		0.0f,  1.0f,  0.0f,		0.5f, 1.0f,
+		-0.5f,  0.5f, -0.5f,	0.0f,  1.0f,  0.0f,		1.0f, 0.0f,
+		0.5f, 0.5f, -0.5f,		0.0f,  1.0f,  0.0f,		0.0f, 0.0f,
+	};
+
+	// Float values per type
+	const GLuint floatsPerVertex = 3; // Number of coordinates per vertex
+	const GLuint floatsPerColor = 3; // (r, g, b)
+	const GLuint floatsPerUV = 2;
+
+	mesh.numVertices = sizeof(verts) / (sizeof(verts[0]) * (floatsPerVertex + floatsPerColor + floatsPerUV));
+
+	glGenVertexArrays(numVAOs, &mesh.vao); // can also generate multiple VAOs or buffers at once
+	glBindVertexArray(mesh.vao);
+	glGenBuffers(numVBOs, mesh.vbo); // Creates buffers
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]); // Activates buffer
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW); // sends vertex or coordinate data to GPU
+
+	// Strides between vertex coordinates
+	GLuint stride = sizeof(float) * (floatsPerVertex + floatsPerColor + floatsPerUV);
+
+	// Instructs the GPU on how to handle the vbo data
+	// Parameters: attribPointerPosition | coordinates per vertex is 2, ie x and y | data type | deactivate normalization | 0
+		// Instructs the GPU on how to handle the vbo data
+	// Parameters: attribPointerPosition | coordinates per vertex is 2, ie x and y | data type | deactivate normalization | 0
+	glVertexAttribPointer(0, floatsPerVertex, GL_FLOAT, GL_FALSE, stride, 0);
+	glEnableVertexAttribArray(0);
+
+	// Parameters: attribPointerPosition 1 | floats per color is temporarily 0, ie rgba | data type | deactivate normalization 
+	// | 0 strides till next color | 2 floats til beginning of each color
+	glVertexAttribPointer(1, floatsPerColor, GL_FLOAT, GL_FALSE, stride, (char*)(sizeof(float) * floatsPerVertex));
+	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, floatsPerUV, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * (floatsPerVertex + floatsPerColor)));
+	glEnableVertexAttribArray(2);
+}
+
+void Meshes::CreateConeMesh(GLmesh& mesh) {
+	GLfloat verts[] = {
+		// cone bottom			// normals			// texture coords
+		1.0f, 0.0f, 0.0f,		0.0f, -1.0f, 0.0f,	0.5f,1.0f,
+		.98f, 0.0f, -0.17f,		0.0f, -1.0f, 0.0f,	0.41f, 0.983f,
+		.94f, 0.0f, -0.34f,		0.0f, -1.0f, 0.0f,	0.33f, 0.96f,
+		.87f, 0.0f, -0.5f,		0.0f, -1.0f, 0.0f,	0.25f, 0.92f,
+		.77f, 0.0f, -0.64f,		0.0f, -1.0f, 0.0f,	0.17f, 0.87f,
+		.64f, 0.0f, -0.77f,		0.0f, -1.0f, 0.0f,	0.13f, 0.83f,
+		.5f, 0.0f, -0.87f,		0.0f, -1.0f, 0.0f,	0.08f, 0.77f,
+		.34f, 0.0f, -0.94f,		0.0f, -1.0f, 0.0f,	0.04f, 0.68f,
+		.17f, 0.0f, -0.98f,		0.0f, -1.0f, 0.0f,	0.017f, 0.6f,
+		0.0f, 0.0f, -1.0f,		0.0f, -1.0f, 0.0f,	0.0f,0.5f,
+		-.17f, 0.0f, -0.98f,	0.0f, -1.0f, 0.0f,	0.017f, 0.41f,
+		-.34f, 0.0f, -0.94f,	0.0f, -1.0f, 0.0f,	0.04f, 0.33f,
+		-.5f, 0.0f, -0.87f,		0.0f, -1.0f, 0.0f,	0.08f, 0.25f,
+		-.64f, 0.0f, -0.77f,	0.0f, -1.0f, 0.0f,	0.13f, 0.17f,
+		-.77f, 0.0f, -0.64f,	0.0f, -1.0f, 0.0f,	0.17f, 0.13f,
+		-.87f, 0.0f, -0.5f,		0.0f, -1.0f, 0.0f,	0.25f, 0.08f,
+		-.94f, 0.0f, -0.34f,	0.0f, -1.0f, 0.0f,	0.33f, 0.04f,
+		-.98f, 0.0f, -0.17f,	0.0f, -1.0f, 0.0f,	0.41f, 0.017f,
+		-1.0f, 0.0f, 0.0f,		0.0f, -1.0f, 0.0f,	0.5f, 0.0f,
+		-.98f, 0.0f, 0.17f,		0.0f, -1.0f, 0.0f,	0.6f, 0.017f,
+		-.94f, 0.0f, 0.34f,		0.0f, -1.0f, 0.0f,	0.68f, 0.04f,
+		-.87f, 0.0f, 0.5f,		0.0f, -1.0f, 0.0f,	0.77f, 0.08f,
+		-.77f, 0.0f, 0.64f,		0.0f, -1.0f, 0.0f,	0.83f, 0.13f,
+		-.64f, 0.0f, 0.77f,		0.0f, -1.0f, 0.0f,	0.87f, 0.17f,
+		-.5f, 0.0f, 0.87f,		0.0f, -1.0f, 0.0f,	0.92f, 0.25f,
+		-.34f, 0.0f, 0.94f,		0.0f, -1.0f, 0.0f,	0.96f, 0.33f,
+		-.17f, 0.0f, 0.98f,		0.0f, -1.0f, 0.0f,	0.983f, 0.41f,
+		0.0f, 0.0f, 1.0f,		0.0f, -1.0f, 0.0f,	1.0f, 0.5f,
+		.17f, 0.0f, 0.98f,		0.0f, -1.0f, 0.0f,	0.983f, 0.6f,
+		.34f, 0.0f, 0.94f,		0.0f, -1.0f, 0.0f,	0.96f, 0.68f,
+		.5f, 0.0f, 0.87f,		0.0f, -1.0f, 0.0f,	0.92f, 0.77f,
+		.64f, 0.0f, 0.77f,		0.0f, -1.0f, 0.0f,	0.87f, 0.83f,
+		.77f, 0.0f, 0.64f,		0.0f, -1.0f, 0.0f,	0.83f, 0.87f,
+		.87f, 0.0f, 0.5f,		0.0f, -1.0f, 0.0f,	0.77f, 0.92f,
+		.94f, 0.0f, 0.34f,		0.0f, -1.0f, 0.0f,	0.68f, 0.96f,
+		.98f, 0.0f, 0.17f,		0.0f, -1.0f, 0.0f,	0.6f, 0.983f,
+
+		// cone sides		// normals									// texture coords
+		1.0f, 0.0f, 0.0f,		-0.993150651f, 0.0f, 0.116841137f, 		0.0f,0.0f,
+		0.0f, 1.0f, 0.0f,		-0.993150651f, 0.0f, 0.116841137f, 		0.5f, 1.0f,
+		.98f, 0.0f, -0.17f,		-0.993150651f, 0.0f, 0.116841137f, 		0.0277,0.0,
+		.98f, 0.0f, -0.17f,		-0.973417103f, 0.0f, 0.229039446f, 		0.0277,0.0,
+		0.0f, 1.0f, 0.0f,		-0.973417103f, 0.0f, 0.229039446f, 		0.5f, 1.0f,
+		.94f, 0.0f, -0.34f,		-0.973417103f, 0.0f, 0.229039446f, 		0.0554,0.0f,
+		.94f, 0.0f, -0.34f,		-0.916157305f, 0.0f, 0.400818795f, 		0.0554,0.0f,
+		0.0f, 1.0f, 0.0f,		-0.916157305f, 0.0f, 0.400818795f, 		0.5f, 1.0f,
+		.87f, 0.0f, -0.5f,		-0.916157305f, 0.0f, 0.400818795f, 		0.0831,0.0f,
+		.87f, 0.0f, -0.5f,		-0.813733339f, 0.0f, 0.581238329f, 		0.0831,0.0f,
+		0.0f, 1.0f, 0.0f,		-0.813733339f, 0.0f, 0.581238329f, 		0.5f, 1.0f,
+		.77f, 0.0f, -0.64f,		-0.813733339f, 0.0f, 0.581238329f, 		0.1108f, 0.0f,
+		.77f, 0.0f, -0.64f,		-0.707106769f, 0.0f, 0.707106769f, 		0.1108f, 0.0f,
+		0.0f, 1.0f, 0.0f,		-0.707106769f, 0.0f, 0.707106769f, 		0.5f, 1.0f,
+		.64f, 0.0f, -0.77f,		-0.707106769f, 0.0f, 0.707106769f, 		0.1385f, 0.0f,
+		.64f, 0.0f, -0.77f,		-0.581238329f, 0.0f, 0.813733339f, 		0.1385f, 0.0f,
+		0.0f, 1.0f, 0.0f,		-0.581238329f, 0.0f, 0.813733339f, 		0.5f, 1.0f,
+		.5f, 0.0f, -0.87f,		-0.581238329f, 0.0f, 0.813733339f, 		0.1662f, 0.0f,
+		.5f, 0.0f, -0.87f,		-0.400818795f, 0.0f, 0.916157305f, 		0.1662f, 0.0f,
+		0.0f, 1.0f, 0.0f,		-0.400818795f, 0.0f, 0.916157305f, 		0.5f, 1.0f,
+		.34f, 0.0f, -0.94f,		-0.400818795f, 0.0f, 0.916157305f, 		0.1939f, 0.0f,
+		.34f, 0.0f, -0.94f,		-0.229039446f, 0.0f, 0.973417103f, 		0.1939f, 0.0f,
+		0.0f, 1.0f, 0.0f,		-0.229039446f, 0.0f, 0.973417103f, 		0.5f, 1.0f,
+		.17f, 0.0f, -0.98f,		-0.229039446f, 0.0f, 0.973417103f, 		0.2216f, 0.0f,
+		.17f, 0.0f, -0.98f,		-0.116841137f, 0.0f, 0.993150651f, 		0.2216f, 0.0f,
+		0.0f, 1.0f, 0.0f,		-0.116841137f, 0.0f, 0.993150651f, 		0.5f, 1.0f,
+		0.0f, 0.0f, -1.0f,		-0.116841137f, 0.0f, 0.993150651f, 		0.2493f, 0.0f,
+		0.0f, 0.0f, -1.0f,		0.116841137f, 0.0f, 0.993150651f, 		0.2493f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.116841137f, 0.0f, 0.993150651f, 		0.5f, 1.0f,
+		-.17f, 0.0f, -0.98f,	0.116841137f, 0.0f, 0.993150651f, 		0.277f, 0.0f,
+		-.17f, 0.0f, -0.98f,	0.229039446f, 0.0f, 0.973417103f, 		0.277f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.229039446f, 0.0f, 0.973417103f, 		0.5f, 1.0f,
+		-.34f, 0.0f, -0.94f,	0.229039446f, 0.0f, 0.973417103f, 		0.3047f, 0.0f,
+		-.34f, 0.0f, -0.94f,	0.400818795f, 0.0f, 0.916157305f, 		0.3047f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.400818795f, 0.0f, 0.916157305f, 		0.5f, 1.0f,
+		-.5f, 0.0f, -0.87f,		0.400818795f, 0.0f, 0.916157305f, 		0.3324f, 0.0f,
+		-.5f, 0.0f, -0.87f,		0.581238329f, 0.0f, 0.813733339f, 		0.3324f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.581238329f, 0.0f, 0.813733339f, 		0.5f, 1.0f,
+		-.64f, 0.0f, -0.77f,	0.581238329f, 0.0f, 0.813733339f, 		0.3601f, 0.0f,
+		-.64f, 0.0f, -0.77f,	0.707106769f, 0.0f, 0.707106769f, 		0.3601f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.707106769f, 0.0f, 0.707106769f, 		0.5f, 1.0f,
+		-.77f, 0.0f, -0.64f,	0.707106769f, 0.0f, 0.707106769f, 		0.3878f, 0.0f,
+		-.77f, 0.0f, -0.64f,	0.813733339f, 0.0f, 0.581238329f, 		0.3878f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.813733339f, 0.0f, 0.581238329f, 		0.5f, 1.0f,
+		-.87f, 0.0f, -0.5f,		0.813733339f, 0.0f, 0.581238329f, 		0.4155f, 0.0f,
+		-.87f, 0.0f, -0.5f,		0.916157305f, 0.0f, 0.400818795f, 		0.4155f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.916157305f, 0.0f, 0.400818795f, 		0.5f, 1.0f,
+		-.94f, 0.0f, -0.34f,	0.916157305f, 0.0f, 0.400818795f, 		0.4432f, 0.0f,
+		-.94f, 0.0f, -0.34f,	0.973417103f, 0.0f, 0.229039446f, 		0.4432f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.973417103f, 0.0f, 0.229039446f, 		0.5f, 1.0f,
+		-.98f, 0.0f, -0.17f,	0.973417103f, 0.0f, 0.229039446f, 		0.4709f, 0.0f,
+		-.98f, 0.0f, -0.17f,	0.993150651f, 0.0f, 0.116841137f, 		0.4709f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.993150651f, 0.0f, 0.116841137f, 		0.5f, 1.0f,
+		-1.0f, 0.0f, 0.0f,		0.993150651f, 0.0f, 0.116841137f, 		0.4986f, 0.0f,
+		-1.0f, 0.0f, 0.0f,		0.993150651f, 0.0f, -0.116841137f, 		0.4986f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.993150651f, 0.0f, -0.116841137f, 		0.5f, 1.0f,
+		-.98f, 0.0f, 0.17f,		0.993150651f, 0.0f, -0.116841137f, 		0.5263f, 0.0f,
+		-.98f, 0.0f, 0.17f,		0.973417103f, 0.0f, -0.229039446f, 		0.5263f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.973417103f, 0.0f, -0.229039446f, 		0.5f, 1.0f,
+		-.94f, 0.0f, 0.34f,		0.973417103f, 0.0f, -0.229039446f, 		0.554f, 0.0f,
+		-.94f, 0.0f, 0.34f,		0.916157305f, 0.0f, -0.400818795f, 		0.554f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.916157305f, 0.0f, -0.400818795f, 		0.5f, 1.0f,
+		-.87f, 0.0f, 0.5f,		0.916157305f, 0.0f, -0.400818795f, 		0.5817f, 0.0f,
+		-.87f, 0.0f, 0.5f,		0.813733339f, 0.0f, -0.581238329f, 		0.5817f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.813733339f, 0.0f, -0.581238329f, 		0.5f, 1.0f,
+		-.77f, 0.0f, 0.64f,		0.813733339f, 0.0f, -0.581238329f, 		0.6094f, 0.0f,
+		-.77f, 0.0f, 0.64f,		0.707106769f, 0.0f, -0.707106769f, 		0.6094f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.707106769f, 0.0f, -0.707106769f, 		0.5f, 1.0f,
+		-.64f, 0.0f, 0.77f,		0.707106769f, 0.0f, -0.707106769f, 		0.6371f, 0.0f,
+		-.64f, 0.0f, 0.77f,		0.581238329f, 0.0f, -0.813733339f, 		0.6371f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.581238329f, 0.0f, -0.813733339f, 		0.5f, 1.0f,
+		-.5f, 0.0f, 0.87f,		0.581238329f, 0.0f, -0.813733339f, 		0.6648f, 0.0f,
+		-.5f, 0.0f, 0.87f,		0.400818795f, 0.0f, -0.916157305f, 		0.6648f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.400818795f, 0.0f, -0.916157305f, 		0.5f, 1.0f,
+		-.34f, 0.0f, 0.94f,		0.400818795f, 0.0f, -0.916157305f, 		0.6925f, 0.0f,
+		-.34f, 0.0f, 0.94f,		0.229039446f, 0.0f, -0.973417103f, 		0.6925f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.229039446f, 0.0f, -0.973417103f, 		0.5f, 1.0f,
+		-.17f, 0.0f, 0.98f,		0.229039446f, 0.0f, -0.973417103f, 		0.7202f, 0.0f,
+		-.17f, 0.0f, 0.98f,		0.116841137f, 0.0f, -0.993150651f, 		0.7202f, 0.0f,
+		0.0f, 1.0f, 0.0f,		0.116841137f, 0.0f, -0.993150651f, 		0.5f, 1.0f,
+		0.0f, 0.0f, 1.0f,		0.116841137f, 0.0f, -0.993150651f, 		0.7479f, 0.0f,
+		0.0f, 0.0f, 1.0f,		-0.116841137f, 0.0f, -0.993150651f, 	0.7479f, 0.0f,
+		0.0f, 1.0f, 0.0f,		-0.116841137f, 0.0f, -0.993150651f, 	0.5f, 1.0f,
+		.17f, 0.0f, 0.98f,		-0.116841137f, 0.0f, -0.993150651f, 	0.7756f, 0.0f,
+		.17f, 0.0f, 0.98f,		-0.229039446f, 0.0f, -0.973417103f, 	0.7756f, 0.0f,
+		0.0f, 1.0f, 0.0f,		-0.229039446f, 0.0f, -0.973417103f, 	0.5f, 1.0f,
+		.34f, 0.0f, 0.94f,		-0.229039446f, 0.0f, -0.973417103f, 	0.8033f, 0.0f,
+		.34f, 0.0f, 0.94f,		-0.400818795f, 0.0f, -0.916157305f, 	0.8033f, 0.0f,
+		0.0f, 1.0f, 0.0f,		-0.400818795f, 0.0f, -0.916157305f, 	0.5f, 1.0f,
+		.5f, 0.0f, 0.87f,		-0.400818795f, 0.0f, -0.916157305f, 	0.831f, 0.0f,
+		.5f, 0.0f, 0.87f,		-0.581238329f, 0.0f, -0.813733339f, 	0.831f, 0.0f,
+		0.0f, 1.0f, 0.0f,		-0.581238329f, 0.0f, -0.813733339f, 	0.5f, 1.0f,
+		.64f, 0.0f, 0.77f,		-0.581238329f, 0.0f, -0.813733339f, 	0.8587f, 0.0f,
+		.64f, 0.0f, 0.77f,		-0.707106769f, 0.0f, -0.707106769f, 	0.8587f, 0.0f,
+		0.0f, 1.0f, 0.0f,		-0.707106769f, 0.0f, -0.707106769f, 	0.5f, 1.0f,
+		.77f, 0.0f, 0.64f,		-0.707106769f, 0.0f, -0.707106769f, 	0.8864f, 0.0f,
+		.77f, 0.0f, 0.64f,		-0.813733339f, 0.0f, -0.581238329f, 	0.8864f, 0.0f,
+		0.0f, 1.0f, 0.0f,		-0.813733339f, 0.0f, -0.581238329f, 	0.5f, 1.0f,
+		.87f, 0.0f, 0.5f,		-0.813733339f, 0.0f, -0.581238329f, 	0.9141f, 0.0f,
+		.87f, 0.0f, 0.5f,		-0.916157305f, 0.0f, -0.400818795f, 	0.9141f, 0.0f,
+		0.0f, 1.0f, 0.0f,		-0.916157305f, 0.0f, -0.400818795f, 	0.5f, 1.0f,
+		.94f, 0.0f, 0.34f,		-0.916157305f, 0.0f, -0.400818795f, 	0.9418f, 0.0f,
+		.94f, 0.0f, 0.34f,		-0.973417103f, 0.0f, -0.229039446f, 	0.9418f, 0.0f,
+		0.0f, 1.0f, 0.0f,		-0.973417103f, 0.0f, -0.229039446f, 	0.5f, 1.0f,
+		.98f, 0.0f, 0.17f,		-0.973417103f, 0.0f, -0.229039446f, 	0.9695f, 0.0f,
+		.98f, 0.0f, 0.17f,		-0.993150651f, 0.0f, -0.116841137f, 	0.9695f, 0.0f,
+		0.0f, 1.0f, 0.0f,		-0.993150651f, 0.0f, -0.116841137f, 	0.5f, 1.0f,
+		1.0f, 0.0f, 0.0f,		-0.993150651f, 0.0f, -0.116841137f, 	0.0f, 0.0f
+	};
+
+	// Total float values per each type
+	const GLuint floatsPerVertex = 3;
+	const GLuint floatsPerNormal = 3;
+	const GLuint floatsPerUV = 2;
+
+	// Store vertex and index count
+	mesh.numVertices = sizeof(verts) / sizeof(verts[0] * (floatsPerVertex + floatsPerNormal + floatsPerUV));
+	mesh.numIndices = 0;
+
+	// Create VAO
+
+	glGenVertexArrays(numVAOs, &mesh.vao); // can also generate multiple VAOs or buffers at once
+	glBindVertexArray(mesh.vao);
+
+	// Create VBOs
+	glGenBuffers(numVBOs, mesh.vbo);
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]); // Activates buffer
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW); // sends vertex or coordinate data to GPU
+
+	// Strides
+	GLint stride = sizeof(float) * (floatsPerVertex + floatsPerNormal + floatsPerUV);
+
+	// Create Vertex Attribute Pointers
+	glVertexAttribPointer(0, floatsPerVertex, GL_FLOAT, GL_FALSE, stride, 0);
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, floatsPerNormal, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float)* floatsPerVertex));
+	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, floatsPerUV, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float)* (floatsPerVertex + floatsPerNormal)));
+	glEnableVertexAttribArray(2);
+
+
+}
+void Meshes::CreateTaperedPolygonMesh(GLmesh& mesh) {
+
+	// Specifies Normalized Device Coordinates for triangle vertices
+	GLfloat verts[] = // vertexPositions in the book
+	{
+		// Vertices				// Colors
+		-0.75f, 1.0f, -0.75f,		0.0f, 1.0f, 0.50196078f, 1.0f, // Top rear left vertex 0
+		-1.0f, -1.0f, -1.0f,	1.0f, 1.0f, 0.0f, 1.0f, // Bottom rear left vertex 1
+		1.0f, -1.0f, -1.0f,		1.0f, 0.50196078f, 0.0f, 1.0f, // Bottom rear right vertex 2
+		0.75f, 1.0f, -0.75f,		1.0f, 0.0f, 0.0f, 1.0f, // Top rear right vertex 3
+		1.0f, -1.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f, // Bottom front right vertex 4
+		0.75f, 1.0f, 0.75f,		1.0f, 0.0f, 1.0f, 1.0f, // Top front right vertex 5
+		-1.0f, -1.0f, 1.0f,		0.50196078f, 0.0f, 1.0f, 1.0f, // Bottom front left vertex 6
+		-0.75f, 1.0f, 0.75f,		1.0f, 0.0f, 0.0f, 1.0f, // Top front left vertex 7
+
+	};
+
+	glGenVertexArrays(numVAOs, &mesh.vao); // can also generate multiple VAOs or buffers at once
+	glBindVertexArray(mesh.vao);
+	glGenBuffers(numVBOs, mesh.vbo); // Creates buffers
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]); // Activates buffer
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW); // sends vertex or coordinate data to GPU
+
+
+	// Creates a buffer object for the indices
+	GLushort indices[] = {
+		0, 1, 3, // Triangle 1
+		1, 2, 3, // Triangle 2
+		0, 1, 7, // Triangle 3
+		0, 3, 7, // Triangle 4
+		3, 5, 7, // Triangle 5
+		1, 6, 7, // Triangle 6
+		1, 2, 4, // Triangle 7
+		1, 4, 6, // Triangle 8
+		4, 6, 7, // Triangle 9
+		4, 5, 7, // Triangle 10
+		3, 4, 5, // Triangle 11
+		2, 3, 4  // Triangle 12
+	};
+
+	// Float values per type
+	const GLuint floatsPerVertex = 3; // Number of coordinates per vertex
+	const GLuint floatsPerColor = 4; // (r, g, b, a) THIS IS SET TO 0 FOR NOW
+	const GLuint floatsPerNormal = 0;
+	const GLuint floatsPerUV = 0;
+
+	// Store the vertex and index count inside the mesh
+	mesh.numVertices = sizeof(verts) / (sizeof(verts[0]) * (floatsPerVertex + floatsPerColor + floatsPerNormal + floatsPerUV));
+	mesh.numIndices = sizeof(indices) / sizeof(indices[0]);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.vbo[1]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	// Strides between vertex coordinates is 3 (xyz rgba)
+	GLint stride = sizeof(float) * (floatsPerVertex + floatsPerColor);
+
+	// Instructs the GPU on how to handle the vbo data
+	// Parameters: attribPointerPosition | coordinates per vertex is 2, ie x and y | data type | deactivate normalization | 0
+	glVertexAttribPointer(0, floatsPerVertex, GL_FLOAT, GL_FALSE, stride, 0);
+	glEnableVertexAttribArray(0);
+
+	// Parameters: attribPointerPosition 1 | floats per color is temporarily 0, ie rgba | data type | deactivate normalization 
+	// | 0 strides till next color | 2 floats til beginning of each color
+	glVertexAttribPointer(1, floatsPerColor, GL_FLOAT, GL_FALSE, stride, (char*)(sizeof(float) * floatsPerVertex));
+	glEnableVertexAttribArray(1);
 }
 
 void Meshes::CreatePyramid3Mesh(GLmesh& mesh) {

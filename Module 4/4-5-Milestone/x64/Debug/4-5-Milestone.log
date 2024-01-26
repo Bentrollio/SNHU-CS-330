@@ -1,12 +1,3 @@
 ﻿  main.cpp
-C:\Github Repo\SNHU-CS-330\Module 4\4-5-Milestone\main.cpp(294,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  utils.cpp
-C:\Github Repo\SNHU-CS-330\Module 4\4-5-Milestone\utils.cpp(174,12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Github Repo\SNHU-CS-330\Module 4\4-5-Milestone\utils.cpp(175,12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Github Repo\SNHU-CS-330\Module 4\4-5-Milestone\utils.cpp(179,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Github Repo\SNHU-CS-330\Module 4\4-5-Milestone\utils.cpp(180,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Github Repo\SNHU-CS-330\Module 4\4-5-Milestone\utils.cpp(182,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Github Repo\SNHU-CS-330\Module 4\4-5-Milestone\utils.cpp(183,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Github Repo\SNHU-CS-330\Module 4\4-5-Milestone\utils.cpp(190,28): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  Generating Code...
+C:\Github Repo\SNHU-CS-330\Module 4\4-5-Milestone\main.cpp(347,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   4-5-Milestone.vcxproj -> C:\Github Repo\SNHU-CS-330\Module 4\4-5-Milestone\x64\Debug\4-5-Milestone.exe

@@ -39,6 +39,7 @@ public:
 		GLmesh coneMesh;
 		GLmesh cylinderMesh;
 		GLmesh taperedCylinderMesh;
+		GLmesh taperedPolygonMesh;
 		GLmesh planeMesh;
 		GLmesh prismMesh;
 		GLmesh sphereMesh;
@@ -50,15 +51,15 @@ public:
 		void DestroyMeshes();
 
 private:
-		// FIX ME: Might want to be private.
 		void CreateCubeMesh(GLmesh &mesh);
 		void CreatePlaneMesh(GLmesh &mesh);
 		void CreatePrismMesh(GLmesh& mesh);
-		/*void CreateBoxMesh(GLmesh& mesh);
+		//void CreateBoxMesh(GLmesh& mesh);
 		void CreateConeMesh(GLmesh &mesh);
-		void CreateCylinderMesh(GLmesh &mesh);
+		/*void CreateCylinderMesh(GLmesh& mesh);
 		void CreateTaperedCylinderMesh(GLmesh &mesh);
 		void CreateTorusMesh(GLmesh &mesh); */
+		void CreateTaperedPolygonMesh(GLmesh& mesh);
 		void CreatePyramid3Mesh(GLmesh &mesh);
 		void CreatePyramid4Mesh(GLmesh& mesh);
 		void CreateSphereMesh(GLmesh& mesh);
