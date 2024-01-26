@@ -248,7 +248,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	// associate VBO with the corresponding vertex attribute in the vertex shader
-	glBindBuffer(GL_ARRAY_BUFFER, meshes.pyramid3Mesh.vbo[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, meshes.cubeMesh.vbo[0]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes.cubeMesh.vbo[1]);
 	glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
 
@@ -257,6 +257,36 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	glBindVertexArray(0);
 
+	mvStack.pop(); // All that remains is the view matrix
+
+
+	/**************************************************
+	 * START of PRISM test
+	 **************************************************
+	 */
+	glBindVertexArray(meshes.prismMesh.vao);
+	mvStack.push(mvStack.top()); // copies view matrix for manipulation
+
+	// 1. Position the prism
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, 1.0f, 0.0f));
+
+	// 2. Rotate the prism
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+
+	// 3. Scale the prism
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	// associate VBO with the corresponding vertex attriibute in the vertex shader
+	glBindBuffer(GL_ARRAY_BUFFER, meshes.prismMesh.vbo[0]);
+	glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
+
+	// Draws the prism
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.prismMesh.numVertices);
+
+	glBindVertexArray(0);
 	mvStack.pop(); // All that remains is the view matrix
 }
 

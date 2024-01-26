@@ -57,7 +57,7 @@ private:
 		/*void CreateBoxMesh(GLmesh& mesh);
 		void CreateConeMesh(GLmesh &mesh);
 		void CreateCylinderMesh(GLmesh &mesh);
-		void CreateTaperedCylinderMesh(GLmesh &mesh);
+		void CreateTaperedCylinderMesh(GLmesh &mesh); // FIX ME: Add
 		void CreateTorusMesh(GLmesh &mesh); */
 		void CreatePyramid3Mesh(GLmesh &mesh);
 		void CreatePyramid4Mesh(GLmesh& mesh);
