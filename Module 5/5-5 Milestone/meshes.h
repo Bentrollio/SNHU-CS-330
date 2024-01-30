@@ -19,7 +19,7 @@
 
 // macros used to simplify adjusting vertex array and vertex buffer objects
 #define numVAOs 1 
-#define numVBOs 2
+#define numVBOs 3
 
 class Meshes
 {

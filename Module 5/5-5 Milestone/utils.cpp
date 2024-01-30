@@ -123,6 +123,8 @@ GLuint createShaderProgram() { // creates vertex and fragment shaders
 	return vfProgram;
 }
 
+
+
 // Process input by querying GLFW for each key press/release
 
 void processInput(GLFWwindow* window, Camera& camera, float& deltaTime) {
@@ -159,6 +161,12 @@ void processInput(GLFWwindow* window, Camera& camera, float& deltaTime) {
 
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
 		camera.ProcessKeyboard(DOWN, deltaTime);
+	}
+	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 }
 

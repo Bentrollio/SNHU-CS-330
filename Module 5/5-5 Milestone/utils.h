@@ -15,6 +15,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <SOIL2/SOIL2.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h> 
 #include "meshes.h"
@@ -57,6 +58,9 @@ GLuint createShaderProgram(); // creates vertex and fragment shaders
 GLuint createShaderProgram(const char* vp, const char* fp);
 
 GLuint createShaderProgram(const char* vp, const char* gp, const char* fp);
+
+// Texture functions
+GLuint loadTexture(const char* texImagePath);
 
 void processInput(GLFWwindow* window, Camera& camera, float& deltaTime);
 
