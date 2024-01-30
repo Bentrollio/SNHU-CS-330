@@ -13,7 +13,7 @@
 #include <cmath>
 #include <stack> // For matrix stack
 
-Camera camera(glm::vec3(2.0f, 4.0f, 15.0f)); // Needs work.
+Camera camera(glm::vec3(0.0f, 4.0f, 20.0f)); // Needs work.
 
 using namespace std;
 
