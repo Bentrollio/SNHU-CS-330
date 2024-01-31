@@ -73,15 +73,65 @@ void Meshes::CreateCubeMesh(GLmesh& mesh) {
 	// Specifies Normalized Device Coordinates for triangle vertices
 	GLfloat verts[] = // vertexPositions in the book
 	{	
-		// Vertices				// Colors
-		-1.0f, 1.0f, -1.0f,		0.0f, 1.0f, 0.50196078f, 1.0f, // Top rear left vertex 0
-		-1.0f, -1.0f, -1.0f,	1.0f, 1.0f, 0.0f, 1.0f, // Bottom rear left vertex 1
-		1.0f, -1.0f, -1.0f,		1.0f, 0.50196078f, 0.0f, 1.0f, // Bottom rear right vertex 2
-		1.0f, 1.0f, -1.0f,		1.0f, 0.0f, 0.0f, 1.0f, // Top rear right vertex 3
-		1.0f, -1.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f, // Bottom front right vertex 4
-		1.0f, 1.0f, 1.0f,		1.0f, 0.0f, 1.0f, 1.0f, // Top front right vertex 5
-		-1.0f, -1.0f, 1.0f,		0.50196078f, 0.0f, 1.0f, 1.0f, // Bottom front left vertex 6
-		-1.0f, 1.0f, 1.0f,		1.0f, 0.0f, 0.0f, 1.0f, // Top front left vertex 7
+		// Cube's Rear side left triangle
+		-1.0f, 1.0f, -1.0f, // top left corner
+		-1.0f, -1.0f, -1.0f, // bottom left corner
+		1.0f, -1.0f, -1.0f, // bottom right corner
+
+		// Cube's Rear side right triangle
+		1.0f, -1.0f, -1.0f, // bottom right corner
+		1.0f, 1.0f, -1.0f, // top right corner
+		-1.0f, 1.0f, -1.0f, // top left corner 
+
+		// Cube's Right side right triangle
+		1.0f, -1.0f, -1.0f, // bottom right corner
+		1.0f, -1.0f, 1.0f, // bottom left corner
+		1.0f, 1.0f, -1.0f, // top right corner
+
+		// Cube's Right side left triangle
+		1.0f, -1.0f, 1.0f, // bottom left corner
+		1.0f, 1.0f, 1.0f, // top left corner
+		1.0f, 1.0f, -1.0f, // top right corner
+
+		// Cube's Front side right triangle
+		1.0f, -1.0f, 1.0f, // bottom right corner
+		-1.0f, -1.0f, 1.0f, // bottom left corner
+		1.0f, 1.0f, 1.0f, // top right corner
+
+		// Cube's Front side left triangle
+		-1.0f, -1.0f, 1.0f, // bottom left corner
+		-1.0f, 1.0f, 1.0f, // top left corner
+		1.0f, 1.0f, 1.0f, // top right corner
+
+		// Cube's Left side right triangle
+		-1.0f, -1.0f, 1.0f, // bottom right corner
+		-1.0f, -1.0f, -1.0f, // bottom left corner
+		-1.0f, 1.0f, 1.0f, // top right corner
+
+		// Cube's Left side left triangle
+		-1.0f, -1.0f, -1.0f, // bottom left corner
+		-1.0f, 1.0f, -1.0f, // top left corner
+		-1.0f, 1.0f, 1.0f, // top right corner
+
+		// Cube's Bottom side right triangle (facing viewer)
+		-1.0f, -1.0f, 1.0f, // top left corner
+		1.0f, -1.0f, 1.0f, // top right corner
+		1.0f, -1.0f, -1.0f, // bottom right corner
+
+		// Cube's Bottom side left triangle (facing viewer)
+		1.0f, -1.0f, -1.0f, // bottom right corner
+		-1.0f, -1.0f, -1.0f, // bottom left corner
+		-1.0f, -1.0f, 1.0f, // top left corner
+
+		// Cube's Top side right triangle (facing viewer)
+		-1.0f, 1.0f, -1.0f, // top left corner
+		1.0f, 1.0f, -1.0f, // top right corner
+		1.0f, 1.0f, 1.0f, // bottom right corner
+
+		// Cube's Top side left triangle (facing viewer)
+		1.0f, 1.0f, 1.0f, // bottom right corner
+		-1.0f, 1.0f, 1.0f, // bottom left corner
+		-1.0f, 1.0f, -1.0f // top left corner
 
 	};
 
@@ -92,38 +142,18 @@ void Meshes::CreateCubeMesh(GLmesh& mesh) {
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]); // Activates buffer
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW); // sends vertex or coordinate data to GPU
 
-
-	// Creates a buffer object for the indices
-	GLushort indices[] = {
-		0, 1, 3, // Triangle 1
-		1, 2, 3, // Triangle 2
-		0, 1, 7, // Triangle 3
-		0, 3, 7, // Triangle 4
-		3, 5, 7, // Triangle 5
-		1, 6, 7, // Triangle 6
-		1, 2, 4, // Triangle 7
-		1, 4, 6, // Triangle 8
-		4, 6, 7, // Triangle 9
-		4, 5, 7, // Triangle 10
-		3, 4, 5, // Triangle 11
-		2, 3, 4  // Triangle 12
-	};
-
 	// Float values per type
 	const GLuint floatsPerVertex = 3; // Number of coordinates per vertex
-	const GLuint floatsPerColor = 4; // (r, g, b, a) THIS IS SET TO 0 FOR NOW
+	const GLuint floatsPerColor = 0; // (r, g, b, a) THIS IS SET TO 0 FOR NOW
 	const GLuint floatsPerNormal = 0;
 	const GLuint floatsPerUV = 0;
 
 	// Store the vertex and index count inside the mesh
 	mesh.numVertices = sizeof(verts) / (sizeof(verts[0]) * (floatsPerVertex + floatsPerColor + floatsPerNormal + floatsPerUV));
-	mesh.numIndices = sizeof(indices) / sizeof(indices[0]);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.vbo[1]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	//mesh.numIndices = sizeof(indices) / sizeof(indices[0]);
 
 	// Strides between vertex coordinates is 3 (xyz rgba)
-	GLint stride = sizeof(float) * (floatsPerVertex + floatsPerColor);
+	GLint stride = sizeof(float) * (floatsPerVertex + floatsPerColor + floatsPerNormal + floatsPerUV);
 
 	// Instructs the GPU on how to handle the vbo data
 	// Parameters: attribPointerPosition | coordinates per vertex is 2, ie x and y | data type | deactivate normalization | 0
@@ -132,8 +162,12 @@ void Meshes::CreateCubeMesh(GLmesh& mesh) {
 
 	// Parameters: attribPointerPosition 1 | floats per color is temporarily 0, ie rgba | data type | deactivate normalization 
 	// | 0 strides till next color | 2 floats til beginning of each color
-	glVertexAttribPointer(1, floatsPerColor, GL_FLOAT, GL_FALSE, stride, (char*)(sizeof(float) * floatsPerVertex));
+	glVertexAttribPointer(1, floatsPerNormal, GL_FLOAT, GL_FALSE, stride, (char*)(sizeof(float) * floatsPerVertex));
 	glEnableVertexAttribArray(1);
+
+
+	glVertexAttribPointer(2, floatsPerUV, GL_FLOAT, GL_FALSE, stride, (char*)(sizeof(float)* (floatsPerVertex + floatsPerNormal)));
+	glEnableVertexAttribArray(2);
 }
 
 void Meshes::CreatePlaneMesh(GLmesh& mesh) {
@@ -141,11 +175,11 @@ void Meshes::CreatePlaneMesh(GLmesh& mesh) {
 	// Specifies Normalized Device Coordinates for triangle vertices
 	GLfloat verts[]
 	{	
-		// Vertices				// Colors
-		-1.0f, 0.0f, 1.0f,		0.0f, 0.50196078f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f,		0.0f, 0.50196078f, 1.0f, 1.0f,
-		1.0f, 0.0f, -1.0f,		0.0f, 0.50196078f, 1.0f, 1.0f,
-		-1.0f, 0.0f, -1.0f,		0.0f, 0.50196078f, 1.0f, 1.0f,
+		// Vertices				//Normals			// Texture coordinates	// Colors
+		-1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	0.0f, 0.0f,				/*0.0f, 0.50196078f, 1.0f, 1.0f*/
+		1.0f, 0.0f, 1.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f,				/*0.0f, 0.50196078f, 1.0f, 1.0f,*/
+		1.0f, 0.0f, -1.0f,		0.0f, 1.0f, 0.0f,	1.0f, 1.0f,				/*0.0f, 0.50196078f, 1.0f, 1.0f,*/
+		-1.0f, 0.0f, -1.0f,		0.0f, 1.0f, 0.0f,	0.0f, 1.0f,				/*0.0f, 0.50196078f, 1.0f, 1.0f,*/
 
 	};
 
@@ -165,9 +199,9 @@ void Meshes::CreatePlaneMesh(GLmesh& mesh) {
 
 	// Float values per type
 	const GLuint floatsPerVertex = 3; // Number of coordinates per vertex
-	const GLuint floatsPerColor = 4; // (r, g, b, a) THIS IS SET TO 0 FOR NOW
-	const GLuint floatsPerNormal = 0;
-	const GLuint floatsPerUV = 0;
+	const GLuint floatsPerColor = 0; // (r, g, b, a) THIS IS SET TO 0 FOR NOW
+	const GLuint floatsPerNormal = 3;
+	const GLuint floatsPerUV = 2;
 
 	// Store the vertex and index count inside the mesh
 	mesh.numVertices = sizeof(verts) / (sizeof(verts[0]) * (floatsPerVertex + floatsPerColor + floatsPerNormal + floatsPerUV));
@@ -177,7 +211,7 @@ void Meshes::CreatePlaneMesh(GLmesh& mesh) {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	// Strides between vertex coordinates is 3 (xyz rgba)
-	GLint stride = sizeof(float) * (floatsPerVertex + floatsPerColor);
+	GLint stride = sizeof(float) * (floatsPerVertex + floatsPerColor + floatsPerNormal + floatsPerUV);
 
 	// Instructs the GPU on how to handle the vbo data
 	// Parameters: attribPointerPosition | coordinates per vertex is 2, ie x and y | data type | deactivate normalization | 0
@@ -186,8 +220,13 @@ void Meshes::CreatePlaneMesh(GLmesh& mesh) {
 
 	// Parameters: attribPointerPosition 1 | floats per color is temporarily 0, ie rgba | data type | deactivate normalization 
 	// | 0 strides till next color | 2 floats til beginning of each color
-	glVertexAttribPointer(1, floatsPerColor, GL_FLOAT, GL_FALSE, stride, (char*)(sizeof(float) * floatsPerVertex));
+	glVertexAttribPointer(1, floatsPerNormal, GL_FLOAT, GL_FALSE, stride, (char*)(sizeof(float) * floatsPerVertex));
 	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, floatsPerUV, GL_FLOAT, GL_FALSE, stride, (char*)(sizeof(float) * (floatsPerVertex + floatsPerNormal)));
+	glEnableVertexAttribArray(2);
+
+
 }
 
 void Meshes::CreatePrismMesh(GLmesh& mesh) {
@@ -241,10 +280,10 @@ void Meshes::CreatePrismMesh(GLmesh& mesh) {
 
 	// Float values per type
 	const GLuint floatsPerVertex = 3; // Number of coordinates per vertex
-	const GLuint floatsPerColor = 3; // (r, g, b)
+	const GLuint floatsPerNormal = 3; // (r, g, b)
 	const GLuint floatsPerUV = 2;
 
-	mesh.numVertices = sizeof(verts) / (sizeof(verts[0]) * (floatsPerVertex + floatsPerColor + floatsPerUV));
+	mesh.numVertices = sizeof(verts) / (sizeof(verts[0]) * (floatsPerVertex + floatsPerNormal + floatsPerUV));
 
 	glGenVertexArrays(numVAOs, &mesh.vao); // can also generate multiple VAOs or buffers at once
 	glBindVertexArray(mesh.vao);
@@ -254,7 +293,7 @@ void Meshes::CreatePrismMesh(GLmesh& mesh) {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW); // sends vertex or coordinate data to GPU
 
 	// Strides between vertex coordinates
-	GLuint stride = sizeof(float) * (floatsPerVertex + floatsPerColor + floatsPerUV);
+	GLuint stride = sizeof(float) * (floatsPerVertex + floatsPerNormal + floatsPerUV);
 
 	// Instructs the GPU on how to handle the vbo data
 	// Parameters: attribPointerPosition | coordinates per vertex is 2, ie x and y | data type | deactivate normalization | 0
@@ -265,10 +304,10 @@ void Meshes::CreatePrismMesh(GLmesh& mesh) {
 
 	// Parameters: attribPointerPosition 1 | floats per color is temporarily 0, ie rgba | data type | deactivate normalization 
 	// | 0 strides till next color | 2 floats til beginning of each color
-	glVertexAttribPointer(1, floatsPerColor, GL_FLOAT, GL_FALSE, stride, (char*)(sizeof(float) * floatsPerVertex));
+	glVertexAttribPointer(1, floatsPerNormal, GL_FLOAT, GL_FALSE, stride, (char*)(sizeof(float) * floatsPerVertex));
 	glEnableVertexAttribArray(1);
 
-	glVertexAttribPointer(2, floatsPerUV, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * (floatsPerVertex + floatsPerColor)));
+	glVertexAttribPointer(2, floatsPerUV, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * (floatsPerVertex + floatsPerNormal)));
 	glEnableVertexAttribArray(2);
 }
 
@@ -463,15 +502,65 @@ void Meshes::CreateTaperedPolygonMesh(GLmesh& mesh) {
 	// Specifies Normalized Device Coordinates for triangle vertices
 	GLfloat verts[] = // vertexPositions in the book
 	{
-		// Vertices				// Colors
-		-0.75f, 1.0f, -0.75f,		0.0f, 1.0f, 0.50196078f, 1.0f, // Top rear left vertex 0
-		-1.0f, -1.0f, -1.0f,	1.0f, 1.0f, 0.0f, 1.0f, // Bottom rear left vertex 1
-		1.0f, -1.0f, -1.0f,		1.0f, 0.50196078f, 0.0f, 1.0f, // Bottom rear right vertex 2
-		0.75f, 1.0f, -0.75f,		1.0f, 0.0f, 0.0f, 1.0f, // Top rear right vertex 3
-		1.0f, -1.0f, 1.0f,		0.0f, 0.0f, 1.0f, 1.0f, // Bottom front right vertex 4
-		0.75f, 1.0f, 0.75f,		1.0f, 0.0f, 1.0f, 1.0f, // Top front right vertex 5
-		-1.0f, -1.0f, 1.0f,		0.50196078f, 0.0f, 1.0f, 1.0f, // Bottom front left vertex 6
-		-0.75f, 1.0f, 0.75f,		1.0f, 0.0f, 0.0f, 1.0f, // Top front left vertex 7
+		// Polygons's Rear side left triangle
+		-0.75f, 1.0f, -0.75f, // top left corner
+		-1.0f, -1.0f, -1.0f, // bottom left corner
+		1.0f, -1.0f, -1.0f, // bottom right corner
+
+		// Polygon's Rear side right triangle
+		1.0f, -1.0f, -1.0f, // bottom right corner
+		0.75f, 1.0f, -0.75f, // top right corner
+		0.75f, 1.0f, -0.75f, // top left corner 
+
+		// Polygon's Right side right triangle
+		1.0f, -1.0f, -1.0f, // bottom right corner
+		1.0f, -1.0f, 1.0f, // bottom left corner
+		0.75f, 1.0f, -0.75f, // top right corner
+
+		// Polygon's Right side left triangle
+		1.0f, -1.0f, 1.0f, // bottom left corner
+		0.75f, 1.0f, 0.75f, // top left corner
+		0.75f, 1.0f, -0.75f, // top right corner
+
+		// Polygon's Front side right triangle
+		1.0f, -1.0f, 1.0f, // bottom right corner
+		-1.0f, -1.0f, 1.0f, // bottom left corner
+		0.75f, 1.0f, 0.75f, // top right corner
+
+		// Polygon's Front side left triangle
+		-1.0f, -1.0f, 1.0f, // bottom left corner
+		-0.75f, 1.0f, 0.75f, // top left corner
+		0.75f, 1.0f, 0.75f, // top right corner
+
+		// Polygon's Left side right triangle
+		-1.0f, -1.0f, 1.0f, // bottom right corner
+		-1.0f, -1.0f, -1.0f, // bottom left corner
+		-0.75f, 1.0f, 0.75f, // top right corner
+
+		// Polygon's Left side left triangle
+		-1.0f, -1.0f, -1.0f, // bottom left corner
+		-0.75f, 1.0f, -0.75f, // top left corner
+		-0.75f, 1.0f, 0.75f, // top right corner
+
+		// Polygon's Bottom side right triangle (facing viewer)
+		-1.0f, -1.0f, 1.0f, // top left corner
+		1.0f, -1.0f, 1.0f, // top right corner
+		1.0f, -1.0f, -1.0f, // bottom right corner
+
+		// Polygon's Bottom side left triangle (facing viewer)
+		1.0f, -1.0f, -1.0f, // bottom right corner
+		-1.0f, -1.0f, -1.0f, // bottom left corner
+		-1.0f, -1.0f, 1.0f, // top left corner
+
+		// Polygon's Top side right triangle (facing viewer)
+		-0.75f, 1.0f, -0.75f, // top left corner
+		0.75f, 1.0f, -0.75f, // top right corner
+		0.75f, 1.0f, 0.75f, // bottom right corner
+
+		// Polygon's Top side left triangle (facing viewer)
+		0.75f, 1.0f, 0.75f, // bottom right corner
+		-0.75f, 1.0f, 0.75f, // bottom left corner
+		-0.75f, 1.0f, -0.75f // top left corner
 
 	};
 
@@ -482,48 +571,26 @@ void Meshes::CreateTaperedPolygonMesh(GLmesh& mesh) {
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]); // Activates buffer
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW); // sends vertex or coordinate data to GPU
 
-
-	// Creates a buffer object for the indices
-	GLushort indices[] = {
-		0, 1, 3, // Triangle 1
-		1, 2, 3, // Triangle 2
-		0, 1, 7, // Triangle 3
-		0, 3, 7, // Triangle 4
-		3, 5, 7, // Triangle 5
-		1, 6, 7, // Triangle 6
-		1, 2, 4, // Triangle 7
-		1, 4, 6, // Triangle 8
-		4, 6, 7, // Triangle 9
-		4, 5, 7, // Triangle 10
-		3, 4, 5, // Triangle 11
-		2, 3, 4  // Triangle 12
-	};
-
 	// Float values per type
 	const GLuint floatsPerVertex = 3; // Number of coordinates per vertex
-	const GLuint floatsPerColor = 4; // (r, g, b, a) THIS IS SET TO 0 FOR NOW
+	const GLuint floatsPerColor = 0; // (r, g, b, a) THIS IS SET TO 0 FOR NOW
 	const GLuint floatsPerNormal = 0;
 	const GLuint floatsPerUV = 0;
 
 	// Store the vertex and index count inside the mesh
 	mesh.numVertices = sizeof(verts) / (sizeof(verts[0]) * (floatsPerVertex + floatsPerColor + floatsPerNormal + floatsPerUV));
-	mesh.numIndices = sizeof(indices) / sizeof(indices[0]);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.vbo[1]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	// Strides between vertex coordinates is 3 (xyz rgba)
 	GLint stride = sizeof(float) * (floatsPerVertex + floatsPerColor);
 
-	// Instructs the GPU on how to handle the vbo data
-	// Parameters: attribPointerPosition | coordinates per vertex is 2, ie x and y | data type | deactivate normalization | 0
 	glVertexAttribPointer(0, floatsPerVertex, GL_FLOAT, GL_FALSE, stride, 0);
 	glEnableVertexAttribArray(0);
 
-	// Parameters: attribPointerPosition 1 | floats per color is temporarily 0, ie rgba | data type | deactivate normalization 
-	// | 0 strides till next color | 2 floats til beginning of each color
-	glVertexAttribPointer(1, floatsPerColor, GL_FLOAT, GL_FALSE, stride, (char*)(sizeof(float) * floatsPerVertex));
+	glVertexAttribPointer(1, floatsPerNormal, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * floatsPerVertex));
 	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, floatsPerUV, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * (floatsPerVertex + floatsPerNormal)));
+	glEnableVertexAttribArray(2);
 }
 
 void Meshes::CreatePyramid3Mesh(GLmesh& mesh) {

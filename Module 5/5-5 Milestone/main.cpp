@@ -1,9 +1,9 @@
 /*
  * SNHU CS-330
- * Module 4 Milestone: Interactivity in a 3D Scene
+ * Module 5 Milestone: Texturing Objects in a 3D Scene
  *
  * Alex Baires
- * 2-4-24
+ * 2-11-24
  *
  */
 
@@ -26,7 +26,8 @@ float deltaTime = 0.0f; // time between current time and last frame
 float lastFrame = 0.0f;
 
 // Variables to be used in display() function to prevent allocation during rendering
-GLuint projLoc, viewLoc, modelLoc, objectColorLoc, mvLoc;
+GLuint projLoc, viewLoc, modelLoc, mvLoc;
+GLint objectColorLoc;
 int width, height;
 glm::mat4 pMat, vMat, mMat;
 
@@ -65,6 +66,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// get the uniform variables for the model view matrix
 	mvLoc = glGetUniformLocation(renderingProgram, "mv_matrix");
 	projLoc = glGetUniformLocation(renderingProgram, "proj_matrix"); // projection
+	objectColorLoc = glGetUniformLocation(renderingProgram, "objectColor");
 
 	// View matrix calculated once and used for all objects
 	vMat = camera.GetViewMatrix();
@@ -80,7 +82,9 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 
 	// --------------DRAWS THE PLANE-----------------
+	// The colour and the shape
 	glBindVertexArray(meshes.planeMesh.vao);
+	glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 0.50196078f, 1.0f, 1.0f);
 
 	mvStack.push(mvStack.top()); // Places a copy of the view matrix at top of stack to add model info to
 	// 1. Places plane at origin
@@ -94,11 +98,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
-
-	// Associate VBO with the corresponding vertex attribute in the vertex shader
-	glBindBuffer(GL_ARRAY_BUFFER, meshes.planeMesh.vbo[0]);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes.planeMesh.vbo[1]);
-	glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
 
 	// Draw triangles
 	glDrawElements(GL_TRIANGLES, meshes.planeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
@@ -114,9 +113,12 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	 */
 
 	// --------------DRAWS THE PYRAMID (PARENT)-----------------
+	//The colour and the shape
 	glBindVertexArray(meshes.pyramid4Mesh.vao);
+	glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.50196078f, 1.0f);
 
 	mvStack.push(mvStack.top()); // copies view matrix for manipulation
+
 	// 1. Place Pyramid
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(6.0f, 2.76f, 3.0f)); // Positions the pyramid
 	mvStack.push(mvStack.top()); // Copies view * (PYRAMID) position to top of stack
@@ -130,22 +132,20 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-	// associate VBO with the corresponding vertex attribute in the vertex shader
-	glBindBuffer(GL_ARRAY_BUFFER, meshes.pyramid4Mesh.vbo[0]);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes.pyramid4Mesh.vbo[1]);
-	//glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
-
 	// Draw triangles
 	//glDrawElements(GL_TRIANGLES, meshes.pyramid4Mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 18);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.pyramid4Mesh.numVertices);
 	glBindVertexArray(0);
 
 	mvStack.pop(); // Removes PYRAMID scale
 
 	// --------------DRAWS THE CUBE (CHILD OF PYRAMID)-----------------
+	// The colour and the shape
 	glBindVertexArray(meshes.cubeMesh.vao);
+	glProgramUniform4f(renderingProgram, objectColorLoc, 0.50196078f, 0.0f, 0.50196078f, 1.0f);
 
 	mvStack.push(mvStack.top()); // Makes copy of PYRAMID(position * rotation)
+
 	// 1. Place Cube relative to Pyramid
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0, -2.0, 0.0));
 
@@ -154,14 +154,9 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-	// associate VBO with the corresponding vertex attribute in the vertex shader
-	glBindBuffer(GL_ARRAY_BUFFER, meshes.cubeMesh.vbo[0]);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes.cubeMesh.vbo[1]);
-	glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
-
 	// Draw triangles
-	glDrawElements(GL_TRIANGLES, meshes.cubeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
-
+	//glDrawElements(GL_TRIANGLES, meshes.cubeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.cubeMesh.numVertices);
 	glBindVertexArray(0);
 
 	mvStack.pop();
@@ -184,11 +179,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
-
-	// associate VBO with the corresponding vertex attribute in the vertex shader
-	glBindBuffer(GL_ARRAY_BUFFER, meshes.sphereMesh.vbo[0]);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes.sphereMesh.vbo[1]);
-	glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
+	glProgramUniform4f(renderingProgram, objectColorLoc, 0.50196078f, 0.50196078f, 0.50196078f, 1.0f);
 
 	// Draw triangles
 	glDrawElements(GL_TRIANGLES, meshes.sphereMesh.numIndices, GL_UNSIGNED_INT, (void*)0);
@@ -197,14 +188,17 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindVertexArray(0);
 
 	// --------------DRAWS THE TAPERED POLYGON PEDESTAL (CHILD OF SPHERE)-----------------
+	// The colour and the shape
 	glBindVertexArray(meshes.taperedPolygonMesh.vao);
+	glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 1.0f, 0.0f, 1.0f);
+
 	mvStack.push(mvStack.top()); // Copies Sphere position
 
 	// 1. Place Cube Relative to Sphere
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.17f, 0.0f));
 
 	// 2. Rotate Cube by 45 degrees on y-axis
-	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	// 3. Scale Cube
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 0.3f, 0.75f));
@@ -212,24 +206,21 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-	// associate VBO with the corresponding vertex attribute in the vertex shader
-	glBindBuffer(GL_ARRAY_BUFFER, meshes.taperedPolygonMesh.vbo[0]);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes.taperedPolygonMesh.vbo[1]);
-	glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
-
 	// Draw triangles
-	glDrawElements(GL_TRIANGLES, meshes.taperedPolygonMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
-
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.taperedPolygonMesh.numVertices);
 	glBindVertexArray(0);
 
 	mvStack.pop();
 	mvStack.pop(); // All that remains is the view matrix
 
 	/**************************************************
-	 * START of RENDERING THE BOOK
+	 * RENDERS THE BOOK
 	 **************************************************
 	 */
+	// The colour and the shape
 	glBindVertexArray(meshes.cubeMesh.vao);
+	glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 0.0f, 1.0f, 1.0f);
+
 	mvStack.push(mvStack.top()); // copies view matrix for manipulation
 
 	// 1. Position cube
@@ -244,14 +235,9 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-	// associate VBO with the corresponding vertex attribute in the vertex shader
-	glBindBuffer(GL_ARRAY_BUFFER, meshes.cubeMesh.vbo[0]);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes.cubeMesh.vbo[1]);
-	glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
-
 	// Draws the cube
-	glDrawElements(GL_TRIANGLES, meshes.cubeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
-
+	//glDrawElements(GL_TRIANGLES, meshes.cubeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.cubeMesh.numVertices);
 	glBindVertexArray(0);
 
 	mvStack.pop(); // All that remains is the view matrix
@@ -261,7 +247,10 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	 **************************************************
 	 */
 	 // --------------DRAWS THE CONE (PARENT)-----------------
+	// The colour and the shape
 	glBindVertexArray(meshes.coneMesh.vao);
+	glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.50196078f, 0.0f, 1.0f);
+
 	mvStack.push(mvStack.top()); // copies view matrix for manipulation
 
 	// 1. Position the cone
@@ -276,10 +265,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-	// associate VBO with the corresponding vertex attriibute in the vertex shader
-	glBindBuffer(GL_ARRAY_BUFFER, meshes.coneMesh.vbo[0]);
-	glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
-
 	// Draws the cone
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 36); // bottom
 	glDrawArrays(GL_TRIANGLE_STRIP, 36, 108); // sides
@@ -287,7 +272,10 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindVertexArray(0);
 
 	// --------------DRAWS THE SQUARE BASE OF TRAFFIC CONE (CHILD OF CONE)-----------------
+	// The colour and the shape
 	glBindVertexArray(meshes.cubeMesh.vao);
+	glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 0.0f, 0.0f, 1.0f);
+
 	mvStack.push(mvStack.top()); // Copies Sphere position
 
 	// 1. Place Cube Relative to cone
@@ -302,14 +290,8 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-	// associate VBO with the corresponding vertex attribute in the vertex shader
-	glBindBuffer(GL_ARRAY_BUFFER, meshes.cubeMesh.vbo[0]);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshes.cubeMesh.vbo[1]);
-	glVertexAttribPointer(0, 7, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
-
 	// Draw triangles
-	glDrawElements(GL_TRIANGLES, meshes.cubeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
-
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.cubeMesh.numVertices);
 	glBindVertexArray(0);
 
 	mvStack.pop();
@@ -329,7 +311,7 @@ int main(void) {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// GLFW: Window creation
-	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "4-5 Milestone: Interactivity in a 3D Scene", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "5-5 Milestone: Texturing Objects in a 3D Scene", NULL, NULL);
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
