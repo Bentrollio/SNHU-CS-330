@@ -9,13 +9,18 @@ uniform mat4 mv_matrix;
 uniform mat4 proj_matrix;
 uniform vec4 objectColor;
 
-layout (binding = 0) uniform sampler2D samp;
+layout (binding = 0) uniform sampler2D sampn;
+layout (binding = 1) uniform sampler2D samp1;
 
 void main(void)
 {
-	//FragColor = vertexColor;
-	//FragColor = vec4(objectColor);
-	//FragColor2 = texture(samp, tc);
-	FragColor = texture(samp, tc);
-
+	// Checks the width of the texture at mipmap level 0
+	if (textureSize(samp, 0).x > 1) {
+		// Use the texture
+		FragColor = texture(samp, tc);
+	}
+	else {
+		// Use color from uniform
+		FragColor = objectColor;
+	}
 }

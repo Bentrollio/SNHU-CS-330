@@ -128,6 +128,16 @@ GLuint loadTexture(const char* texImagePath) {
 	GLuint textureID;
 	textureID = SOIL_load_OGL_texture(texImagePath, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_INVERT_Y);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	// if also anisotropic filtering
+	if (glewIsSupported("GL_EXT_texture_filter_anisotropic")) {
+		GLfloat anisoSetting = 0.0f;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisoSetting);
+		glTexParameterf(GL_TEXTURE_2D, GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, anisoSetting);
+	}
 	if (textureID == 0) cout << "could not find texture file" << texImagePath << endl;
 	return textureID;
 }

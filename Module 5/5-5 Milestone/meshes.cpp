@@ -501,69 +501,70 @@ void Meshes::CreateConeMesh(GLmesh& mesh) {
 void Meshes::CreateTaperedPolygonMesh(GLmesh& mesh) {
 
 	// Specifies Normalized Device Coordinates for triangle vertices
-	GLfloat verts[] = // vertexPositions in the book
-	{
-		// Polygons's Rear side left triangle
-		-0.75f, 1.0f, -0.75f, // top left corner
-		-1.0f, -1.0f, -1.0f, // bottom left corner
-		1.0f, -1.0f, -1.0f, // bottom right corner
+GLfloat verts[] = // vertexPositions in the book
+{
+	// Vertex				//Texture
+	// Cube's Rear side left triangle
+	-0.75f, 1.0f, -0.75f,		1.0f, 1.0f,	// top left corner
+	-1.0f, -1.0f, -1.0f,		1.0f, 0.0f,	// bottom left corner
+	1.0f, -1.0f, -1.0f,			0.0f, 0.0f,	// bottom right corner
 
-		// Polygon's Rear side right triangle
-		1.0f, -1.0f, -1.0f, // bottom right corner
-		0.75f, 1.0f, -0.75f, // top right corner
-		0.75f, 1.0f, -0.75f, // top left corner 
+	// Cube's Rear side right triangle
+	1.0f, -1.0f, -1.0f,			0.0f, 0.0f,	// bottom right corner
+	0.75f, 1.0f, -0.75f,		0.0f, 1.0f,	// top right corner
+	-0.75f, 1.0f, -0.75f,		1.0f, 1.0f,// top left corner 
 
-		// Polygon's Right side right triangle
-		1.0f, -1.0f, -1.0f, // bottom right corner
-		1.0f, -1.0f, 1.0f, // bottom left corner
-		0.75f, 1.0f, -0.75f, // top right corner
+	// Cube's Right side right triangle
+	1.0f, -1.0f, -1.0f,			1.0f, 0.0f,	// bottom right corner
+	1.0f, -1.0f, 1.0f,			0.0f, 0.0f,	// bottom left corner
+	0.75f, 1.0f, -0.75f,		1.0f, 1.0f,	// top right corner
 
-		// Polygon's Right side left triangle
-		1.0f, -1.0f, 1.0f, // bottom left corner
-		0.75f, 1.0f, 0.75f, // top left corner
-		0.75f, 1.0f, -0.75f, // top right corner
+	// Cube's Right side left triangle
+	1.0f, -1.0f, 1.0f,			0.0f, 0.0f,	// bottom left corner
+	0.75f, 1.0f, 0.75f,			0.0f, 1.0f,	// top left corner
+	-0.75f, 1.0f, -0.75f,		1.0f, 1.0f,	// top right corner
 
-		// Polygon's Front side right triangle
-		1.0f, -1.0f, 1.0f, // bottom right corner
-		-1.0f, -1.0f, 1.0f, // bottom left corner
-		0.75f, 1.0f, 0.75f, // top right corner
+	// Cube's Front side right triangle
+	1.0f, -1.0f, 1.0f,			1.0f, 0.0f,	// bottom right corner
+	-1.0f, -1.0f, 1.0f,			0.0f, 0.0f,	// bottom left corner
+	0.75f, 1.0f, 0.75f,			1.0f, 1.0f,	// top right corner
 
-		// Polygon's Front side left triangle
-		-1.0f, -1.0f, 1.0f, // bottom left corner
-		-0.75f, 1.0f, 0.75f, // top left corner
-		0.75f, 1.0f, 0.75f, // top right corner
+	// Cube's Front side left triangle
+	-1.0f, -1.0f, 1.0f,			0.0f, 0.0f,	// bottom left corner
+	-0.75f, 1.0f, 0.75f,		0.0f, 1.0f,	// top left corner
+	0.75f, 1.0f, 0.75f,			1.0f, 1.0f,	// top right corner
 
-		// Polygon's Left side right triangle
-		-1.0f, -1.0f, 1.0f, // bottom right corner
-		-1.0f, -1.0f, -1.0f, // bottom left corner
-		-0.75f, 1.0f, 0.75f, // top right corner
+	// Cube's Left side right triangle
+	-1.0f, -1.0f, 1.0f,			1.0f, 0.0f,	// bottom right corner
+	-1.0f, -1.0f, -1.0f,		0.0f, 0.0f,	// bottom left corner
+	-0.75f, 1.0f, 0.75f,		1.0f, 1.0f,	// top right corner
 
-		// Polygon's Left side left triangle
-		-1.0f, -1.0f, -1.0f, // bottom left corner
-		-0.75f, 1.0f, -0.75f, // top left corner
-		-0.75f, 1.0f, 0.75f, // top right corner
+	// Cube's Left side left triangle
+	-1.0f, -1.0f, -1.0f,		0.0f, 0.0f,	// bottom left corner
+	-0.75f, 1.0f, -0.75f,		0.0f, 1.0f,	// top left corner
+	-0.75f, 1.0f, 0.75f,		1.0f, 1.0f,	// top right corner
 
-		// Polygon's Bottom side right triangle (facing viewer)
-		-1.0f, -1.0f, 1.0f, // top left corner
-		1.0f, -1.0f, 1.0f, // top right corner
-		1.0f, -1.0f, -1.0f, // bottom right corner
+	// Cube's Bottom side right triangle (facing viewer)
+	-1.0f, -1.0f, 1.0f,			0.0f, 1.0f,	// top left corner
+	1.0f, -1.0f, 1.0f,			1.0f, 1.0f,	// top right corner
+	1.0f, -1.0f, -1.0f,			1.0f, 0.0f,	// bottom right corner
 
-		// Polygon's Bottom side left triangle (facing viewer)
-		1.0f, -1.0f, -1.0f, // bottom right corner
-		-1.0f, -1.0f, -1.0f, // bottom left corner
-		-1.0f, -1.0f, 1.0f, // top left corner
+	// Cube's Bottom side left triangle (facing viewer)
+	1.0f, -1.0f, -1.0f,			1.0f, 0.0f,	// bottom right corner
+	-1.0f, -1.0f, -1.0f,		0.0f, 0.0f,	// bottom left corner
+	-1.0f, -1.0f, 1.0f,			0.0f, 1.0f,	// top left corner
 
-		// Polygon's Top side right triangle (facing viewer)
-		-0.75f, 1.0f, -0.75f, // top left corner
-		0.75f, 1.0f, -0.75f, // top right corner
-		0.75f, 1.0f, 0.75f, // bottom right corner
+	// Cube's Top side right triangle (facing viewer)
+	-0.75f, 1.0f, -0.75f,		0.0f, 1.0f,	// top left corner
+	0.75f, 1.0f, -0.75f,		1.0f, 1.0f,	// top right corner
+	0.75f, 1.0f, 0.75f,			1.0f, 0.0f,// bottom right corner
 
-		// Polygon's Top side left triangle (facing viewer)
-		0.75f, 1.0f, 0.75f, // bottom right corner
-		-0.75f, 1.0f, 0.75f, // bottom left corner
-		-0.75f, 1.0f, -0.75f // top left corner
+	// Cube's Top side left triangle (facing viewer)
+	0.75f, 1.0f, 0.75f,			1.0f, 0.0f,	// bottom right corner
+	-0.75f, 1.0f, 0.75f,		0.0f, 0.0f,	// bottom left corner
+	-0.75f, 1.0f, -0.75f,		0.0f, 1.0f,	// top left corner
 
-	};
+};
 
 	glGenVertexArrays(numVAOs, &mesh.vao); // can also generate multiple VAOs or buffers at once
 	glBindVertexArray(mesh.vao);
@@ -576,13 +577,13 @@ void Meshes::CreateTaperedPolygonMesh(GLmesh& mesh) {
 	const GLuint floatsPerVertex = 3; // Number of coordinates per vertex
 	const GLuint floatsPerColor = 0; // (r, g, b, a) THIS IS SET TO 0 FOR NOW
 	const GLuint floatsPerNormal = 0;
-	const GLuint floatsPerUV = 0;
+	const GLuint floatsPerUV = 2;
 
 	// Store the vertex and index count inside the mesh
 	mesh.numVertices = sizeof(verts) / (sizeof(verts[0]) * (floatsPerVertex + floatsPerColor + floatsPerNormal + floatsPerUV));
 
 	// Strides between vertex coordinates is 3 (xyz rgba)
-	GLint stride = sizeof(float) * (floatsPerVertex + floatsPerColor);
+	GLint stride = sizeof(float) * (floatsPerVertex + floatsPerColor + floatsPerNormal + floatsPerUV);
 
 	glVertexAttribPointer(0, floatsPerVertex, GL_FLOAT, GL_FALSE, stride, 0);
 	glEnableVertexAttribArray(0);
