@@ -26,10 +26,12 @@ float deltaTime = 0.0f; // time between current time and last frame
 float lastFrame = 0.0f;
 
 // Variables to be used in display() function to prevent allocation during rendering
-GLuint projLoc, viewLoc, modelLoc, mvLoc;
-GLint objectColorLoc;
+GLuint projLoc, viewLoc, modelLoc, mvLoc, objectColorLoc;
 int width, height;
 glm::mat4 pMat, vMat, mMat;
+
+// Texture variables;
+GLuint texture;
 
 // Hierarchal Matrix Stack for Parent-Child Objects
 stack<glm::mat4> mvStack;
@@ -48,6 +50,7 @@ void init(GLFWwindow* window) {
 
 	//createMesh(mesh); // Creates VAO and VBO for pyramid mesh
 	meshes.CreateMeshes();
+	texture = loadTexture("Marble019_1K-JPG_Color.jpg");
 }
 
 // Draws to GLFW display window
@@ -59,7 +62,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// adjust OpenGL settings
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //ENABLES WIREFRAME
 
 	glUseProgram(renderingProgram); // loads compiled shaders into openGL pipeline
 
@@ -81,29 +83,29 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy projection matrix to the uniform variable
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 
-	// --------------DRAWS THE PLANE-----------------
-	// The colour and the shape
-	glBindVertexArray(meshes.planeMesh.vao);
-	glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 0.50196078f, 1.0f, 1.0f);
+	////// --------------DRAWS THE PLANE-----------------
+	////// The colour and the shape
+	//glBindVertexArray(meshes.planeMesh.vao);
+	//glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 0.50196078f, 1.0f, 1.0f);
 
-	mvStack.push(mvStack.top()); // Places a copy of the view matrix at top of stack to add model info to
-	// 1. Places plane at origin
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)); // Positions the plane
+	//mvStack.push(mvStack.top()); // Places a copy of the view matrix at top of stack to add model info to
+	//// 1. Places plane at origin
+	//mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)); // Positions the plane
 
-	// 2. Rotates Plane
-	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	//// 2. Rotates Plane
+	//mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-	// 3. Scales Plane
-	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 1.0f, 10.0f));
+	//// 3. Scales Plane
+	//mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 1.0f, 10.0f));
 
-	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	//// Copy model matrix to the uniform variables for the shaders
+	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-	// Draw triangles
-	glDrawElements(GL_TRIANGLES, meshes.planeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
-	glBindVertexArray(0);
+	//// Draw triangles
+	//glDrawElements(GL_TRIANGLES, meshes.planeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
+	//glBindVertexArray(0);
 
-	mvStack.pop(); // Removes Plane transforms from stack
+	//mvStack.pop(); // Removes Plane transforms from stack
 
 	/**************************************************
 	 * START of RENDERING CRYSTAL OBJECT
@@ -112,32 +114,36 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	 **************************************************
 	 */
 
-	// --------------DRAWS THE PYRAMID (PARENT)-----------------
-	//The colour and the shape
-	glBindVertexArray(meshes.pyramid4Mesh.vao);
-	glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.50196078f, 1.0f);
+	//// --------------DRAWS THE PYRAMID (PARENT)-----------------
+	////The colour and the shape
+	//glBindVertexArray(meshes.pyramid4Mesh.vao);
+	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.50196078f, 1.0f);
 
-	mvStack.push(mvStack.top()); // copies view matrix for manipulation
+	//mvStack.push(mvStack.top()); // copies view matrix for manipulation
 
-	// 1. Place Pyramid
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(6.0f, 2.76f, 3.0f)); // Positions the pyramid
-	mvStack.push(mvStack.top()); // Copies view * (PYRAMID) position to top of stack
+	//// 1. Place Pyramid
+	//mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(6.0f, 2.76f, 3.0f)); // Positions the pyramid
+	//mvStack.push(mvStack.top()); // Copies view * (PYRAMID) position to top of stack
 
-	// 2. Rotates Pyramid 85 degrees along the y-axis
-	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(85.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	mvStack.push(mvStack.top()); // Copies view * PYRAMID(position * rotation) to top
+	//// 2. Rotates Pyramid 85 degrees along the y-axis
+	//mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(85.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	//mvStack.push(mvStack.top()); // Copies view * PYRAMID(position * rotation) to top
 
-	// 3. Scales Pyramid
-	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 1.25f, 0.5f));
+	//// 3. Scales Pyramid
+	//mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 1.25f, 0.5f));
 
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-	// Draw triangles
-	//glDrawElements(GL_TRIANGLES, meshes.pyramid4Mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.pyramid4Mesh.numVertices);
-	glBindVertexArray(0);
+	//// Draw triangles
+	////glDrawElements(GL_TRIANGLES, meshes.pyramid4Mesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
 
-	mvStack.pop(); // Removes PYRAMID scale
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, texture);
+
+	//glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.pyramid4Mesh.numVertices);
+	//glBindVertexArray(0);
+
+	//mvStack.pop(); // Removes PYRAMID scale
 
 	// --------------DRAWS THE CUBE (CHILD OF PYRAMID)-----------------
 	// The colour and the shape
@@ -156,146 +162,150 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// Draw triangles
 	//glDrawElements(GL_TRIANGLES, meshes.cubeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.cubeMesh.numVertices);
 	glBindVertexArray(0);
 
-	mvStack.pop();
-	mvStack.pop(); 
-	mvStack.pop(); // All that remains in stack is view matrix
+	//mvStack.pop();
+	//mvStack.pop(); 
+	//mvStack.pop(); // All that remains in stack is view matrix
 
 	// **** END of RENDERING CRYSTAL OBJECT ****
 
-	/**************************************************
-	 * START of RENDERING SOLAR SYSTEM GLOBE
-	 **************************************************
-	 */
+	///**************************************************
+	// * START of RENDERING SOLAR SYSTEM GLOBE
+	// **************************************************
+	// */
 
-	 // --------------DRAWS THE SPHERE (PARENT)-----------------
-	glBindVertexArray(meshes.sphereMesh.vao);
+	// // --------------DRAWS THE SPHERE (PARENT)-----------------
+	//glBindVertexArray(meshes.sphereMesh.vao);
 
-	mvStack.push(mvStack.top()); // copies the view matrix to the top for manipulation
-	// 1. Position Sphere
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.5f, 4.2f));
+	//mvStack.push(mvStack.top()); // copies the view matrix to the top for manipulation
+	//// 1. Position Sphere
+	//mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.5f, 4.2f));
 
-	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
-	glProgramUniform4f(renderingProgram, objectColorLoc, 0.50196078f, 0.50196078f, 0.50196078f, 1.0f);
+	//// Copy model matrix to the uniform variables for the shaders
+	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	//glProgramUniform4f(renderingProgram, objectColorLoc, 0.50196078f, 0.50196078f, 0.50196078f, 1.0f);
 
-	// Draw triangles
-	glDrawElements(GL_TRIANGLES, meshes.sphereMesh.numIndices, GL_UNSIGNED_INT, (void*)0);
+	//// Draw triangles
+	//glDrawElements(GL_TRIANGLES, meshes.sphereMesh.numIndices, GL_UNSIGNED_INT, (void*)0);
 
-	// Deactivate the VAO
-	glBindVertexArray(0);
+	//// Deactivate the VAO
+	//glBindVertexArray(0);
 
-	// --------------DRAWS THE TAPERED POLYGON PEDESTAL (CHILD OF SPHERE)-----------------
-	// The colour and the shape
-	glBindVertexArray(meshes.taperedPolygonMesh.vao);
-	glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 1.0f, 0.0f, 1.0f);
+	//// --------------DRAWS THE TAPERED POLYGON PEDESTAL (CHILD OF SPHERE)-----------------
+	//// The colour and the shape
+	//glBindVertexArray(meshes.taperedPolygonMesh.vao);
+	//glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 1.0f, 0.0f, 1.0f);
 
-	mvStack.push(mvStack.top()); // Copies Sphere position
+	//mvStack.push(mvStack.top()); // Copies Sphere position
 
-	// 1. Place Cube Relative to Sphere
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.17f, 0.0f));
+	//// 1. Place Cube Relative to Sphere
+	//mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.17f, 0.0f));
 
-	// 2. Rotate Cube by 45 degrees on y-axis
-	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	//// 2. Rotate Cube by 45 degrees on y-axis
+	//mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-	// 3. Scale Cube
-	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 0.3f, 0.75f));
+	//// 3. Scale Cube
+	//mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 0.3f, 0.75f));
 
-	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	//// Copy model matrix to the uniform variables for the shaders
+	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-	// Draw triangles
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.taperedPolygonMesh.numVertices);
-	glBindVertexArray(0);
+	//// Draw triangles
+	//glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.taperedPolygonMesh.numVertices);
+	//glBindVertexArray(0);
 
-	mvStack.pop();
-	mvStack.pop(); // All that remains is the view matrix
+	//mvStack.pop();
+	//mvStack.pop(); // All that remains is the view matrix
 
-	/**************************************************
-	 * RENDERS THE BOOK
-	 **************************************************
-	 */
-	// The colour and the shape
-	glBindVertexArray(meshes.cubeMesh.vao);
-	glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 0.0f, 1.0f, 1.0f);
+	///**************************************************
+	// * RENDERS THE BOOK
+	// **************************************************
+	// */
+	//// The colour and the shape
+	//glBindVertexArray(meshes.cubeMesh.vao);
+	//glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 0.0f, 1.0f, 1.0f);
 
-	mvStack.push(mvStack.top()); // copies view matrix for manipulation
+	//mvStack.push(mvStack.top()); // copies view matrix for manipulation
 
-	// 1. Position cube
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 3.0f, -3.0f));
+	//// 1. Position cube
+	//mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 3.0f, -3.0f));
 
-	// 2. Rotate the cube slightly clockwise
-	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(-10.0f), glm::vec3(0.0, 1.0f, 0.0f));
+	//// 2. Rotate the cube slightly clockwise
+	//mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(-10.0f), glm::vec3(0.0, 1.0f, 0.0f));
 
-	// 3. Scale the cube to be booklike, double in width, taller in height, smaller depth
-	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.5f, 3.0f, 0.50f));
+	//// 3. Scale the cube to be booklike, double in width, taller in height, smaller depth
+	//mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.5f, 3.0f, 0.50f));
 
-	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	//// Copy model matrix to the uniform variables for the shaders
+	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-	// Draws the cube
-	//glDrawElements(GL_TRIANGLES, meshes.cubeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.cubeMesh.numVertices);
-	glBindVertexArray(0);
+	//// Draws the cube
+	////glDrawElements(GL_TRIANGLES, meshes.cubeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
+	//glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.cubeMesh.numVertices);
+	//glBindVertexArray(0);
 
-	mvStack.pop(); // All that remains is the view matrix
+	//mvStack.pop(); // All that remains is the view matrix
 
-	/**************************************************
-	 * DRAWS THE MINI TRAFFIC CONE
-	 **************************************************
-	 */
-	 // --------------DRAWS THE CONE (PARENT)-----------------
-	// The colour and the shape
-	glBindVertexArray(meshes.coneMesh.vao);
-	glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.50196078f, 0.0f, 1.0f);
+	///**************************************************
+	// * DRAWS THE MINI TRAFFIC CONE
+	// **************************************************
+	// */
+	// // --------------DRAWS THE CONE (PARENT)-----------------
+	//// The colour and the shape
+	//glBindVertexArray(meshes.coneMesh.vao);
+	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.50196078f, 0.0f, 1.0f);
 
-	mvStack.push(mvStack.top()); // copies view matrix for manipulation
+	//mvStack.push(mvStack.top()); // copies view matrix for manipulation
 
-	// 1. Position the cone
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 0.11f, 8.0f));
+	//// 1. Position the cone
+	//mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 0.11f, 8.0f));
 
-	// 2. Rotate the cone
-	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	//// 2. Rotate the cone
+	//mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-	// 3. Scale the cone
-	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 2.0f, 1.0f));
+	//// 3. Scale the cone
+	//mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 2.0f, 1.0f));
 
-	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	//// Copy model matrix to the uniform variables for the shaders
+	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-	// Draws the cone
-	glDrawArrays(GL_TRIANGLE_FAN, 0, 36); // bottom
-	glDrawArrays(GL_TRIANGLE_STRIP, 36, 108); // sides
+	//// Draws the cone
+	//glDrawArrays(GL_TRIANGLE_FAN, 0, 36); // bottom
+	//glDrawArrays(GL_TRIANGLE_STRIP, 36, 108); // sides
 
-	glBindVertexArray(0);
+	//glBindVertexArray(0);
 
-	// --------------DRAWS THE SQUARE BASE OF TRAFFIC CONE (CHILD OF CONE)-----------------
-	// The colour and the shape
-	glBindVertexArray(meshes.cubeMesh.vao);
-	glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 0.0f, 0.0f, 1.0f);
+	//// --------------DRAWS THE SQUARE BASE OF TRAFFIC CONE (CHILD OF CONE)-----------------
+	//// The colour and the shape
+	//glBindVertexArray(meshes.cubeMesh.vao);
+	//glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 0.0f, 0.0f, 1.0f);
 
-	mvStack.push(mvStack.top()); // Copies Sphere position
+	//mvStack.push(mvStack.top()); // Copies Sphere position
 
-	// 1. Place Cube Relative to cone
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	//// 1. Place Cube Relative to cone
+	//mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
-	// 2. Rotate Cube by 45 degrees on y-axis
-	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	//// 2. Rotate Cube by 45 degrees on y-axis
+	//mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-	// 3. Scale Cube to Cone
-	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.1f, 0.05f, 1.0f));
+	//// 3. Scale Cube to Cone
+	//mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.1f, 0.05f, 1.0f));
 
-	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	//// Copy model matrix to the uniform variables for the shaders
+	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-	// Draw triangles
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.cubeMesh.numVertices);
-	glBindVertexArray(0);
+	//// Draw triangles
+	//glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.cubeMesh.numVertices);
+	//glBindVertexArray(0);
 
-	mvStack.pop();
-	mvStack.pop(); // All that remains is the view matrix
+	//mvStack.pop();
+	//mvStack.pop(); // All that remains is the view matrix
 }
 
 int main(void) {
@@ -323,6 +333,8 @@ int main(void) {
 	glfwSwapInterval(1);
 
 	init(window);
+
+	glUniform1i(glGetUniformLocation(renderingProgram, "samp"), 0);
 
 	// Rendering loop
 	while (!glfwWindowShouldClose(window)) {
