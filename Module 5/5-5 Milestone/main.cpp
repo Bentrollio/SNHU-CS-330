@@ -31,7 +31,7 @@ int width, height;
 glm::mat4 pMat, vMat, mMat;
 
 // Texture variables;
-GLuint marbleTexture, brickTexture, fabricTexture;
+GLuint seleniteBaseTexture, seleniteTipTexture, fabricTexture, grungeTexture;
 
 // Hierarchal Matrix Stack for Parent-Child Objects
 stack<glm::mat4> mvStack;
@@ -52,9 +52,11 @@ void init(GLFWwindow* window) {
 
 	meshes.CreateMeshes();
 
-	marbleTexture = loadTexture("Marble019_2K-JPG_Color.jpg");
-	brickTexture = loadTexture("brick1.jpg");
-	fabricTexture = loadTexture("Fabric074_2K-PNG_Color.png");
+	seleniteBaseTexture = loadTexture("Marble019_2K-PNG_Color.png");
+	seleniteTipTexture = loadTexture("Marble005_2K-PNG_Color.png");
+	fabricTexture = loadTexture("Fabric017_2K-PNG_Color.png");
+	grungeTexture = loadTexture("texture_overlays_988_1_S.png");
+
 
 	// GL TEX PARAMETERS HERE
 
@@ -76,6 +78,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvLoc = glGetUniformLocation(renderingProgram, "mv_matrix");
 	projLoc = glGetUniformLocation(renderingProgram, "proj_matrix"); // projection
 	objectColorLoc = glGetUniformLocation(renderingProgram, "objectColor");
+
 
 	// View matrix calculated once and used for all objects
 	vMat = camera.GetViewMatrix();
@@ -109,6 +112,10 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, fabricTexture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, grungeTexture);
+
 	// Draw triangles
 	glDrawElements(GL_TRIANGLES, meshes.planeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
 	glBindVertexArray(0);
@@ -144,13 +151,15 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
+	// Activate texture located in 0 (samp in frag shader)
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, marbleTexture);
+	glBindTexture(GL_TEXTURE_2D, seleniteTipTexture);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.pyramid4Mesh.numVertices);
+	glDisable(GL_BLEND);
 	glBindVertexArray(0);
 
-	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_2D, 0); // unbind the texture
 
 	mvStack.pop(); // Removes PYRAMID scale
 
@@ -169,8 +178,14 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, seleniteBaseTexture);
+
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
 	glBindVertexArray(0);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	mvStack.pop();
 	mvStack.pop(); 
