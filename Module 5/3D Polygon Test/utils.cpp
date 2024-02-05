@@ -129,6 +129,18 @@ GLuint loadTexture(const char* texImagePath) {
 	GLuint textureID;
 	textureID = SOIL_load_OGL_texture(texImagePath,
 		SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	if (textureID == 0) cout << "could not find texture file" << texImagePath << endl;
+	return textureID;
+}
+
+// SOIL2 texture functions
+GLuint loadTextureWithAlpha(const char* texImagePath) {
+	GLuint textureID;
+	textureID = SOIL_load_OGL_texture(texImagePath,
+		SOIL_LOAD_LA, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
 	if (textureID == 0) cout << "could not find texture file" << texImagePath << endl;
 	return textureID;
 }

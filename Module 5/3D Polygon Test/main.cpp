@@ -29,7 +29,9 @@ GLuint projLoc, viewLoc, modelLoc;
 int width, height;
 glm::mat4 pMat, vMat, mMat, scale, rotation, translation;
 
-GLuint brickTexture;
+bool isGrunge = true;  // gIsHatOn
+
+GLuint brickTexture, seleniteTipTexture, grungeTexture;
 
 // Places application-specific initialization tasks
 void init(GLFWwindow* window) {
@@ -51,7 +53,9 @@ void init(GLFWwindow* window) {
 	pyrLocZ = 0.0f; 
 
 	createMesh(mesh); // Creates VAO and VBO for pyramid mesh
-	brickTexture = loadTexture("brick1.jpg");
+	seleniteTipTexture = loadTexture("Marble005_2K-PNG_Color.png");
+	grungeTexture = loadTexture("texture_overlays_988_1_Modified.png");
+	brickTexture = loadTexture("image.png");
 }
 
 // Draws to GLFW display window
@@ -80,7 +84,8 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	activateOrtho(window, pMat);
 	// Copy projection matrix to the uniform variable
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
-
+	GLuint multipleTexturesLoc = glGetUniformLocation(renderingProgram, "multipleTextures");
+	glUniform1i(multipleTexturesLoc, isGrunge);
 
 	// --------------DRAWS THE PYRAMID-----------------
 	glBindVertexArray(mesh.vao[0]);
@@ -99,15 +104,21 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// associate VBO with the corresponding vertex attribute in the vertex shader
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]);
-
+	
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.vbo[1]);
 	glVertexAttribPointer(0, 5, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
 	//bind textures on corresponding texture units
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, brickTexture);
-
+	glBindTexture(GL_TEXTURE_2D, seleniteTipTexture);
+	/*glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);*/
+	glActiveTexture(GL_TEXTURE1);
+	
+	glBindTexture(GL_TEXTURE_2D, grungeTexture);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
+	//glDisable(GL_BLEND);
 }
 
 int main(void) {

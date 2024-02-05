@@ -58,6 +58,9 @@ GLuint createShaderProgram(const char* vp, const char* gp, const char* fp);
 // Texture functions
 GLuint loadTexture(const char* texImagePath);
 
+GLuint loadTextureWithAlpha(const char* texImagePath);
+
+
 void processInput(GLFWwindow* window, Camera &camera, float &deltaTime);
 
 void activateOrtho(GLFWwindow* window, glm::mat4& pMat);
