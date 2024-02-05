@@ -1,0 +1,18 @@
+﻿  main.cpp
+  meshes.cpp
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone Self Contained\meshes.cpp(320,61): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone Self Contained\meshes.cpp(321,61): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone Self Contained\meshes.cpp(323,61): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone Self Contained\meshes.cpp(324,61): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone Self Contained\meshes.cpp(326,60): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone Self Contained\meshes.cpp(327,60): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone Self Contained\meshes.cpp(656,12): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone Self Contained\meshes.cpp(664,13): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone Self Contained\meshes.cpp(785,4): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone Self Contained\meshes.cpp(894,13): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone Self Contained\meshes.cpp(902,14): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone Self Contained\meshes.cpp(1444,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 3\3-5-Milestone Self Contained\meshes.cpp(1445,22): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  utils.cpp
+  Generating Code...
+LINK : fatal error LNK1104: cannot open file 'glfw3.lib'

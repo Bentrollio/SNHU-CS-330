@@ -146,6 +146,7 @@
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dependencies.h" />
     <ClInclude Include="meshes.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
