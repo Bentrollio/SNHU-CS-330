@@ -1,0 +1,16 @@
+﻿  GLmesh.cpp
+  main.cpp
+C:\Github Repo\SNHU-CS-330\Module 4\4-3 Basic Camera Movement\main.cpp(141,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  utils.cpp
+C:\Github Repo\SNHU-CS-330\Module 4\4-3 Basic Camera Movement\utils.cpp(166,12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 4\4-3 Basic Camera Movement\utils.cpp(167,12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 4\4-3 Basic Camera Movement\utils.cpp(171,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 4\4-3 Basic Camera Movement\utils.cpp(172,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 4\4-3 Basic Camera Movement\utils.cpp(174,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 4\4-3 Basic Camera Movement\utils.cpp(175,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 4\4-3 Basic Camera Movement\utils.cpp(182,28): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 259 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  4-3 Basic Camera Movement.vcxproj -> C:\Github Repo\SNHU-CS-330\Module 4\4-3 Basic Camera Movement\x64\Release\4-3 Basic Camera Movement.exe
