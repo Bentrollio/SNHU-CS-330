@@ -55,7 +55,7 @@ void init(GLFWwindow* window) {
 	seleniteBaseTexture = loadTexture("Marble019_2K-PNG_Color.png");
 	seleniteTipTexture = loadTexture("Marble005_2K-PNG_Color.png");
 	fabricTexture = loadTexture("Fabric017_2K-PNG_Color.png");
-	grungeTexture = loadTexture("texture_overlays_988_1_S.png");
+	grungeTexture = loadTexture("texture_overlays_988_1_Modified.png");
 
 
 	// GL TEX PARAMETERS HERE
@@ -110,17 +110,16 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, fabricTexture);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, grungeTexture);
 
 	// Draw triangles
 	glDrawElements(GL_TRIANGLES, meshes.planeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
 	glBindVertexArray(0);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+
 
 	mvStack.pop(); // Removes Plane transforms from stack
 
@@ -155,11 +154,12 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, seleniteTipTexture);
 
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.pyramid4Mesh.numVertices);
-	glDisable(GL_BLEND);
-	glBindVertexArray(0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, grungeTexture);
 
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.pyramid4Mesh.numVertices);
 	glBindTexture(GL_TEXTURE_2D, 0); // unbind the texture
+	glBindVertexArray(0);
 
 	mvStack.pop(); // Removes PYRAMID scale
 

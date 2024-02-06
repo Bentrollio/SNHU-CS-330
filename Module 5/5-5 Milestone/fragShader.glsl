@@ -13,18 +13,21 @@ layout (binding = 0) uniform sampler2D samp;
 layout (binding = 1) uniform sampler2D samp1;
 
 void main(void)
-{
-	// Checks the width of the texture at mipmap level 0
-	if (textureSize(samp, 0).x > 1) {
-		// Use the texture
-		FragColor = texture(samp, tc);
+{	// Sample textures
+	vec4 mainTexture = texture(samp, tc);
+	vec4 secondTexture = texture(samp1, tc);
+
+	// Check if the width of the texture at mipmap level 0 is greater than 1 and
+	// the there is an alpha level for the second texture
+	if ((textureSize(samp, 0).x > 1) && (secondTexture.a > 0.0)) {
+		FragColor = mix(mainTexture, secondTexture, 0.25); // blend textures
 	}
-	else if (textureSize(samp1, 0).x > 1) {
-		// Use a second texture
-		FragColor = mix(texture(samp, tc), texture(samp1, tc), 0.2);
+	//
+	else if (textureSize(samp, 0).x > 1) {
+		FragColor = mainTexture;
 	}
+	// No valid textures, just uses the object color.
 	else {
-		// Use color from uniform
 		FragColor = objectColor;
 	}
 }

@@ -1,3 +1,26 @@
 ﻿  main.cpp
 C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\main.cpp(358,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  meshes.cpp
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\meshes.cpp(358,61): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\meshes.cpp(359,61): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\meshes.cpp(361,61): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\meshes.cpp(362,61): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\meshes.cpp(364,60): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\meshes.cpp(365,60): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\meshes.cpp(742,12): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\meshes.cpp(750,13): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\meshes.cpp(871,4): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\meshes.cpp(980,13): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\meshes.cpp(988,14): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\meshes.cpp(1530,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\meshes.cpp(1531,22): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  utils.cpp
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\utils.cpp(199,12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\utils.cpp(200,12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\utils.cpp(204,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\utils.cpp(205,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\utils.cpp(207,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\utils.cpp(208,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\utils.cpp(215,28): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
   5-5 Milestone.vcxproj -> C:\Github Repo\SNHU-CS-330\Module 5\5-5 Milestone\x64\Debug\5-5 Milestone.exe
