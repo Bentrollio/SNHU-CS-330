@@ -1,6 +1,5 @@
-﻿  GLmesh.cpp
-  main.cpp
-C:\Github Repo\SNHU-CS-330\Module 6\6-3 Lighting a Pyramid\main.cpp(143,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+﻿  main.cpp
+C:\Github Repo\SNHU-CS-330\Module 6\6-3 Lighting a Pyramid\main.cpp(146,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   utils.cpp
 C:\Github Repo\SNHU-CS-330\Module 6\6-3 Lighting a Pyramid\utils.cpp(188,12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 C:\Github Repo\SNHU-CS-330\Module 6\6-3 Lighting a Pyramid\utils.cpp(189,12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data

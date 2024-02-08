@@ -73,6 +73,22 @@ void glfwMousePositionCallbackWrapper(GLFWwindow* window, double xPos, double yP
 void glfwMouseScrollCallbackWrapper(GLFWwindow* window, double xOffset, double yOffset);
 void glfwMouseButtonCallbackWrapper(GLFWwindow* window, int button, int action, int mods);
 
+// Materials
+float* goldAmbient();
+float* goldDiffuse();
+float* goldSpecular();
+float goldShininess();
+
+float* silverAmbient();
+float* silverDiffuse();
+float* silverSpecular();
+float silverShininess();
+
+float* bronzeAmbient();
+float* bronzeDiffuse();
+float* bronzeSpecular();
+float bronzeShininess();
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 #endif /* UTILS_H */

@@ -1,6 +1,6 @@
 /*
  * SNHU CS-330
- * Module 5 Assignment - Texturing a Pyramid
+ * Module 6 Assignment - Lighting a Pyramid
  *
  * Alex Baires
  * 2-11-24
@@ -25,7 +25,7 @@ float gDeltatime = 0.0f; // Time between current time and last frame
 float gLastFrame = 0.0f;
 
 // Variables to be used in display() function to prevent allocation during rendering
-GLuint projLoc, viewLoc, modelLoc;
+GLuint projLoc, viewLoc, modelLoc, objectColorLoc;
 int width, height;
 glm::mat4 pMat, vMat, mMat, scale, rotation, translation;
 
@@ -70,6 +70,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	projLoc = glGetUniformLocation(renderingProgram, "proj_matrix"); // projection
 	modelLoc = glGetUniformLocation(renderingProgram, "model_matrix"); // model
 	viewLoc = glGetUniformLocation(renderingProgram, "view_matrix"); // view
+	objectColorLoc = glGetUniformLocation(renderingProgram, "objectColor");
 
 	// *** build view matrix, model matrix, and model-view matrix.
 	// View Matrix calculated once
@@ -84,6 +85,8 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// --------------DRAWS THE PYRAMID-----------------
 	glBindVertexArray(mesh.vao[0]);
+	glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.50196078f, 1.0f);
+
 	// 1. Scale object by 1 (I built my mesh with different vertices than the tutorial)
 	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.5f));
 	// 2. Rotate shape by 25 degrees along y axis (to match screenshot of the rubric. Used glm::radians as an argument to convert 25 degrees to radians
@@ -100,13 +103,13 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// associate VBO with the corresponding vertex attribute in the vertex shader
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]);
 
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.vbo[1]);
-	glVertexAttribPointer(0, 5, GL_FLOAT, GL_FALSE, 0, 0); // Specifies format of vertex info in VAO
-	//bind textures on corresponding texture units
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, brickTexture);
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, brickTexture);
+	}
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 18);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 }
 
@@ -123,7 +126,7 @@ int main(void) {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// GLFW: Window creation
-	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "5-3 Assignment - Texturing a Pyramid", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "6-3 Assignment - Lighting a Pyramid", NULL, NULL);
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 

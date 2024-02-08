@@ -252,6 +252,25 @@ void glfwMouseScrollCallbackWrapper(GLFWwindow* window, double xOffset, double y
 void glfwMouseButtonCallbackWrapper(GLFWwindow* window, int button, int action, int mods) {
 	mouseButtonCallback(window, button, action, mods, camera);
 }
+
+// Gold material
+float* goldAmbient() { static float a[4] = { 0.2473f, 0.1995f, 0.0745f, 1 }; return (float*)a; }
+float* goldDiffuse() { static float a[4] = { 0.7516f, 0.6065f, 0.2265f, 1 }; return (float*)a; }
+float* goldSpecular() { static float a[4] = { 0.6283f, 0.5558f, 0.3661f, 1 }; return (float*)a; }
+float goldShininess() { return 51.2f; }
+
+// Silver Material
+float* silverAmbient() { static float a[4] = { 0.1923f, 0.1923f, 0.1923f, 1 }; return (float*)a; }
+float* silverDiffuse() { static float a[4] = { 0.5075f, 0.5075f, 0.5075f, 1 }; return (float*)a; }
+float* silverSpecular() { static float a[4] = { 0.5083f, 0.5083f, 0.5083f, 1 }; return (float*)a; }
+float silverShininess() { return 51.2f; }
+
+// Bronze Material
+float* bronzeAmbient() { static float a[4] = { 0.2125f, 0.1275f, 0.0540f, 1 }; return (float*)a; }
+float* bronzeDiffuse() { static float a[4] = { 0.7140f, 0.4284f, 0.1814f, 1 }; return (float*)a; }
+float* bronzeSpecular() { static float a[4] = { 0.3935f, 0.2719f, 0.1667f, 1 }; return (float*)a; }
+float bronzeShininess() { return 25.6f; }
+
 // glfw - function executes when window is resized
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
