@@ -31,7 +31,8 @@ int width, height;
 glm::mat4 pMat, vMat, mMat;
 
 // Texture variables;
-GLuint seleniteBaseTexture, seleniteTipTexture, fabricTexture, grungeTexture;
+GLuint seleniteBaseTexture, seleniteTipTexture, fabricTexture, fabricRoughnessTexture, grungeTexture, plasticTexture, walmartLogoTexture,
+blackRubberBaseTexture;
 
 // Hierarchal Matrix Stack for Parent-Child Objects
 stack<glm::mat4> mvStack;
@@ -54,12 +55,11 @@ void init(GLFWwindow* window) {
 
 	seleniteBaseTexture = loadTexture("Marble019_2K-PNG_Color.png");
 	seleniteTipTexture = loadTexture("Marble005_2K-PNG_Color.png");
-	fabricTexture = loadTexture("Fabric017_2K-PNG_Color.png");
+	fabricTexture = loadTexture("Fabric046_4K-PNG_Color_Advanced.png");
 	grungeTexture = loadTexture("texture_overlays_988_1_Modified.png");
-
-
-	// GL TEX PARAMETERS HERE
-
+	plasticTexture = loadTexture("Plastic014B_2K-PNG_Color.png");
+	walmartLogoTexture = loadLogoTexture("walmartlogo.png");
+	blackRubberBaseTexture = loadTexture("Rubber004_2K-PNG_Color.png");
 }
 
 // Draws to GLFW display window
@@ -113,6 +113,9 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, fabricTexture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, fabricRoughnessTexture);
 
 	// Draw triangles
 	glDrawElements(GL_TRIANGLES, meshes.planeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
@@ -207,7 +210,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
-	glProgramUniform4f(renderingProgram, objectColorLoc, 0.50196078f, 0.50196078f, 0.50196078f, 1.0f);
+	glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.50196078f, 1.0f);
 
 	// Draw triangles
 	glDrawElements(GL_TRIANGLES, meshes.sphereMesh.numIndices, GL_UNSIGNED_INT, (void*)0);
@@ -285,7 +288,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 0.11f, 8.0f));
 
 	// 2. Rotate the cone
-	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	// 3. Scale the cone
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 2.0f, 1.0f));
@@ -293,10 +296,17 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, plasticTexture);
+
 	// Draws the cone
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 36); // bottom
+	
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, walmartLogoTexture);
 	glDrawArrays(GL_TRIANGLE_STRIP, 36, 108); // sides
 
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 
 	// --------------DRAWS THE SQUARE BASE OF TRAFFIC CONE (CHILD OF CONE)-----------------
@@ -318,8 +328,12 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, blackRubberBaseTexture);
+
 	// Draw triangles
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 
 	mvStack.pop();
