@@ -25,11 +25,62 @@ float gDeltatime = 0.0f; // Time between current time and last frame
 float gLastFrame = 0.0f;
 
 // Variables to be used in display() function to prevent allocation during rendering
-GLuint projLoc, viewLoc, modelLoc, objectColorLoc;
+GLuint projLoc, mvLoc, objectColorLoc, nLoc;
 int width, height;
-glm::mat4 pMat, vMat, mMat, scale, rotation, translation;
+glm::mat4 pMat, vMat, mMat, scale, rotation, translation, mvMat, invTrMat;
 
+// Textures
 GLuint brickTexture;
+
+// Lighting variables
+GLuint globalAmbLoc, ambLoc, diffLoc, specLoc, posLoc, mAmbLoc, mDiffLoc, mSpecLoc, mShiLoc;
+glm::vec3 currentLightPos, lightPosV; // light position as Vector3f, in both model and view space
+float lightPos[3]; // light position as float array
+
+// initial light location
+glm::vec3 initialLightLoc = glm::vec3(5.0f, 2.0f, 2.0f);
+
+// white light properties
+float globalAmbient[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
+float lightAmbient[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+float lightDiffuse[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+float lightSpecular[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+// gold material properties
+float* matAmb = goldAmbient();
+float* matDif = goldDiffuse();
+float* matSpe = goldSpecular();
+float matShi = goldShininess();
+
+void installLights(glm::mat4 vMatrix) {
+	// Convert light's position to view space and save it in a float array
+	lightPosV = glm::vec3(vMatrix * glm::vec4(currentLightPos, 1.0));
+	lightPos[0] = lightPosV.x;
+	lightPos[1] = lightPosV.y;
+	lightPos[2] = lightPosV.z;
+
+	// Get the locations of the light and material fields in the shader
+	globalAmbLoc = glGetUniformLocation(renderingProgram, "globalAmbient");
+	ambLoc = glGetUniformLocation(renderingProgram, "light.ambient");
+	diffLoc = glGetUniformLocation(renderingProgram, "light.diffuse");
+	specLoc = glGetUniformLocation(renderingProgram, "light.specular");
+	posLoc = glGetUniformLocation(renderingProgram, "light.position");
+	mAmbLoc = glGetUniformLocation(renderingProgram, "material.ambient");
+	mDiffLoc = glGetUniformLocation(renderingProgram, "material.diffuse");
+	mSpecLoc = glGetUniformLocation(renderingProgram, "material.specular");
+	mShiLoc = glGetUniformLocation(renderingProgram, "material.shininess");
+
+	// Set the uniform light and material values in the shader
+	glProgramUniform4fv(renderingProgram, globalAmbLoc, 1, globalAmbient);
+	glProgramUniform4fv(renderingProgram, ambLoc, 1, lightAmbient);
+	glProgramUniform4fv(renderingProgram, diffLoc, 1, lightDiffuse);
+	glProgramUniform4fv(renderingProgram, specLoc, 1, lightSpecular);
+	glProgramUniform3fv(renderingProgram, posLoc, 1, lightPos);
+	glProgramUniform4fv(renderingProgram, mAmbLoc, 1, matAmb);
+	glProgramUniform4fv(renderingProgram, mDiffLoc, 1, matDif);
+	glProgramUniform4fv(renderingProgram, mSpecLoc, 1, matSpe);
+	glProgramUniform1f(renderingProgram, mShiLoc, matShi);
+}
 
 // Places application-specific initialization tasks
 void init(GLFWwindow* window) {
@@ -67,10 +118,12 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glUseProgram(renderingProgram); // loads compiled shaders into openGL pipeline
 
 	// get the uniform variables for the projection, model and view matrices
+	mvLoc = glGetUniformLocation(renderingProgram, "mv_matrix");
 	projLoc = glGetUniformLocation(renderingProgram, "proj_matrix"); // projection
-	modelLoc = glGetUniformLocation(renderingProgram, "model_matrix"); // model
-	viewLoc = glGetUniformLocation(renderingProgram, "view_matrix"); // view
+	// color uniform variable for non-textured objects
 	objectColorLoc = glGetUniformLocation(renderingProgram, "objectColor");
+	// lighting normal uniform location variable
+	nLoc = glGetUniformLocation(renderingProgram, "norm_matrix");
 
 	// *** build view matrix, model matrix, and model-view matrix.
 	// View Matrix calculated once
@@ -96,9 +149,15 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	mMat = translation * rotation * scale;
 
-	// Copy model and view matrices to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mMat));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(vMat));
+	// Build the MODEL-VIEW matrix by concatenating matrixes v and m
+	mvMat = vMat * mMat;
+
+	// build the inverse-transpose of the MV matrix, for transforming normal vectors
+	invTrMat = glm::transpose(glm::inverse(mvMat));
+
+	// Copy model-view matrix to the uniform variable for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
+	glUniformMatrix4fv(nLoc, 1, GL_FALSE, glm::value_ptr(invTrMat));
 
 	// associate VBO with the corresponding vertex attribute in the vertex shader
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]);
