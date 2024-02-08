@@ -149,6 +149,10 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	mMat = translation * rotation * scale;
 
+	// Set up lights based pm current lights position
+	currentLightPos = glm::vec3(initialLightLoc.x, initialLightLoc.y, initialLightLoc.z);
+	installLights(vMat);
+
 	// Build the MODEL-VIEW matrix by concatenating matrixes v and m
 	mvMat = vMat * mMat;
 
