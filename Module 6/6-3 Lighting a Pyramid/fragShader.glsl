@@ -1,5 +1,9 @@
 #version 430 core
 
+in vec3 varyingNormal;
+in vec3 varyingLightDir;
+in vec3 varyingVertPos;
+
 in vec4 vertexColor; // aka varyingColor
 in vec2 tc;
 out vec4 FragColor;
@@ -31,14 +35,31 @@ layout (binding = 0) uniform sampler2D samp;
 
 void main(void)
 {
-	FragColor = vertexColor;
 
 
-/*	if (textureSize(samp, 0).x > 1) {
+if (textureSize(samp, 0).x > 1) {
 		 FragColor = texture(samp, tc);
 	}
 	else {
-		FragColor = objectColor;
-	}*/
+			// Normalize the light, normal and view vectors
+	vec3 L = normalize(varyingLightDir);
+	vec3 N = normalize(varyingNormal);
+	vec3 V = normalize(-varyingVertPos);
+
+	// Compute light reflection vector with respect to N:
+	vec3 R = normalize(reflect(-L, N));
+	// Get the angle between the light and surface normal
+	float cosTheta = dot(L,N);
+	// angle between the view vector and reflected light:
+	float cosPhi = dot(V,R);
+
+	// Compute ADS contributions (per pixel), and combine to build output color
+	vec3 ambient = ((globalAmbient * material.ambient) + (light.ambient * material.ambient)).xyz;
+	vec3 diffuse = light.diffuse.xyz * material.diffuse.xyz * max(cosTheta,0.0);
+	vec3 specular = light.specular.xyz * material.specular.xyz * pow(max(cosPhi,0.0), material.shininess);
+
+	FragColor = vec4((ambient + diffuse + specular), 1.0);
+
+	}
 
 }

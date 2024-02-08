@@ -46,11 +46,18 @@ float lightAmbient[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 float lightDiffuse[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 float lightSpecular[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
+//// gold material properties
+//float* matAmb = goldAmbient();
+//float* matDif = goldDiffuse();
+//float* matSpe = goldSpecular();
+//float matShi = goldShininess();
+
 // gold material properties
-float* matAmb = goldAmbient();
-float* matDif = goldDiffuse();
-float* matSpe = goldSpecular();
-float matShi = goldShininess();
+float* matAmb = silverAmbient();
+float* matDif = silverDiffuse();
+float* matSpe = silverSpecular();
+float matShi = silverShininess();
+
 
 void installLights(glm::mat4 vMatrix) {
 	// Convert light's position to view space and save it in a float array
