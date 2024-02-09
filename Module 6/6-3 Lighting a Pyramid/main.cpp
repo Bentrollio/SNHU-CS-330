@@ -19,79 +19,57 @@ float pyrLocX, pyrLocY, pyrLocZ;
 
 GLmesh mesh; // Triangle mesh data
 GLuint renderingProgram;
+GLuint lightingProgram;
 
 // Timing
 float gDeltatime = 0.0f; // Time between current time and last frame
 float gLastFrame = 0.0f;
 
 // Variables to be used in display() function to prevent allocation during rendering
-GLuint projLoc, mvLoc, objectColorLoc, nLoc;
+GLuint projLoc, mvLoc, modelLoc, objectColorLoc, viewPosLoc, ambStrLoc, ambColLoc, light1ColLoc, light1PosLoc,
+light2ColLoc, light2PosLoc, specInt1Loc, highlghtSz1Loc, specInt2Loc, highlghtSz2Loc;
 int width, height;
-glm::mat4 pMat, vMat, mMat, scale, rotation, translation, mvMat, invTrMat;
+glm::mat4 pMat, vMat, mMat, scale, rotation, translation, mvMat;
 
 // Textures
 GLuint brickTexture;
 
-// Lighting variables
-GLuint globalAmbLoc, ambLoc, diffLoc, specLoc, posLoc, mAmbLoc, mDiffLoc, mSpecLoc, mShiLoc;
-glm::vec3 currentLightPos, lightPosV; // light position as Vector3f, in both model and view space
-float lightPos[3]; // light position as float array
+//// Lighting variables
+void installLights() {
 
-// initial light location
-glm::vec3 initialLightLoc = glm::vec3(5.0f, 2.0f, 2.0f);
+	viewPosLoc = glGetUniformLocation(renderingProgram, "viewPosition");
+	ambStrLoc = glGetUniformLocation(renderingProgram, "ambientStrength");
+	ambColLoc = glGetUniformLocation(renderingProgram, "ambientColor");
+	light1ColLoc = glGetUniformLocation(renderingProgram, "light1Color");
+	light1PosLoc = glGetUniformLocation(renderingProgram, "light1Position");
+	light2ColLoc = glGetUniformLocation(renderingProgram, "light2Color");
+	light2PosLoc = glGetUniformLocation(renderingProgram, "light2Position");
+	specInt1Loc = glGetUniformLocation(renderingProgram, "specularIntensity1");
+	highlghtSz1Loc = glGetUniformLocation(renderingProgram, "highlightSize1");
+	specInt2Loc = glGetUniformLocation(renderingProgram, "specularIntensity2");
+	highlghtSz2Loc = glGetUniformLocation(renderingProgram, "highlightSize2");
 
-// white light properties
-float globalAmbient[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
-float lightAmbient[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-float lightDiffuse[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-float lightSpecular[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	// Set ambient lighting strength
+	glUniform1f(ambStrLoc, 0.4f);
+	// Set ambient color
+	glUniform3f(ambColLoc, 0.1f, 0.1f, 0.1f);
+	glUniform3f(light1ColLoc, 1.0f, 0.2f, 0.2f);
+	glUniform3f(light1PosLoc, -1.0f, 1.0f, -1.0f);
+	glUniform3f(light2ColLoc, 0.2f, 1.0f, 0.2f);
+	glUniform3f(light2PosLoc, 1.0f, 1.0f, -1.0f);
 
-//// gold material properties
-//float* matAmb = goldAmbient();
-//float* matDif = goldDiffuse();
-//float* matSpe = goldSpecular();
-//float matShi = goldShininess();
-
-// gold material properties
-float* matAmb = silverAmbient();
-float* matDif = silverDiffuse();
-float* matSpe = silverSpecular();
-float matShi = silverShininess();
-
-
-void installLights(glm::mat4 vMatrix) {
-	// Convert light's position to view space and save it in a float array
-	lightPosV = glm::vec3(vMatrix * glm::vec4(currentLightPos, 1.0));
-	lightPos[0] = lightPosV.x;
-	lightPos[1] = lightPosV.y;
-	lightPos[2] = lightPosV.z;
-
-	// Get the locations of the light and material fields in the shader
-	globalAmbLoc = glGetUniformLocation(renderingProgram, "globalAmbient");
-	ambLoc = glGetUniformLocation(renderingProgram, "light.ambient");
-	diffLoc = glGetUniformLocation(renderingProgram, "light.diffuse");
-	specLoc = glGetUniformLocation(renderingProgram, "light.specular");
-	posLoc = glGetUniformLocation(renderingProgram, "light.position");
-	mAmbLoc = glGetUniformLocation(renderingProgram, "material.ambient");
-	mDiffLoc = glGetUniformLocation(renderingProgram, "material.diffuse");
-	mSpecLoc = glGetUniformLocation(renderingProgram, "material.specular");
-	mShiLoc = glGetUniformLocation(renderingProgram, "material.shininess");
-
-	// Set the uniform light and material values in the shader
-	glProgramUniform4fv(renderingProgram, globalAmbLoc, 1, globalAmbient);
-	glProgramUniform4fv(renderingProgram, ambLoc, 1, lightAmbient);
-	glProgramUniform4fv(renderingProgram, diffLoc, 1, lightDiffuse);
-	glProgramUniform4fv(renderingProgram, specLoc, 1, lightSpecular);
-	glProgramUniform3fv(renderingProgram, posLoc, 1, lightPos);
-	glProgramUniform4fv(renderingProgram, mAmbLoc, 1, matAmb);
-	glProgramUniform4fv(renderingProgram, mDiffLoc, 1, matDif);
-	glProgramUniform4fv(renderingProgram, mSpecLoc, 1, matSpe);
-	glProgramUniform1f(renderingProgram, mShiLoc, matShi);
+	// Set specular intensity
+	glUniform1f(specInt1Loc, .8f);
+	glUniform1f(specInt2Loc, .8f);
+	// Set specular highlight size
+	glUniform1f(highlghtSz1Loc, 2.0f);
+	glUniform1f(highlghtSz2Loc, 2.0f);
 }
 
 // Places application-specific initialization tasks
 void init(GLFWwindow* window) {
-	renderingProgram = createShaderProgram(); // Reads from and compiles GLSL shader files
+	renderingProgram = createShaderProgram("vertShader.glsl", "fragShader.glsl"); // Reads from and compiles GLSL shader files
+	lightingProgram = createShaderProgram("lightVertShader.glsl", "lightFragShader.glsl");
 
 	// build perspective matrix
 	glfwGetFramebufferSize(window, &width, &height);
@@ -125,12 +103,11 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glUseProgram(renderingProgram); // loads compiled shaders into openGL pipeline
 
 	// get the uniform variables for the projection, model and view matrices
-	mvLoc = glGetUniformLocation(renderingProgram, "mv_matrix");
+	modelLoc = glGetUniformLocation(renderingProgram, "model"); // model only
+	mvLoc = glGetUniformLocation(renderingProgram, "mv_matrix"); // model-view matrix
 	projLoc = glGetUniformLocation(renderingProgram, "proj_matrix"); // projection
 	// color uniform variable for non-textured objects
 	objectColorLoc = glGetUniformLocation(renderingProgram, "objectColor");
-	// lighting normal uniform location variable
-	nLoc = glGetUniformLocation(renderingProgram, "norm_matrix");
 
 	// *** build view matrix, model matrix, and model-view matrix.
 	// View Matrix calculated once
@@ -142,6 +119,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy projection matrix to the uniform variable
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 
+	installLights();
 
 	// --------------DRAWS THE PYRAMID-----------------
 	glBindVertexArray(mesh.vao[0]);
@@ -156,31 +134,85 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	mMat = translation * rotation * scale;
 
-	// Set up lights based pm current lights position
-	currentLightPos = glm::vec3(initialLightLoc.x, initialLightLoc.y, initialLightLoc.z);
-	installLights(vMat);
-
 	// Build the MODEL-VIEW matrix by concatenating matrixes v and m
 	mvMat = vMat * mMat;
 
-	// build the inverse-transpose of the MV matrix, for transforming normal vectors
-	invTrMat = glm::transpose(glm::inverse(mvMat));
-
 	// Copy model-view matrix to the uniform variable for the shaders
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mMat));
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
-	glUniformMatrix4fv(nLoc, 1, GL_FALSE, glm::value_ptr(invTrMat));
 
 	// associate VBO with the corresponding vertex attribute in the vertex shader
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]);
 
-	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, brickTexture);
-	}
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, brickTexture);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 18);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
+	glBindVertexArray(0);
+
+	// Use lighting program
+	glUseProgram(lightingProgram);
+
+	// get the uniform variables for the projection, model-view matrices
+	modelLoc = glGetUniformLocation(lightingProgram, "model"); // model only
+	mvLoc = glGetUniformLocation(lightingProgram, "mv_matrix"); // model-view matrix
+	projLoc = glGetUniformLocation(lightingProgram, "proj_matrix"); // projection
+
+	// Copy model-view matrix to the uniform variable for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+	// --------------DRAWS THE FIRST LIGHTING PYRAMID-----------------
+	glBindVertexArray(mesh.vao[0]);
+	//glProgramUniform4f(lightingProgram, objectColorLoc, 1.0f, 0.0f, 0.50196078f, 1.0f);
+
+	// 1. Scale object by 1 (I built my mesh with different vertices than the tutorial)
+	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.2f, 0.2f, 0.2f));
+	// 2. Rotate shape 11 degrees along x axis
+	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(-11.459f), glm::vec3(1.0f, 0.0f, 0.0f));
+	// 3. Place object at origin
+	translation = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 1.0f, -1.0f));
+
+	mMat = translation * rotation * scale;
+
+	// Build the MODEL-VIEW matrix by concatenating matrixes v and m
+	mvMat = vMat * mMat;
+
+	// Copy model-view matrix to the uniform variable for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
+
+	// associate VBO with the corresponding vertex attribute in the vertex shader
+	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]);
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 18);
+	glBindVertexArray(0);
+
+	// --------------DRAWS THE Second LIGHTING PYRAMID-----------------
+	glBindVertexArray(mesh.vao[0]);
+	//glProgramUniform4f(lightingProgram, objectColorLoc, 1.0f, 0.0f, 0.50196078f, 1.0f);
+
+	// 1. Scale object by 1 (I built my mesh with different vertices than the tutorial)
+	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.2f, 0.2f, 0.2f));
+	// 2. Rotate shape 11 degrees along x axis
+	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(-11.459f), glm::vec3(1.0f, 0.0f, 0.0f));
+	// 3. Place object at origin
+	translation = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, -1.0f));
+
+	mMat = translation * rotation * scale;
+
+	// Build the MODEL-VIEW matrix by concatenating matrixes v and m
+	mvMat = vMat * mMat;
+
+	// Copy model-view matrix to the uniform variable for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
+
+	// associate VBO with the corresponding vertex attribute in the vertex shader
+	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]);
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 18);
+	glBindVertexArray(0);
+
 }
 
 int main(void) {
