@@ -53,9 +53,13 @@ void installLights() {
 	glUniform1f(ambStrLoc, 0.4f);
 	// Set ambient color
 	glUniform3f(ambColLoc, 0.1f, 0.1f, 0.1f);
+	// set color of the first light
 	glUniform3f(light1ColLoc, 1.0f, 0.2f, 0.2f);
+	// set position of the first light
 	glUniform3f(light1PosLoc, -1.0f, 1.0f, -1.0f);
+	// set color of the second light
 	glUniform3f(light2ColLoc, 0.2f, 1.0f, 0.2f);
+	// set position of the second light
 	glUniform3f(light2PosLoc, 1.0f, 1.0f, -1.0f);
 
 	// Set specular intensity
@@ -167,8 +171,8 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindVertexArray(mesh.vao[0]);
 	//glProgramUniform4f(lightingProgram, objectColorLoc, 1.0f, 0.0f, 0.50196078f, 1.0f);
 
-	// 1. Scale object by 1 (I built my mesh with different vertices than the tutorial)
-	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.2f, 0.2f, 0.2f));
+	// 1. Scale object by .1 (I built my mesh with different vertices than the tutorial)
+	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f));
 	// 2. Rotate shape 11 degrees along x axis
 	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(-11.459f), glm::vec3(1.0f, 0.0f, 0.0f));
 	// 3. Place object at origin
@@ -188,12 +192,12 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 18);
 	glBindVertexArray(0);
 
-	// --------------DRAWS THE Second LIGHTING PYRAMID-----------------
+	// --------------DRAWS THE SECOND LIGHTING PYRAMID-----------------
 	glBindVertexArray(mesh.vao[0]);
 	//glProgramUniform4f(lightingProgram, objectColorLoc, 1.0f, 0.0f, 0.50196078f, 1.0f);
 
-	// 1. Scale object by 1 (I built my mesh with different vertices than the tutorial)
-	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.2f, 0.2f, 0.2f));
+	// 1. Scale object by .1 (I built my mesh with different vertices than the tutorial)
+	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f));
 	// 2. Rotate shape 11 degrees along x axis
 	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(-11.459f), glm::vec3(1.0f, 0.0f, 0.0f));
 	// 3. Place object at origin

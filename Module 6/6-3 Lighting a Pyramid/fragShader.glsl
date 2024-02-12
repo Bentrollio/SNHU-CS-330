@@ -1,7 +1,7 @@
 #version 430 core
 
 in vec3 vertexFragmentNormal; // Outgoing normals to fragment shader
-in vec3 vertexFragmentPos; // vertexColor re[placement?
+in vec3 vertexFragmentPos; // vertexColor replacement?
 in vec2 tc;
 
 //in vec4 vertexColor; // aka varyingColor

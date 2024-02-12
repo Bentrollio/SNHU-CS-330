@@ -5,7 +5,7 @@ layout (location = 2) in vec2 texCoord; // Texture data from vertexattributepoin
 layout (location = 3) in vec4 color; // Color data
 
 out vec3 vertexFragmentNormal; // Outgoing normals to fragment shader
-out vec3 vertexFragmentPos; // vertexColor re[placement?
+out vec3 vertexFragmentPos; // vertexColor replacement?
 
 //out vec4 vertexColor; // sends color to fragment shader aka varyingColor in book
 out vec2 tc; // texture coordinate output to rasterizer for interpolation
