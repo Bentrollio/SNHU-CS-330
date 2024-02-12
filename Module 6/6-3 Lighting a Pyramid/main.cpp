@@ -10,7 +10,7 @@
 #include "utils.h"
 #include "GLmesh.h"
 
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 1.0f, 6.0f));
 
 using namespace std;
 
@@ -53,18 +53,18 @@ void installLights() {
 	glUniform1f(ambStrLoc, 0.4f);
 	// Set ambient color
 	glUniform3f(ambColLoc, 0.1f, 0.1f, 0.1f);
-	// set color of the first light
-	glUniform3f(light1ColLoc, 1.0f, 0.2f, 0.2f);
-	// set position of the first light
-	glUniform3f(light1PosLoc, -1.0f, 1.0f, -1.0f);
-	// set color of the second light
-	glUniform3f(light2ColLoc, 0.2f, 1.0f, 0.2f);
-	// set position of the second light
-	glUniform3f(light2PosLoc, 1.0f, 1.0f, -1.0f);
+	// set color of the first light (Key Light)
+	glUniform3f(light1ColLoc, 0.2f, 1.0f, 0.2f);
+	// set position of the first light (Key Light)
+	glUniform3f(light1PosLoc, -1.0f, 1.5f, 2.0f);
+	// set color of the second light (Fill Light)
+	glUniform3f(light2ColLoc, 0.5f, 0.2f, 0.2f);
+	// set position of the second light (Fill Light)
+	glUniform3f(light2PosLoc, 3.0f, 0.0f, 0.0f);
 
 	// Set specular intensity
-	glUniform1f(specInt1Loc, .8f);
-	glUniform1f(specInt2Loc, .8f);
+	glUniform1f(specInt1Loc, 1.0f);
+	glUniform1f(specInt2Loc, 0.1f);
 	// Set specular highlight size
 	glUniform1f(highlghtSz1Loc, 2.0f);
 	glUniform1f(highlghtSz2Loc, 2.0f);
@@ -131,8 +131,8 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// 1. Scale object by 1 (I built my mesh with different vertices than the tutorial)
 	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.5f));
-	// 2. Rotate shape by 25 degrees along y axis (to match screenshot of the rubric. Used glm::radians as an argument to convert 25 degrees to radians
-	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	// 2. Rotate shape by -20 degrees along y axis (to match screenshot of the rubric. Used glm::radians as an argument to convert 25 degrees to radians
+	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(-20.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	// 3. Place object at the origin (0, 0, 0)
 	translation = glm::translate(glm::mat4(1.0f), glm::vec3(pyrLocX, pyrLocY, pyrLocZ));
 
@@ -167,7 +167,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model-view matrix to the uniform variable for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
-	// --------------DRAWS THE FIRST LIGHTING PYRAMID-----------------
+	// --------------DRAWS THE FIRST LIGHTING PYRAMID (KEY LIGHT)-----------------
 	glBindVertexArray(mesh.vao[0]);
 	//glProgramUniform4f(lightingProgram, objectColorLoc, 1.0f, 0.0f, 0.50196078f, 1.0f);
 
@@ -176,7 +176,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 2. Rotate shape 11 degrees along x axis
 	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(-11.459f), glm::vec3(1.0f, 0.0f, 0.0f));
 	// 3. Place object at origin
-	translation = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 1.0f, -1.0f));
+	translation = glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 1.5f, 2.0f));
 
 	mMat = translation * rotation * scale;
 
@@ -192,7 +192,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 18);
 	glBindVertexArray(0);
 
-	// --------------DRAWS THE SECOND LIGHTING PYRAMID-----------------
+	// --------------DRAWS THE SECOND LIGHTING PYRAMID (FILL LIGHT)-----------------
 	glBindVertexArray(mesh.vao[0]);
 	//glProgramUniform4f(lightingProgram, objectColorLoc, 1.0f, 0.0f, 0.50196078f, 1.0f);
 
@@ -201,7 +201,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 2. Rotate shape 11 degrees along x axis
 	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(-11.459f), glm::vec3(1.0f, 0.0f, 0.0f));
 	// 3. Place object at origin
-	translation = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, -1.0f));
+	translation = glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 0.0f, 0.0f));
 
 	mMat = translation * rotation * scale;
 

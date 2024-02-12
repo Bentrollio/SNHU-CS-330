@@ -23,11 +23,11 @@ uniform vec3 light2Position;
 uniform vec3 viewPosition;
 layout (binding = 0) uniform sampler2D samp; // uTexture
 uniform vec2 uvScale;
-uniform float ambientStrength = 0.1f; // Set ambient or global lighting strength
-uniform float specularIntensity1 = 0.8f;
-uniform float highlightSize1 = 16.0f;
-uniform float specularIntensity2 = 0.8f;
-uniform float highlightSize2 = 16.0f;
+uniform float ambientStrength; // Set ambient or global lighting strength
+uniform float specularIntensity1;
+uniform float highlightSize1;
+uniform float specularIntensity2;
+uniform float highlightSize2;
 
 void main(void)
 {
