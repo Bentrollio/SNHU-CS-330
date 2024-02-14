@@ -156,6 +156,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	modelStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 1.0f, 10.0f));
 
 	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	glActiveTexture(GL_TEXTURE0);
@@ -206,6 +207,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	modelStack.push(modelStack.top()); // Copies PYRAMID(position * rotation) to top of model stack
 	modelStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 1.25f, 0.5f)); // Pyramid Scale
 
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	// Activate texture located in 0 (samp in frag shader)
@@ -239,6 +241,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	modelStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0, -2.0, 0.0));
 	modelStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.75f, 0.5f));
 
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 
@@ -305,6 +308,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	modelStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 0.3f, 0.75f));
 
 	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	// Draw triangles
@@ -338,6 +342,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	modelStack.push(mvStack.top());
 
 	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	// Draws the cube
@@ -372,6 +377,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	modelStack.push(mvStack.top());
 
 	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	glActiveTexture(GL_TEXTURE0);
@@ -406,6 +412,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// --Model only transforms for lighting calculations--
 	modelStack.top() *= mvStack.top();
 	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	glActiveTexture(GL_TEXTURE0);

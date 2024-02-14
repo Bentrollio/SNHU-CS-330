@@ -5,6 +5,7 @@ in vec2 tc;
 
 out vec4 FragColor;
 
+uniform mat4 model;
 uniform mat4 mv_matrix;
 uniform mat4 proj_matrix;
 uniform vec4 objectColor;
