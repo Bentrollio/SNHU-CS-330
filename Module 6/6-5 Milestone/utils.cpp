@@ -68,14 +68,14 @@ string readShaderSource(const char* filePath) {
 	return content;
 }
 
-GLuint createShaderProgram() { // creates vertex and fragment shaders
+GLuint createShaderProgram(const char* vertexShader, const char* fragmentShader) { // creates vertex and fragment shaders
 
 	GLint vertCompiled;
 	GLint fragCompiled;
 	GLint linked;
 
-	string vertShaderStr = readShaderSource("vertShader.glsl");
-	string fragShaderStr = readShaderSource("fragShader.glsl");
+	string vertShaderStr = readShaderSource(vertexShader);
+	string fragShaderStr = readShaderSource(fragmentShader);
 
 	const char* vertShaderSrc = vertShaderStr.c_str();
 	const char* fragShaderSrc = fragShaderStr.c_str();

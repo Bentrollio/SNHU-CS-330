@@ -53,7 +53,7 @@ bool checkOpenGLError(); // checks for occurrence of an openGL error.
 
 string readShaderSource(const char* filePath);
 
-GLuint createShaderProgram(); // creates vertex and fragment shaders
+GLuint createShaderProgram(const char* vertexShader, const char* fragmentShader); // creates vertex and fragment shaders
 
 GLuint createShaderProgram(const char* vp, const char* fp);
 

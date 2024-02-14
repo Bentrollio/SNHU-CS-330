@@ -20,13 +20,15 @@ using namespace std;
 //GLmesh mesh; // Triangle mesh data
 Meshes meshes;
 GLuint renderingProgram;
+GLuint lightedPyramidShaders;
 
 // Timing
 float deltaTime = 0.0f; // time between current time and last frame
 float lastFrame = 0.0f;
 
 // Variables to be used in display() function to prevent allocation during rendering
-GLuint projLoc, viewLoc, modelLoc, mvLoc, objectColorLoc;
+GLuint projLoc, viewLoc, modelLoc, mvLoc, objectColorLoc, viewPosLoc, ambStrLoc, ambColLoc, light1ColLoc, light1PosLoc,
+light2ColLoc, light2PosLoc, specInt1Loc, highlghtSz1Loc, specInt2Loc, highlghtSz2Loc;
 int width, height;
 glm::mat4 pMat, vMat, mMat;
 
@@ -34,15 +36,52 @@ glm::mat4 pMat, vMat, mMat;
 GLuint seleniteBaseTexture, seleniteTipTexture, fabricTexture, fabricRoughnessTexture, grungeTexture, plasticTexture, walmartLogoTexture,
 blackRubberBaseTexture;
 
+// Lightning Variables
+void installLights() {
+	viewPosLoc = glGetUniformLocation(renderingProgram, "viewPosition");
+	ambStrLoc = glGetUniformLocation(renderingProgram, "ambientStrength");
+	ambColLoc = glGetUniformLocation(renderingProgram, "ambientColor");
+	light1ColLoc = glGetUniformLocation(renderingProgram, "light1Color");
+	light1PosLoc = glGetUniformLocation(renderingProgram, "light1Position");
+	light2ColLoc = glGetUniformLocation(renderingProgram, "light2Color");
+	light2PosLoc = glGetUniformLocation(renderingProgram, "light2Position");
+	specInt1Loc = glGetUniformLocation(renderingProgram, "specularIntensity1");
+	highlghtSz1Loc = glGetUniformLocation(renderingProgram, "highlightSize1");
+	specInt2Loc = glGetUniformLocation(renderingProgram, "specularIntensity2");
+	highlghtSz2Loc = glGetUniformLocation(renderingProgram, "hiighlightSize2");
+
+	// Set ambient lighting strength
+	glUniform1f(ambStrLoc, 0.4f);
+	// Set ambiient color
+	glUniform3f(ambColLoc, 0.1f, 0.1f, 0.1f);
+	// Set color of the first light
+	glUniform3f(light1ColLoc, 0.2f, 1.0f, 0.2f);
+	// Set position of the first light
+	glUniform3f(light1PosLoc, -1.0f, 1.5f, 2.0f);
+	// Set color of the second light
+	glUniform3f(light2ColLoc, 0.5f, 0.2f, 0.2f);
+	// Set position of the second light
+	glUniform3f(light2PosLoc, 3.0f, 0.0f, 0.0f);
+
+	// Set specular intensity
+	glUniform1f(specInt1Loc, 1.0f);
+	glUniform1f(specInt2Loc, 1.0f);
+	// Set specular highlight size
+	glUniform1f(highlghtSz1Loc, 2.0f);
+	glUniform1f(highlghtSz2Loc, 2.0f);
+
+
+}
+
 // Hierarchal Matrix Stack for Parent-Child Objects
 stack<glm::mat4> mvStack;
+stack<glm::mat4> modelStack;
 
 // Places application-specific initialization tasks
 void init(GLFWwindow* window) {
 
-
-	renderingProgram = createShaderProgram(); // Reads from and compiles GLSL shader files
-
+	renderingProgram = createShaderProgram("vertShader.glsl", "fragShader.glsl"); // Reads from and compiles GLSL shader files
+	//lightedPyramidShaders = createShaderProgram(); // Creates the pyramids that represent the lighting position
 	glfwGetFramebufferSize(window, &width, &height);
 
 	// Mouse Events
@@ -74,8 +113,9 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	glUseProgram(renderingProgram); // loads compiled shaders into openGL pipeline
 
-	// get the uniform variables for the model view matrix
-	mvLoc = glGetUniformLocation(renderingProgram, "mv_matrix");
+	// get the uniform variables for the model/view, model and projection matrices
+	modelLoc = glGetUniformLocation(renderingProgram, "model"); // model only
+	mvLoc = glGetUniformLocation(renderingProgram, "mv_matrix"); // model-view matrix
 	projLoc = glGetUniformLocation(renderingProgram, "proj_matrix"); // projection
 	objectColorLoc = glGetUniformLocation(renderingProgram, "objectColor");
 
@@ -93,23 +133,30 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy projection matrix to the uniform variable
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 
+	installLights();
+
 	//// --------------DRAWS THE PLANE-----------------
 	//// The colour and the shape
 	glBindVertexArray(meshes.planeMesh.vao);
 	glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 0.50196078f, 1.0f, 1.0f);
-
+	
 	mvStack.push(mvStack.top()); // Places a copy of the view matrix at top of stack to add model info to
 	// 1. Places plane at origin
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)); // Positions the plane
-
+	
 	// 2. Rotates Plane
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// 3. Scales Plane
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 1.0f, 10.0f));
 
+	// --Model only transforms for lighting calculations--
+	modelStack.push(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f))); // Positions the plane
+	modelStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	modelStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 1.0f, 10.0f));
+
 	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, fabricTexture);
@@ -125,6 +172,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 
 	mvStack.pop(); // Removes Plane transforms from stack
+	modelStack.pop(); // Resets the model matrix for next object
 
 	/**************************************************
 	 * START of RENDERING CRYSTAL OBJECT
@@ -151,7 +199,14 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 3. Scales Pyramid
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 1.25f, 0.5f));
 
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	// --Model only transforms for lighting calculations--
+	modelStack.push(glm::translate(glm::mat4(1.0f), glm::vec3(6.0f, 2.76f, 3.0f))); // Positions the pyramid
+	modelStack.push(modelStack.top()); // Copies PYRAMID position to top of MODEL stack
+	modelStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(85.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	modelStack.push(modelStack.top()); // Copies PYRAMID(position * rotation) to top of model stack
+	modelStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 1.25f, 0.5f)); // Pyramid Scale
+
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	// Activate texture located in 0 (samp in frag shader)
 	glActiveTexture(GL_TEXTURE0);
@@ -165,6 +220,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindVertexArray(0);
 
 	mvStack.pop(); // Removes PYRAMID scale
+	modelStack.pop(); // Removes PYRAMID scale from model only matrix
 
 	// --------------DRAWS THE CUBE (CHILD OF PYRAMID)-----------------
 	// The colour and the shape
@@ -179,7 +235,11 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 2. Scale Cube
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.75f, 0.5f));
 
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	// --Model only transforms for lighting calculations--
+	modelStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0, -2.0, 0.0));
+	modelStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.75f, 0.5f));
+
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 
 	glActiveTexture(GL_TEXTURE0);
@@ -193,6 +253,8 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.pop();
 	mvStack.pop(); 
 	mvStack.pop(); // All that remains in stack is view matrix
+	modelStack.pop();
+	modelStack.pop(); // Model stack is empty and ready for next object.
 
 	// **** END of RENDERING CRYSTAL OBJECT ****
 
@@ -208,8 +270,11 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 1. Position Sphere
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.5f, 4.2f));
 
+	// --Model only transforms for lighting calculations--
+	modelStack.push(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.5f, 4.2f)));
+
 	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 	glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.50196078f, 1.0f);
 
 	// Draw triangles
@@ -234,8 +299,13 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 3. Scale Cube
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 0.3f, 0.75f));
 
+	// --Model only transforms for lighting calculations--
+	modelStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.17f, 0.0f));
+	modelStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	modelStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 0.3f, 0.75f));
+
 	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	// Draw triangles
 	glDrawArrays(GL_TRIANGLES, 0, meshes.taperedPolygonMesh.numVertices);
@@ -243,6 +313,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	mvStack.pop();
 	mvStack.pop(); // All that remains is the view matrix
+	modelStack.pop();
 
 	/**************************************************
 	 * RENDERS THE BOOK
@@ -263,8 +334,11 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 3. Scale the cube to be booklike, double in width, taller in height, smaller depth
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.5f, 3.0f, 0.50f));
 
+	// --Model only transforms for lighting calculations--
+	modelStack.push(mvStack.top());
+
 	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	// Draws the cube
 	//glDrawElements(GL_TRIANGLES, meshes.cubeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
@@ -272,6 +346,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindVertexArray(0);
 
 	mvStack.pop(); // All that remains is the view matrix
+	modelStack.pop();
 
 	/**************************************************
 	 * DRAWS THE MINI TRAFFIC CONE
@@ -293,8 +368,11 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 3. Scale the cone
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 2.0f, 1.0f));
 
+	// --Model only transforms for lighting calculations--
+	modelStack.push(mvStack.top());
+
 	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, plasticTexture);
@@ -314,7 +392,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindVertexArray(meshes.cubeMesh.vao);
 	glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 0.0f, 0.0f, 1.0f);
 
-	mvStack.push(mvStack.top()); // Copies Sphere position
+	mvStack.push(mvStack.top()); // Copies Cone position
 
 	// 1. Place Cube Relative to cone
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -325,8 +403,10 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 3. Scale Cube to Cone
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.1f, 0.05f, 1.0f));
 
+	// --Model only transforms for lighting calculations--
+	modelStack.top() *= mvStack.top();
 	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, blackRubberBaseTexture);
@@ -338,6 +418,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	mvStack.pop();
 	mvStack.pop(); // All that remains is the view matrix
+	modelStack.pop();
 }
 
 int main(void) {
