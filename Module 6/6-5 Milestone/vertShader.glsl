@@ -11,6 +11,7 @@ out vec3 vertexFragmentPos; // vertexColor replacement?
 out vec2 tc; // texture coordinate output to rasterizer for interpolation
 
 layout (binding = 0) uniform sampler2D samp; // not used in vertex shader
+layout (binding = 1) uniform sampler2D samp1; // not used in vertex shader
 
 uniform mat4 model;
 uniform mat4 mv_matrix;

@@ -16,10 +16,11 @@ Camera camera(glm::vec3(0.0f, 4.0f, 20.0f)); // Needs work.
 
 using namespace std;
 
-//GLmesh mesh; // Triangle mesh data
+// Different shape meshes
 Meshes meshes;
-GLuint renderingProgram;
-GLuint lightedPyramidShaders;
+
+// Shader programs
+GLuint renderingProgram, lightedPyramidShaders, materialShaders;
 
 // Timing
 float deltaTime = 0.0f; // time between current time and last frame
@@ -28,21 +29,41 @@ float lastFrame = 0.0f;
 // Variables to be used in display() function to prevent allocation during rendering
 GLuint projLoc, viewLoc, modelLoc, mvLoc, objectColorLoc, viewPosLoc, ambStrLoc, ambColLoc, light1ColLoc, light1PosLoc,
 light2ColLoc, light2PosLoc, specInt1Loc, highlghtSz1Loc, specInt2Loc, highlghtSz2Loc;
+
+// FIX ME: Material Variables
+GLuint mAmbLoc, mDiffLoc, mSpecLoc, mShiLoc;
 int width, height;
+
+//// PEARL Material properties
+//float* matAmb = pearlAmbient();
+//float* matDif = pearlDiffuse();
+//float* matSpe = pearlSpecular();
+//float matShi = pearlShininess();
+
+// JADE Material properties
+float* matAmb = jadeAmbient();
+float* matDif = jadeDiffuse();
+float* matSpe = jadeSpecular();
+float matShi = jadeShininess();
+
 // Render matrices
 glm::mat4 pMat, vMat;
 
 // Lighting matrices to denote light sources
 glm::mat4 mMat, mvMat, scale, rotation, translation;
 
+// UBO to condense uniforms
+GLuint ubo;
+
+
 // Texture variables;
 GLuint seleniteBaseTexture, seleniteTipTexture, fabricTexture, fabricRoughnessTexture, grungeTexture, plasticTexture, walmartLogoTexture,
 blackRubberBaseTexture;
 
-// Lightning Variables
+// Lighting Variables for general objects
 void installLights() {
 	viewPosLoc = glGetUniformLocation(renderingProgram, "viewPosition");
-	ambStrLoc = glGetUniformLocation(renderingProgram, "ambientStrength");
+	ambStrLoc = glGetUniformLocation(renderingProgram, "ambientStrength"); 
 	ambColLoc = glGetUniformLocation(renderingProgram, "ambientColor");
 	light1ColLoc = glGetUniformLocation(renderingProgram, "light1Color");
 	light1PosLoc = glGetUniformLocation(renderingProgram, "light1Position");
@@ -52,6 +73,9 @@ void installLights() {
 	highlghtSz1Loc = glGetUniformLocation(renderingProgram, "highlightSize1");
 	specInt2Loc = glGetUniformLocation(renderingProgram, "specularIntensity2");
 	highlghtSz2Loc = glGetUniformLocation(renderingProgram, "highlightSize2");
+
+	// Set the camera view location
+	glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
 
 	// Set ambient lighting strength
 	glUniform1f(ambStrLoc, 0.3f);
@@ -75,15 +99,84 @@ void installLights() {
 
 }
 
+// FIXME Lighting variables for material shaders
+void installMaterialShader() {
+	viewPosLoc = glGetUniformLocation(materialShaders, "viewPosition");
+	ambStrLoc = glGetUniformLocation(materialShaders, "ambientStrength");
+	ambColLoc = glGetUniformLocation(materialShaders, "ambientColor");
+	light1ColLoc = glGetUniformLocation(materialShaders, "light1Color");
+	light1PosLoc = glGetUniformLocation(materialShaders, "light1Position");
+	light2ColLoc = glGetUniformLocation(materialShaders, "light2Color");
+	light2PosLoc = glGetUniformLocation(materialShaders, "light2Position");
+	specInt1Loc = glGetUniformLocation(materialShaders, "specularIntensity1");
+	highlghtSz1Loc = glGetUniformLocation(materialShaders, "highlightSize1");
+	specInt2Loc = glGetUniformLocation(materialShaders, "specularIntensity2");
+	highlghtSz2Loc = glGetUniformLocation(materialShaders, "highlightSize2");
+
+	// Material uniforms
+	mAmbLoc = glGetUniformLocation(materialShaders, "material.ambient");
+	mDiffLoc = glGetUniformLocation(materialShaders, "material.diffuse");
+	mSpecLoc = glGetUniformLocation(materialShaders, "material.specular");
+	mShiLoc = glGetUniformLocation(materialShaders, "material.shininess");
+
+	// Set the camera view location
+	glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
+
+	// Set ambient lighting strength
+	glUniform1f(ambStrLoc, 0.3f);
+	// Set ambient color
+	glUniform3f(ambColLoc, 0.7f, 0.7f, 0.7f); // White natural light
+	//Set color of the first light
+	glUniform3f(light1ColLoc, 0.2f, 0.2f, 1.0f); // Blue light from a monitor
+	// Set position of the first light
+	glUniform3f(light1PosLoc, -10.0f, 5.0f, -15.0f);
+	// Set color of the second light
+	glUniform3f(light2ColLoc, 1.0f, 0.78823529, 0.39215686); // 3900k "yellow" light bulb
+	// Set position of the second light
+	glUniform3f(light2PosLoc, 0.0f, 8.0f, 10.0f);
+
+	// Set specular intensity
+	glUniform1f(specInt1Loc, 0.1f);
+	glUniform1f(specInt2Loc, 1.0f);
+	// Set specular highlight size
+	glUniform1f(highlghtSz1Loc, 2.0f);
+	glUniform1f(highlghtSz2Loc, 6.0f);
+
+	// Set material values in the shader
+	glUniform4fv(mAmbLoc, 1, matAmb);
+	glUniform4fv(mDiffLoc, 1, matDif);
+	glUniform4fv(mSpecLoc, 1, matSpe);
+	glUniform1f(mShiLoc, matShi);
+
+
+}
+
+struct LightData {
+	glm::vec3 viewPosition;
+	float ambientStrength;
+	glm::vec3 ambientColor;
+	glm::vec3 light1Color;
+	glm::vec3 light1Position;
+	glm::vec3 light2Color;
+	glm::vec3 light2Position;
+	float specularIntensity1;
+	float highlightSize1;
+	float specularIntensity2;
+	float highlightSize2;
+};
+
+
 // Hierarchal Matrix Stack for Parent-Child Objects
 stack<glm::mat4> mvStack;
-stack<glm::mat4> modelStack;
+stack<glm::mat4> modelStack; // Model only stack for lighting calculations
 
 // Places application-specific initialization tasks
 void init(GLFWwindow* window) {
 
 	renderingProgram = createShaderProgram("vertShader.glsl", "fragShader.glsl"); // Reads from and compiles GLSL shader files
 	lightedPyramidShaders = createShaderProgram("lightVertShader.glsl", "lightFragShader.glsl"); // Creates the pyramids that represent the lighting position
+	materialShaders = createShaderProgram("materialVertShader.glsl", "materialFragShader.glsl");
+
 	glfwGetFramebufferSize(window, &width, &height);
 
 	// Mouse Events
@@ -101,6 +194,8 @@ void init(GLFWwindow* window) {
 	plasticTexture = loadTexture("Plastic014B_2K-PNG_Color.png");
 	walmartLogoTexture = loadLogoTexture("walmartlogo.png");
 	blackRubberBaseTexture = loadTexture("Rubber004_2K-PNG_Color.png");
+
+	glGenBuffers(1, &ubo);
 }
 
 // Draws to GLFW display window
@@ -114,6 +209,28 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glDepthFunc(GL_LEQUAL);
 
 	glUseProgram(renderingProgram); // loads compiled shaders into openGL pipeline
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+	// Define the size of the UBO based on size of struct
+	GLsizeiptr size = sizeof(LightData);
+
+	// UBO memory allocation
+	glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_DYNAMIC_DRAW);
+
+	// UBO struct for lights
+	LightData newData;
+	newData.ambientStrength = 0.3f;
+	newData.ambientColor = { 0.7f, 0.7f, 0.7f }; // White natural
+	newData.light1Color = { 0.2f, 0.2f, 1.0f }; // Blue light
+	newData.light1Position = { -10.0f, 5.0f, -15.0f };
+	newData.light2Color = { 1.0f, 0.78823529f, 0.39215686f }; // 3900k yellow light
+	newData.light2Position = { 0.0f, 8.0f, 10.0f };
+	newData.specularIntensity1 = 0.1f;
+	newData.specularIntensity2 = 1.0f;
+	newData.highlightSize1 = 2.0f;
+	newData.highlightSize2 = 6.0f;
+
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightData), &newData);
+
 
 	// get the uniform variables for the model/view, model and projection matrices
 	modelLoc = glGetUniformLocation(renderingProgram, "model"); // model only
@@ -277,6 +394,19 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// * START of RENDERING SOLAR SYSTEM GLOBE
 	// **************************************************
 	// */
+	glUseProgram(materialShaders);
+	installMaterialShader();
+	// get the uniform variables for the projection, model-view matrices
+	modelLoc = glGetUniformLocation(materialShaders, "model"); // model only
+	mvLoc = glGetUniformLocation(materialShaders, "mv_matrix"); // model-view matrix
+	projLoc = glGetUniformLocation(materialShaders, "proj_matrix"); // projection
+	objectColorLoc = glGetUniformLocation(materialShaders, "objectColor");
+
+	// Copy model-view matrix to the uniform variable for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+
+
 
 	 // --------------DRAWS THE SPHERE (PARENT)-----------------
 	glBindVertexArray(meshes.sphereMesh.vao);
@@ -291,7 +421,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
-	glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.50196078f, 1.0f);
+	//glProgramUniform4f(materialShaders, objectColorLoc, 1.0f, 0.0f, 0.50196078f, 1.0f);
 
 	// Draw triangles
 	glDrawElements(GL_TRIANGLES, meshes.sphereMesh.numIndices, GL_UNSIGNED_INT, (void*)0);
@@ -299,6 +429,19 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Deactivate the VAO
 	glBindVertexArray(0);
 	modelStack.pop();
+
+	glUseProgram(renderingProgram);
+	installLights();
+	// get the uniform variables for the projection, model-view matrices
+	modelLoc = glGetUniformLocation(renderingProgram, "model"); // model only
+	mvLoc = glGetUniformLocation(renderingProgram, "mv_matrix"); // model-view matrix
+	projLoc = glGetUniformLocation(renderingProgram, "proj_matrix"); // projection
+	objectColorLoc = glGetUniformLocation(renderingProgram, "objectColor");
+
+	// Copy model-view matrix to the uniform variable for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+
 
 	// --------------DRAWS THE TAPERED POLYGON PEDESTAL (CHILD OF SPHERE)-----------------
 	// The colour and the shape

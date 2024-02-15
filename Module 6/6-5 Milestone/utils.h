@@ -57,7 +57,7 @@ GLuint createShaderProgram(const char* vertexShader, const char* fragmentShader)
 
 GLuint createShaderProgram(const char* vp, const char* fp);
 
-GLuint createShaderProgram(const char* vp, const char* gp, const char* fp);
+//GLuint createShaderProgram(const char* vp, const char* gp, const char* fp);
 
 // Texture functions
 GLuint loadTexture(const char* texImagePath);
@@ -78,6 +78,32 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods, C
 void glfwMousePositionCallbackWrapper(GLFWwindow* window, double xPos, double yPos);
 void glfwMouseScrollCallbackWrapper(GLFWwindow* window, double xOffset, double yOffset);
 void glfwMouseButtonCallbackWrapper(GLFWwindow* window, int button, int action, int mods);
+
+// Materials ADS
+float* goldAmbient();
+float* goldDiffuse();
+float* goldSpecular();
+float goldShininess();
+
+float* silverAmbient();
+float* silverDiffuse();
+float* silverSpecular();
+float silverShininess();
+
+float* bronzeAmbient();
+float* bronzeDiffuse();
+float* bronzeSpecular();
+float bronzeShininess();
+
+float* pearlAmbient();
+float* pearlDiffuse();
+float* pearlSpecular();
+float pearlShininess();
+
+float* jadeAmbient();
+float* jadeDiffuse();
+float* jadeSpecular();
+float jadeShininess();
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 

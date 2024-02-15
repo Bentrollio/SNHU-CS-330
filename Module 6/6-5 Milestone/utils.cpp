@@ -264,6 +264,37 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods, C
 	}
 }
 
+// MATERIALS ADS
+// Gold material
+float* goldAmbient() { static float a[4] = { 0.2473f, 0.1995f, 0.0745f, 1 }; return (float*)a; }
+float* goldDiffuse() { static float a[4] = { 0.7516f, 0.6065f, 0.2265f, 1 }; return (float*)a; }
+float* goldSpecular() { static float a[4] = { 0.6283f, 0.5558f, 0.3661f, 1 }; return (float*)a; }
+float goldShininess() { return 51.2f; }
+
+// Silver Material
+float* silverAmbient() { static float a[4] = { 0.1923f, 0.1923f, 0.1923f, 1 }; return (float*)a; }
+float* silverDiffuse() { static float a[4] = { 0.5075f, 0.5075f, 0.5075f, 1 }; return (float*)a; }
+float* silverSpecular() { static float a[4] = { 0.5083f, 0.5083f, 0.5083f, 1 }; return (float*)a; }
+float silverShininess() { return 51.2f; }
+
+// Bronze Material
+float* bronzeAmbient() { static float a[4] = { 0.2125f, 0.1275f, 0.0540f, 1 }; return (float*)a; }
+float* bronzeDiffuse() { static float a[4] = { 0.7140f, 0.4284f, 0.1814f, 1 }; return (float*)a; }
+float* bronzeSpecular() { static float a[4] = { 0.3935f, 0.2719f, 0.1667f, 1 }; return (float*)a; }
+float bronzeShininess() { return 25.6f; }
+
+// Pearl Material
+float* pearlAmbient() { static float a[4] = { 0.2500f, 0.2073f, 0.2073f, 0.922f }; return (float*)a; }
+float* pearlDiffuse() { static float a[4] = { 1.0000f, 0.8290f, 0.8290f, 0.922f }; return (float*)a; }
+float* pearlSpecular() { static float a[4] = { 0.2966f, 0.2966f, 0.2966f, 0.922f }; return (float*)a; }
+float pearlShininess() { return 11.264f; }
+
+// Jade Material
+float* jadeAmbient() { static float a[4] = { 0.1350f, 0.2225f, 0.1575f, 0.95f }; return (float*)a; }
+float* jadeDiffuse() { static float a[4] = { 0.5400f, 0.8900f, 0.6300f, 0.95f }; return (float*)a; }
+float* jadeSpecular() { static float a[4] = { 0.3162f, 0.3162f, 0.3162f, 0.95f }; return (float*)a; }
+float jadeShininess() { return 12.800f; }
+
 // Wrapper functions
 void glfwMousePositionCallbackWrapper(GLFWwindow* window, double xPos, double yPos) {
 	mousePositionCallback(window, xPos, yPos, camera);
