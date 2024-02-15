@@ -154,6 +154,8 @@
     <None Include="fragShader.glsl" />
     <None Include="lightFragShader.glsl" />
     <None Include="lightVertShader.glsl" />
+    <None Include="materialFragShader.glsl" />
+    <None Include="materialVertShader.glsl" />
     <None Include="vertShader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

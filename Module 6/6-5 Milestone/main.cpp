@@ -9,7 +9,6 @@
 
 #include "utils.h"
 #include "meshes.h"
-
 #include <cmath>
 #include <stack> // For matrix stack
 
@@ -57,23 +56,22 @@ void installLights() {
 	// Set ambient lighting strength
 	glUniform1f(ambStrLoc, 0.3f);
 	// Set ambient color
-	glUniform3f(ambColLoc, 1.0f, 0.78823529, 0.39215686);
+	glUniform3f(ambColLoc, 0.7f, 0.7f, 0.7f); // White natural light
 	//Set color of the first light
-	//glUniform3f(light1ColLoc, 0.0f, 0.0f, 0.0f);
+	glUniform3f(light1ColLoc, 0.2f, 0.2f, 1.0f); // Blue light from a monitor
 	// Set position of the first light
-	//glUniform3f(light1PosLoc, 0.0f, 5.0f, -15.0f);
+	glUniform3f(light1PosLoc, -10.0f, 5.0f, -15.0f);
 	// Set color of the second light
-	glUniform3f(light2ColLoc, 1.0f, 0.78823529, 0.39215686); // 3900k light bulb
+	glUniform3f(light2ColLoc, 1.0f, 0.78823529, 0.39215686); // 3900k "yellow" light bulb
 	// Set position of the second light
 	glUniform3f(light2PosLoc, 0.0f, 8.0f, 10.0f);
 
 	// Set specular intensity
-	glUniform1f(specInt1Loc, 0.0f);
+	glUniform1f(specInt1Loc, 0.1f);
 	glUniform1f(specInt2Loc, 1.0f);
 	// Set specular highlight size
 	glUniform1f(highlghtSz1Loc, 2.0f);
-	glUniform1f(highlghtSz2Loc, 3.0f);
-
+	glUniform1f(highlghtSz2Loc, 6.0f);
 
 }
 
@@ -454,7 +452,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.pop(); // All that remains is the view matrix
 	modelStack.pop();
 
-		// Use lighting program
+	// Use lighting program for pyramids that denote the direction and source of the lights
 	glUseProgram(lightedPyramidShaders);
 
 	// get the uniform variables for the projection, model-view matrices
@@ -475,7 +473,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 2. Rotate shape 11 degrees along x axis
 	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(-11.459f), glm::vec3(1.0f, 0.0f, 0.0f));
 	// 3. Place object at origin
-	translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 5.0f, -15.0f));
+	translation = glm::translate(glm::mat4(1.0f), glm::vec3(-10.0f, 5.0f, -15.0f));
 
 	mMat = translation * rotation * scale;
 

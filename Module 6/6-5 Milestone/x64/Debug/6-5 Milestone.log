@@ -1,8 +1,1 @@
-﻿  main.cpp
-C:\Github Repo\SNHU-CS-330\Module 6\6-5 Milestone\main.cpp(60,43): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-C:\Github Repo\SNHU-CS-330\Module 6\6-5 Milestone\main.cpp(60,31): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-C:\Github Repo\SNHU-CS-330\Module 6\6-5 Milestone\main.cpp(66,46): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-C:\Github Repo\SNHU-CS-330\Module 6\6-5 Milestone\main.cpp(66,34): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-C:\Github Repo\SNHU-CS-330\Module 6\6-5 Milestone\main.cpp(544,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-  6-5 Milestone.vcxproj -> C:\Github Repo\SNHU-CS-330\Module 6\6-5 Milestone\x64\Debug\6-5 Milestone.exe
+﻿  6-5 Milestone.vcxproj -> C:\Github Repo\SNHU-CS-330\Module 6\6-5 Milestone\x64\Debug\6-5 Milestone.exe

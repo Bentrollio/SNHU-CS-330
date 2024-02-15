@@ -37,9 +37,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="vertShader.glsl" />
-    <None Include="fragShader.glsl" />
     <None Include="lightVertShader.glsl" />
     <None Include="lightFragShader.glsl" />
+    <None Include="fragShader.glsl" />
+    <None Include="materialFragShader.glsl" />
+    <None Include="materialVertShader.glsl" />
+    <None Include="vertShader.glsl" />
   </ItemGroup>
 </Project>
