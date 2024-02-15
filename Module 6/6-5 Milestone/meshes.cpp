@@ -80,59 +80,59 @@ void Meshes::CreateCubeMesh(GLmesh& mesh) {
 		1.0f, -1.0f, -1.0f,		0.0f, 0.0f, -1.0f,		0.0f, 0.0f,	// bottom right corner
 
 		// Cube's Rear side right triangle
-		1.0f, -1.0f, -1.0f,		0.0f, 0.0f, 1.0f,		0.0f, 0.0f,	// bottom right corner
-		1.0f, 1.0f, -1.0f,		0.0f, 0.0f, 1.0f,		0.0f, 1.0f,	// top right corner
-		-1.0f, 1.0f, -1.0f,		0.0f, 0.0f, 1.0f,		1.0f, 1.0f,// top left corner 
+		1.0f, -1.0f, -1.0f,		0.0f, 0.0f, -1.0f,		0.0f, 0.0f,	// bottom right corner
+		1.0f, 1.0f, -1.0f,		0.0f, 0.0f, -1.0f,		0.0f, 1.0f,	// top right corner
+		-1.0f, 1.0f, -1.0f,		0.0f, 0.0f, -1.0f,		1.0f, 1.0f,// top left corner 
 
 		// Cube's Right side right triangle
-		1.0f, -1.0f, -1.0f,		0.707f, 0.707f, 0.0f,	1.0f, 0.0f,	// bottom right corner
-		1.0f, -1.0f, 1.0f,		0.707f, 0.707f, 0.0f,	0.0f, 0.0f,	// bottom left corner
-		1.0f, 1.0f, -1.0f,		0.707f, 0.707f, 0.0f,	1.0f, 1.0f,	// top right corner
+		1.0f, -1.0f, -1.0f,		1.0f, 0.0f, 0.0f,	1.0f, 0.0f,	// bottom right corner
+		1.0f, -1.0f, 1.0f,		1.0f, 0.0f, 0.0f,	0.0f, 0.0f,	// bottom left corner
+		1.0f, 1.0f, -1.0f,		1.0f, 0.0f, 0.0f,	1.0f, 1.0f,	// top right corner
 
 		// Cube's Right side left triangle
-		1.0f, -1.0f, 1.0f,		0.707f, 0.707f, 0.0f,	0.0f, 0.0f,	// bottom left corner
-		1.0f, 1.0f, 1.0f,		0.707f, 0.707f, 0.0f,	0.0f, 1.0f,	// top left corner
-		1.0f, 1.0f, -1.0f,		0.707f, 0.707f, 0.0f,	1.0f, 1.0f,	// top right corner
+		1.0f, -1.0f, 1.0f,		1.0f, 0.0f, 0.0f,	0.0f, 0.0f,	// bottom left corner
+		1.0f, 1.0f, 1.0f,		1.0f, 0.0f, 0.0f,	0.0f, 1.0f,	// top left corner
+		1.0f, 1.0f, -1.0f,		1.0f, 0.0f, 0.0f,	1.0f, 1.0f,	// top right corner
 
 		// Cube's Front side right triangle
-		1.0f, -1.0f, 1.0f,		0.577f, 0.577f, 0.577f,	1.0f, 0.0f,	// bottom right corner
-		-1.0f, -1.0f, 1.0f,		0.577f, 0.577f, 0.577f,	0.0f, 0.0f,	// bottom left corner
-		1.0f, 1.0f, 1.0f,		0.577f, 0.577f, 0.577f,	1.0f, 1.0f,	// top right corner
+		1.0f, -1.0f, 1.0f,		0.0f, 0.0f, 1.0f,	1.0f, 0.0f,	// bottom right corner
+		-1.0f, -1.0f, 1.0f,		0.0f, 0.0f, 1.0f,	0.0f, 0.0f,	// bottom left corner
+		1.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f,	1.0f, 1.0f,	// top right corner
 
 		// Cube's Front side left triangle
-		-1.0f, -1.0f, 1.0f,		0.577f, 0.577f, 0.577f,	0.0f, 0.0f,	// bottom left corner
-		-1.0f, 1.0f, 1.0f,		0.577f, 0.577f, 0.577f,	0.0f, 1.0f,	// top left corner
-		1.0f, 1.0f, 1.0f,		0.577f, 0.577f, 0.577f,	1.0f, 1.0f,	// top right corner
+		-1.0f, -1.0f, 1.0f,		0.0f, 0.0f, 1.0f,	0.0f, 0.0f,	// bottom left corner
+		-1.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f,	0.0f, 1.0f,	// top left corner
+		1.0f, 1.0f, 1.0f,		0.0f, 0.0f, 1.0f,	1.0f, 1.0f,	// top right corner
 
 		// Cube's Left side right triangle
-		-1.0f, -1.0f, 1.0f,		0.0f, 0.0f, 0.0f,	1.0f, 0.0f,	// bottom right corner
-		-1.0f, -1.0f, -1.0f,	0.0f, 0.0f, 0.0f,	0.0f, 0.0f,	// bottom left corner
-		-1.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f,	1.0f, 1.0f,	// top right corner
+		-1.0f, -1.0f, 1.0f,		-1.0f, 0.0f, 0.0f,	1.0f, 0.0f,	// bottom right corner
+		-1.0f, -1.0f, -1.0f,	-1.0f, 0.0f, 0.0f,	0.0f, 0.0f,	// bottom left corner
+		-1.0f, 1.0f, 1.0f,		-1.0f, 0.0f, 0.0f,	1.0f, 1.0f,	// top right corner
 
 		// Cube's Left side left triangle
-		-1.0f, -1.0f, -1.0f,	0.0f, 0.0f, 0.0f,	0.0f, 0.0f,	// bottom left corner
-		-1.0f, 1.0f, -1.0f,		0.0f, 0.0f, 0.0f,	0.0f, 1.0f,	// top left corner
-		-1.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f,	1.0f, 1.0f,	// top right corner
+		-1.0f, -1.0f, -1.0f,	-1.0f, 0.0f, 0.0f,	0.0f, 0.0f,	// bottom left corner
+		-1.0f, 1.0f, -1.0f,		-1.0f, 0.0f, 0.0f,	0.0f, 1.0f,	// top left corner
+		-1.0f, 1.0f, 1.0f,		-1.0f, 0.0f, 0.0f,	1.0f, 1.0f,	// top right corner
 
 		// Cube's Bottom side right triangle (facing viewer)
-		-1.0f, -1.0f, 1.0f,		0.0f, 0.0f, 0.0f,	0.0f, 1.0f,	// top left corner
-		1.0f, -1.0f, 1.0f,		0.0f, 0.0f, 0.0f,	1.0f, 1.0f,	// top right corner
-		1.0f, -1.0f, -1.0f,		0.0f, 0.0f, 0.0f,	1.0f, 0.0f,	// bottom right corner
+		-1.0f, -1.0f, 1.0f,		0.0f, -1.0f, 0.0f,	0.0f, 1.0f,	// top left corner
+		1.0f, -1.0f, 1.0f,		0.0f, -1.0f, 0.0f,	1.0f, 1.0f,	// top right corner
+		1.0f, -1.0f, -1.0f,		0.0f, -1.0f, 0.0f,	1.0f, 0.0f,	// bottom right corner
 
 		// Cube's Bottom side left triangle (facing viewer)
-		1.0f, -1.0f, -1.0f,		0.0f, 0.0f, 0.0f,	1.0f, 0.0f,	// bottom right corner
-		-1.0f, -1.0f, -1.0f,	0.0f, 0.0f, 0.0f,	0.0f, 0.0f,	// bottom left corner
-		-1.0f, -1.0f, 1.0f,		0.0f, 0.0f, 0.0f,	0.0f, 1.0f,	// top left corner
+		1.0f, -1.0f, -1.0f,		0.0f, -1.0f, 0.0f,	1.0f, 0.0f,	// bottom right corner
+		-1.0f, -1.0f, -1.0f,	0.0f, -1.0f, 0.0f,	0.0f, 0.0f,	// bottom left corner
+		-1.0f, -1.0f, 1.0f,		0.0f, -1.0f, 0.0f,	0.0f, 1.0f,	// top left corner
 
 		// Cube's Top side right triangle (facing viewer)
-		-1.0f, 1.0f, -1.0f,		0.0f, 0.0f, 0.0f,	0.0f, 1.0f,	// top left corner
-		1.0f, 1.0f, -1.0f,		0.0f, 0.0f, 0.0f,	1.0f, 1.0f,	// top right corner
-		1.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f,	1.0f, 0.0f,// bottom right corner
+		-1.0f, 1.0f, -1.0f,		0.0f, 1.0f, 0.0f,	0.0f, 1.0f,	// top left corner
+		1.0f, 1.0f, -1.0f,		0.0f, 1.0f, 0.0f,	1.0f, 1.0f,	// top right corner
+		1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f,// bottom right corner
 
 		// Cube's Top side left triangle (facing viewer)
-		1.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f,	1.0f, 0.0f,	// bottom right corner
-		-1.0f, 1.0f, 1.0f,		0.0f, 0.0f, 0.0f,	0.0f, 0.0f,	// bottom left corner
-		-1.0f, 1.0f, -1.0f,		0.0f, 0.0f, 0.0f,	0.0f, 1.0f,	// top left corner
+		1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f,	1.0f, 0.0f,	// bottom right corner
+		-1.0f, 1.0f, 1.0f,		0.0f, 1.0f, 0.0f,	0.0f, 0.0f,	// bottom left corner
+		-1.0f, 1.0f, -1.0f,		0.0f, 1.0f, 0.0f,	0.0f, 1.0f,	// top left corner
 
 	};
 
@@ -510,9 +510,9 @@ GLfloat verts[] = // vertexPositions in the book
 	1.0f, -1.0f, -1.0f,		0.0f, 0.0f, -1.0f,		0.0f, 0.0f,	// bottom right corner
 
 	// Tapered Polygon's Rear side right triangle
-	1.0f, -1.0f, -1.0f,		0.0f, 0.0f, 1.0f,		0.0f, 0.0f,	// bottom right corner
-	0.75f, 1.0f, -0.75f,	0.0f, 0.0f, 1.0f,		0.0f, 1.0f,	// top right corner
-	-0.75f, 1.0f, -0.75f,	0.0f, 0.0f, 1.0f,		1.0f, 1.0f,// top left corner 
+	1.0f, -1.0f, -1.0f,		0.0f, 0.0f, -1.0f,		0.0f, 0.0f,	// bottom right corner
+	0.75f, 1.0f, -0.75f,	0.0f, 0.0f, -1.0f,		0.0f, 1.0f,	// top right corner
+	-0.75f, 1.0f, -0.75f,	0.0f, 0.0f, -1.0f,		1.0f, 1.0f,// top left corner 
 
 	// Tapered Polygon's Right side right triangle
 	1.0f, -1.0f, -1.0f,		1.0f, 0.0f, 0.0f,		1.0f, 0.0f,	// bottom right corner
@@ -522,37 +522,37 @@ GLfloat verts[] = // vertexPositions in the book
 	// Tapered Polygon's Right side left triangle
 	1.0f, -1.0f, 1.0f,		1.0f, 0.0f, 0.0f,		0.0f, 0.0f,	// bottom left corner
 	0.75f, 1.0f, 0.75f,		1.0f, 0.0f, 0.0f,		0.0f, 1.0f,	// top left corner
-	-0.75f, 1.0f, -0.75f,	1.0f, 0.0f, 0.0f,		1.0f, 1.0f,	// top right corner
+	0.75f, 1.0f, -0.75f,	1.0f, 0.0f, 0.0f,		1.0f, 1.0f,	// top right corner
 
 	// Tapered Polygon's Front side right triangle
-	1.0f, -1.0f, 1.0f,		1.0f, 0.0f, 0.0f,		1.0f, 0.0f,	// bottom right corner
-	-1.0f, -1.0f, 1.0f,		1.0f, 0.0f, 0.0f,		0.0f, 0.0f,	// bottom left corner
-	0.75f, 1.0f, 0.75f,		1.0f, 0.0f, 0.0f,		1.0f, 1.0f,	// top right corner
+	1.0f, -1.0f, 1.0f,		0.0f, 0.0f, 1.0f,		1.0f, 0.0f,	// bottom right corner
+	-1.0f, -1.0f, 1.0f,		0.0f, 0.0f, 1.0f,		0.0f, 0.0f,	// bottom left corner
+	0.75f, 1.0f, 0.75f,		0.0f, 0.0f, 1.0f,		1.0f, 1.0f,	// top right corner
 
 	// Tapered Polygon's Front side left triangle
-	-1.0f, -1.0f, 1.0f,		1.0f, 0.0f, 0.0f,		0.0f, 0.0f,	// bottom left corner
-	-0.75f, 1.0f, 0.75f,	1.0f, 0.0f, 0.0f,		0.0f, 1.0f,	// top left corner
-	0.75f, 1.0f, 0.75f,		1.0f, 0.0f, 0.0f,		1.0f, 1.0f,	// top right corner
+	-1.0f, -1.0f, 1.0f,		0.0f, 0.0f, 1.0f,		0.0f, 0.0f,	// bottom left corner
+	-0.75f, 1.0f, 0.75f,	0.0f, 0.0f, 1.0f,		0.0f, 1.0f,	// top left corner
+	0.75f, 1.0f, 0.75f,		0.0f, 0.0f, 1.0f,		1.0f, 1.0f,	// top right corner
 
 	// Tapered Polygon's Left side right triangle
-	-1.0f, -1.0f, 1.0f,		0.0f, 0.0f, 1.0f,		1.0f, 0.0f,	// bottom right corner
-	-1.0f, -1.0f, -1.0f,	0.0f, 0.0f, 1.0f,		0.0f, 0.0f,	// bottom left corner
-	-0.75f, 1.0f, 0.75f,	0.0f, 0.0f, 1.0f,		1.0f, 1.0f,	// top right corner
+	-1.0f, -1.0f, 1.0f,		-1.0f, 0.0f, 0.0f,		1.0f, 0.0f,	// bottom right corner
+	-1.0f, -1.0f, -1.0f,	-1.0f, 0.0f, 0.0f,		0.0f, 0.0f,	// bottom left corner
+	-0.75f, 1.0f, 0.75f,	-1.0f, 0.0f, 0.0f,		1.0f, 1.0f,	// top right corner
 
 	// Tapered Polygon's Left side left triangle
-	-1.0f, -1.0f, -1.0f,	0.0f, 0.0f, 1.0f,		0.0f, 0.0f,	// bottom left corner
-	-0.75f, 1.0f, -0.75f,	0.0f, 0.0f, 1.0f,		0.0f, 1.0f,	// top left corner
-	-0.75f, 1.0f, 0.75f,	0.0f, 0.0f, 1.0f,		1.0f, 1.0f,	// top right corner
+	-1.0f, -1.0f, -1.0f,	-1.0f, 0.0f, 0.0f,		0.0f, 0.0f,	// bottom left corner
+	-0.75f, 1.0f, -0.75f,	-1.0f, 0.0f, 0.0f,		0.0f, 1.0f,	// top left corner
+	-0.75f, 1.0f, 0.75f,	-1.0f, 0.0f, 0.0f,		1.0f, 1.0f,	// top right corner
 
 	// Tapered Polygon's Bottom side right triangle (facing viewer)
-	-1.0f, -1.0f, 1.0f,		0.0f, 1.0f, 0.0f,		0.0f, 1.0f,	// top left corner
-	1.0f, -1.0f, 1.0f,		0.0f, 1.0f, 0.0f,		1.0f, 1.0f,	// top right corner
-	1.0f, -1.0f, -1.0f,		0.0f, 1.0f, 0.0f,		1.0f, 0.0f,	// bottom right corner
+	-1.0f, -1.0f, 1.0f,		0.0f, -1.0f, 0.0f,		0.0f, 1.0f,	// top left corner
+	1.0f, -1.0f, 1.0f,		0.0f, -1.0f, 0.0f,		1.0f, 1.0f,	// top right corner
+	1.0f, -1.0f, -1.0f,		0.0f, -1.0f, 0.0f,		1.0f, 0.0f,	// bottom right corner
 
 	// Tapered Polygon's Bottom side left triangle (facing viewer)
-	1.0f, -1.0f, -1.0f,		0.0f, 1.0f, 0.0f,		1.0f, 0.0f,	// bottom right corner
-	-1.0f, -1.0f, -1.0f,	0.0f, 1.0f, 0.0f,		0.0f, 0.0f,	// bottom left corner
-	-1.0f, -1.0f, 1.0f,		0.0f, 1.0f, 0.0f,		0.0f, 1.0f,	// top left corner
+	1.0f, -1.0f, -1.0f,		0.0f, -1.0f, 0.0f,		1.0f, 0.0f,	// bottom right corner
+	-1.0f, -1.0f, -1.0f,	0.0f, -1.0f, 0.0f,		0.0f, 0.0f,	// bottom left corner
+	-1.0f, -1.0f, 1.0f,		0.0f, -1.0f, 0.0f,		0.0f, 1.0f,	// top left corner
 
 	// Tapered Polygon's Top side right triangle (facing viewer)
 	-0.75f, 1.0f, -0.75f,	0.0f, 1.0f, 0.0f,		0.0f, 1.0f,	// top left corner

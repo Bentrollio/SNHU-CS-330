@@ -39,5 +39,7 @@
   <ItemGroup>
     <None Include="vertShader.glsl" />
     <None Include="fragShader.glsl" />
+    <None Include="lightVertShader.glsl" />
+    <None Include="lightFragShader.glsl" />
   </ItemGroup>
 </Project>

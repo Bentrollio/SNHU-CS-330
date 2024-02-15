@@ -29,8 +29,8 @@ uniform float highlightSize2;
 
 void main(void)
 {	// Sample textures
-	vec4 mainTexture = texture(samp, tc);
-	vec4 secondTexture = texture(samp1, tc);
+	vec4 mainTextureColor = texture(samp, tc);
+	vec4 secondTextureColor = texture(samp1, tc);
 
 	// Phong lighting model calculations to generate ambient, diffuse, and specular components.
 
@@ -58,22 +58,34 @@ void main(void)
 	vec3 specular2 = specularIntensity2 * specularComponent2 * light2Color;
 
 	// Calculate Phong result
-	// Texture holds the color to be used for all three components
-	vec4 textureColor = texture(samp, tc);
 	vec3 phong1;
 	vec3 phong2;
+	vec3 mixPhong1;
+	vec3 mixPhong2;
 
 	// Check if the width of the texture at mipmap level 0 is greater than 1 and
 	// the there is an alpha level for the second texture
-	if ((textureSize(samp, 0).x > 1) && (secondTexture.a > 0.0)) {
-		fragmentColor = mix(mainTexture, secondTexture, 0.25); // blend textures
+	if ((textureSize(samp, 0).x > 1) && (secondTextureColor.a > 0.0)) {
+		//fragmentColor = mix(mainTextureColor, secondTextureColor, 0.25); // blend textures
+		phong1 = (ambient + diffuse1 + specular1) * mainTextureColor.xyz;
+		phong2 = (ambient + diffuse2 + specular2) * mainTextureColor.xyz;
+		mixPhong1 = (ambient + diffuse1 + specular1) * secondTextureColor.xyz;
+		mixPhong2 = (ambient + diffuse2 + specular2) * secondTextureColor.xyz;
+		fragmentColor = mix(vec4(phong1 + phong2, 1.0), vec4(mixPhong1 + mixPhong2, 1.0), 0.50); // Send lighting results to GPU
+
 	}
 	//
 	else if (textureSize(samp, 0).x > 1) {
-		fragmentColor = mainTexture;
+		phong1 = (ambient + diffuse1 + specular1) * mainTextureColor.xyz;
+		phong2 = (ambient + diffuse2 + specular2) * mainTextureColor.xyz;
+		fragmentColor = vec4(phong1 + phong2, 1.0); // Send lighting results to GPU
+
 	}
 	// No valid textures, just uses the object color.
 	else {
-		fragmentColor = objectColor;
+		phong1 = (ambient + diffuse1 + specular1) * objectColor.xyz;
+		phong2 = (ambient + diffuse2 + specular2) * objectColor.xyz;
+		fragmentColor = vec4(phong1 + phong2, 1.0); // Send lighting results to GPU
 	}
+
 }
