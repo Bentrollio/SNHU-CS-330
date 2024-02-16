@@ -105,6 +105,12 @@ float* jadeDiffuse();
 float* jadeSpecular();
 float jadeShininess();
 
+float* sapphireAmbient();
+float* sapphireDiffuse();
+float* sapphireSpecular();
+float sapphireShininess();
+
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 #endif /* UTILS_H */
