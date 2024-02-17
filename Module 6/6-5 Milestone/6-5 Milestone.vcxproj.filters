@@ -43,5 +43,7 @@
     <None Include="materialFragShader.glsl" />
     <None Include="materialVertShader.glsl" />
     <None Include="vertShader.glsl" />
+    <None Include="TESTfragShader.glsl" />
+    <None Include="TESTvertShader.glsl" />
   </ItemGroup>
 </Project>

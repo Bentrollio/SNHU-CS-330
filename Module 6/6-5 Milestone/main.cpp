@@ -20,7 +20,7 @@ using namespace std;
 Meshes meshes;
 
 // Shader programs
-GLuint renderingProgram, lightedPyramidShaders, materialShaders;
+GLuint renderingProgram, lightedPyramidShaders, materialShaders, testShader;
 
 // Timing
 float deltaTime = 0.0f; // time between current time and last frame
@@ -32,6 +32,28 @@ light2ColLoc, light2PosLoc, specInt1Loc, highlghtSz1Loc, specInt2Loc, highlghtSz
 
 // FIX ME: Material Variables
 GLuint mAmbLoc, mDiffLoc, mSpecLoc, mShiLoc;
+
+// FIX ME: Advanced lighting variables
+GLuint globalAmbLoc, ambLoc, ambLoc2, diffLoc, diffLoc2, specLoc, specLoc2, posLoc, posLoc2, nLoc; //mAmbLoc, mDiffLoc, mSpecLoc, mShiLoc, nLoc;
+glm::vec3 currentLightPos, currentLightPos2, lightPosV, lightPos2V; // light position as Vector3f, in both model and view space
+float lightPos[3]; // light position as float array
+float lightPos2[3];
+glm::mat4 invTrMat;
+
+// initial light location
+glm::vec3 initialLightLoc = glm::vec3(0.0f, 8.0f, 10.0f);
+glm::vec3 initialLightLoc2 = glm::vec3(-10.0f, 5.0f, -15.0f);
+
+
+float globalAmbient[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
+// front white light properties
+float lightAmbient[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+float lightDiffuse[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+float lightSpecular[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+// rear blue light properties
+float lightAmbient2[4] = { 0.0f, 0.0f, 1.0f, 1.0f };
+float lightDiffuse2[4] = { 0.2f, 0.2f, 1.0f, 1.0f };
+float lightSpecular2[4] = { 0.2f, 0.2f, 1.0f, 1.0f };
 
 // Material variables that reflect light
 float* matAmb;
@@ -72,15 +94,15 @@ void installLights(GLuint shader) {
 	// Set ambient lighting strength
 	glUniform1f(ambStrLoc, 0.3f);
 	// Set ambient color
-	glUniform3f(ambColLoc, 0.7f, 0.7f, 0.7f); // White natural light
+	glUniform3f(ambColLoc, globalAmbient[0], globalAmbient[1], globalAmbient[2]); // White natural light
 	//Set color of the first light
 	glUniform3f(light1ColLoc, 0.2f, 0.2f, 1.0f); // Blue light from a monitor
 	// Set position of the first light
-	glUniform3f(light1PosLoc, -10.0f, 5.0f, -15.0f);
+	glUniform3f(light1PosLoc, initialLightLoc2.x, initialLightLoc2.y, initialLightLoc2.z);
 	// Set color of the second light
 	glUniform3f(light2ColLoc, 1.0f, 0.78823529, 0.39215686); // 3900k "yellow" light bulb
 	// Set position of the second light
-	glUniform3f(light2PosLoc, 0.0f, 8.0f, 10.0f);
+	glUniform3f(light2PosLoc, initialLightLoc.x, initialLightLoc.y, initialLightLoc.z);
 
 	// Set specular intensity
 	glUniform1f(specInt1Loc, 0.1f);
@@ -88,6 +110,52 @@ void installLights(GLuint shader) {
 	// Set specular highlight size
 	glUniform1f(highlghtSz1Loc, 2.0f);
 	glUniform1f(highlghtSz2Loc, 6.0f);
+}
+
+void installAdvancedLights(GLuint shader, glm::mat4 vMatrix) {
+
+	// Convert light's position to view space and save it in a float array
+	lightPosV = glm::vec3(vMatrix * glm::vec4(currentLightPos, 1.0));
+	lightPos[0] = lightPosV.x;
+	lightPos[1] = lightPosV.y;
+	lightPos[2] = lightPosV.z;
+
+	// Convert light's position to view space and save it in a float array
+	lightPos2V = glm::vec3(vMatrix * glm::vec4(currentLightPos2, 1.0));
+	lightPos2[0] = lightPos2V.x;
+	lightPos2[1] = lightPos2V.y;
+	lightPos2[2] = lightPos2V.z;
+
+	// Get the locations of the light and material fields in the shader
+	globalAmbLoc = glGetUniformLocation(shader, "globalAmbient");
+	ambLoc = glGetUniformLocation(shader, "light.ambient");
+	ambLoc2 = glGetUniformLocation(shader, "light2.ambient");
+	diffLoc = glGetUniformLocation(shader, "light.diffuse");
+	diffLoc2 = glGetUniformLocation(shader, "light2.diffuse");
+	specLoc = glGetUniformLocation(shader, "light.specular");
+	specLoc2 = glGetUniformLocation(shader, "light2.specular");
+	posLoc = glGetUniformLocation(shader, "light.position");
+	posLoc2 = glGetUniformLocation(shader, "light2.position");
+
+	mAmbLoc = glGetUniformLocation(shader, "material.ambient");
+	mDiffLoc = glGetUniformLocation(shader, "material.diffuse");
+	mSpecLoc = glGetUniformLocation(shader, "material.specular");
+	mShiLoc = glGetUniformLocation(shader, "material.shininess");
+
+	// Set the uniform light and material values in the shader
+	glProgramUniform4fv(shader, globalAmbLoc, 1, globalAmbient);
+	glProgramUniform4fv(shader, ambLoc, 1, lightAmbient);
+	glProgramUniform4fv(shader, ambLoc2, 1, lightAmbient2);
+	glProgramUniform4fv(shader, diffLoc, 1, lightDiffuse);
+	glProgramUniform4fv(shader, diffLoc2, 1, lightDiffuse2);
+	glProgramUniform4fv(shader, specLoc, 1, lightSpecular);
+	glProgramUniform4fv(shader, specLoc2, 1, lightSpecular2);
+	glProgramUniform3fv(shader, posLoc, 1, lightPos);
+	glProgramUniform3fv(shader, posLoc2, 1, lightPos2);
+	glProgramUniform4fv(shader, mAmbLoc, 1, matAmb);
+	glProgramUniform4fv(shader, mDiffLoc, 1, matDif);
+	glProgramUniform4fv(shader, mSpecLoc, 1, matSpe);
+	glProgramUniform1f(shader, mShiLoc, matShi);
 }
 
 // FIXME Lighting variables for material shaders
@@ -116,6 +184,7 @@ void init(GLFWwindow* window) {
 	renderingProgram = createShaderProgram("vertShader.glsl", "fragShader.glsl"); // Reads from and compiles GLSL shader files
 	lightedPyramidShaders = createShaderProgram("lightVertShader.glsl", "lightFragShader.glsl"); // Creates the pyramids that represent the lighting position
 	materialShaders = createShaderProgram("materialVertShader.glsl", "materialFragShader.glsl");
+	testShader = createShaderProgram("TESTVertShader.glsl", "TESTFragShader.glsl");
 
 	glfwGetFramebufferSize(window, &width, &height);
 
@@ -138,21 +207,25 @@ void init(GLFWwindow* window) {
 
 // Draws to GLFW display window
 void display(GLFWwindow* window, double currentTime) { // AKA urender function in tutorial
-
+	
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	currentLightPos = glm::vec3(initialLightLoc.x, initialLightLoc.y, initialLightLoc.z);
+	currentLightPos2 = glm::vec3(initialLightLoc2.x, initialLightLoc2.y, initialLightLoc2.z);
 
 	// adjust OpenGL settings
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-	glUseProgram(materialShaders); // loads compiled shaders into openGL pipeline
+	glUseProgram(testShader); // loads compiled shaders into openGL pipeline
 
 	// get the uniform variables for the model/view, model and projection matrices
-	modelLoc = glGetUniformLocation(materialShaders, "model"); // model only
-	mvLoc = glGetUniformLocation(materialShaders, "mv_matrix"); // model-view matrix
-	projLoc = glGetUniformLocation(materialShaders, "proj_matrix"); // projection
-	objectColorLoc = glGetUniformLocation(materialShaders, "objectColor");
+	//modelLoc = glGetUniformLocation(materialShaders, "model"); // model only
+	mvLoc = glGetUniformLocation(testShader, "mv_matrix"); // model-view matrix
+	projLoc = glGetUniformLocation(testShader, "proj_matrix"); // projection
+	objectColorLoc = glGetUniformLocation(testShader, "objectColor");
+	nLoc = glGetUniformLocation(testShader, "norm_matrix");
 
 
 	// View matrix calculated once and used for all objects
@@ -168,18 +241,21 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy projection matrix to the uniform variable
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 
-	installLights(materialShaders);
+	matAmb = silverAmbient();
+	matDif = silverDiffuse();
+	matSpe = silverSpecular();
+	matShi = silverShininess();
+
+	installAdvancedLights(testShader, vMat);
+
+
 	// Material variables that reflect light
-	matAmb = jadeAmbient();
-	matDif = jadeDiffuse();
-	matSpe = jadeSpecular();
-	matShi = jadeShininess();
-	installMaterialShader(materialShaders);
+	installMaterialShader(testShader);
 
 	//// --------------DRAWS THE PLANE-----------------
 	//// The colour and the shape
 	glBindVertexArray(meshes.planeMesh.vao);
-	glProgramUniform4f(materialShaders, objectColorLoc, 0.0f, 0.50196078f, 1.0f, 1.0f);
+	//glProgramUniform4f(materialShaders, objectColorLoc, 0.0f, 0.50196078f, 1.0f, 1.0f);
 	
 	mvStack.push(mvStack.top()); // Places a copy of the view matrix at top of stack to add model info to
 	// 1. Places plane at origin
@@ -197,8 +273,9 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	modelStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 1.0f, 10.0f));
 
 	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
+	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	glUniformMatrix4fv(nLoc, 1, GL_FALSE, glm::value_ptr(invTrMat));
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, fabricTexture);
@@ -212,8 +289,8 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	glActiveTexture(GL_TEXTURE0); // reactivates texture at loc 0
-	glBindTexture(GL_TEXTURE_2D, 0); // unbinds active texture at 0
+	//glActiveTexture(GL_TEXTURE0); // reactivates texture at loc 0
+	//glBindTexture(GL_TEXTURE_2D, 0); // unbinds active texture at 0
 
 
 	mvStack.pop(); // Removes Plane transforms from stack
@@ -329,25 +406,24 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// * START of RENDERING SOLAR SYSTEM GLOBE
 	// **************************************************
 	// */
-	glUseProgram(materialShaders);
-	installLights(materialShaders);
+	glUseProgram(testShader);
+	//currentLightPos = glm::vec3(initialLightLoc.x, initialLightLoc.y, initialLightLoc.z);
+	//currentLightPos2 = glm::vec3(initialLightLoc2.x, initialLightLoc2.y, initialLightLoc2.z);
+	installAdvancedLights(testShader, vMat);
 	// Material variables that reflect light
-	matAmb = sapphireAmbient();
-	matDif = sapphireDiffuse();
-	matSpe = sapphireSpecular();
-	matShi = sapphireShininess();
-	installMaterialShader(materialShaders);
+	matAmb = silverAmbient();
+	matDif = silverDiffuse();
+	matSpe = silverSpecular();
+	matShi = silverShininess();
+	installMaterialShader(testShader);
 	// get the uniform variables for the projection, model-view matrices
-	modelLoc = glGetUniformLocation(materialShaders, "model"); // model only
-	mvLoc = glGetUniformLocation(materialShaders, "mv_matrix"); // model-view matrix
-	projLoc = glGetUniformLocation(materialShaders, "proj_matrix"); // projection
-	objectColorLoc = glGetUniformLocation(materialShaders, "objectColor");
+	//modelLoc = glGetUniformLocation(testShader, "model"); // model only
+	mvLoc = glGetUniformLocation(testShader, "mv_matrix"); // model-view matrix
+	projLoc = glGetUniformLocation(testShader, "proj_matrix"); // projection
+	objectColorLoc = glGetUniformLocation(testShader, "objectColor");
+	nLoc = glGetUniformLocation(testShader, "norm_matrix");
 
 	// Copy projection matrix to the uniform variable
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
-
-	// Copy model-view matrix to the uniform variable for the shaders
-	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 
 	 // --------------DRAWS THE SPHERE (PARENT)-----------------
@@ -360,10 +436,13 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// --Model only transforms for lighting calculations--
 	modelStack.push(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.5f, 4.2f)));
 
+	invTrMat = glm::transpose(glm::inverse(mvStack.top()));
 	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
+	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 	//glProgramUniform4f(materialShaders, objectColorLoc, 1.0f, 0.0f, 0.50196078f, 1.0f);
+	glUniformMatrix4fv(nLoc, 1, GL_FALSE, glm::value_ptr(invTrMat));
+	
 
 	// Draw triangles
 	glDrawElements(GL_TRIANGLES, meshes.sphereMesh.numIndices, GL_UNSIGNED_INT, (void*)0);
@@ -374,13 +453,13 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// --------------DRAWS THE TAPERED POLYGON PEDESTAL (CHILD OF SPHERE)-----------------
 	// The colour and the shape
-	matAmb = goldAmbient();
-	matDif = goldDiffuse();
-	matSpe = goldSpecular();
-	matShi = goldShininess();
-	installMaterialShader(materialShaders);
+	matAmb = bronzeAmbient();
+	matDif = bronzeDiffuse();
+	matSpe = bronzeSpecular();
+	matShi = bronzeShininess();
+	installAdvancedLights(testShader, vMat);
 	glBindVertexArray(meshes.taperedPolygonMesh.vao);
-	glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 1.0f, 0.0f, 1.0f);
+	//glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 1.0f, 0.0f, 1.0f);
 
 	mvStack.push(mvStack.top()); // Copies Sphere position
 
@@ -393,14 +472,15 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 3. Scale Cube
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 0.3f, 0.75f));
 
-	// --Model only transforms for lighting calculations--
-	modelStack.push(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.17f, 0.0f)));
-	modelStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	modelStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 0.3f, 0.75f));
+	//// --Model only transforms for lighting calculations--
+	//modelStack.push(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.17f, 0.0f)));
+	//modelStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	//modelStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 0.3f, 0.75f));
 
 	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
+	//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	glUniformMatrix4fv(nLoc, 1, GL_FALSE, glm::value_ptr(invTrMat));
 
 	// Draw triangles
 	glDrawArrays(GL_TRIANGLES, 0, meshes.taperedPolygonMesh.numVertices);
@@ -408,7 +488,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	mvStack.pop();
 	mvStack.pop(); // All that remains is the view matrix
-	modelStack.pop();
+	//modelStack.pop();
 
 	///**************************************************
 	// * RENDERS THE BOOK
