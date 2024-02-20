@@ -35,8 +35,8 @@ private:
 	float toRadians(float degrees);
 
 public:
-	GLuint vao; // Handle for the Vertex Array Object
-	GLuint vbo[numVBOs]; // Handle for the Vertex Buffer Objects
+	//GLuint vao; // Handle for the Vertex Array Object
+	//GLuint vbo[numVBOs]; // Handle for the Vertex Buffer Objects
 	Sphere(); // default constructor
 	Sphere(int prec);
 	int getNumVertices();

@@ -71,12 +71,25 @@ void main(void)
 	//FragColor = vec4((ambient + diffuse + specular), 1.0);
 	vec3 phong1;
 	vec3 phong2;
+	vec3 mixPhong1;
+	vec3 mixPhong2;
 
-	if (textureSize(samp, 0).x > 1) {
+	// Check if the width of the texture at mipmap level 0 is greater than 1 and
+	// the there is an alpha level for the second texture
+
+	if ((textureSize(samp, 0).x > 1) && (secondTextureColor.a > 0.0)) {
 		phong1 = (ambient + diffuse + specular) * mainTextureColor.xyz;
 		phong2 = (ambient2 + diffuse2 + specular2) * mainTextureColor.xyz;
+		mixPhong1 = (ambient + diffuse + specular) * secondTextureColor.xyz;
+		mixPhong2 = (ambient + diffuse2 +specular2) * secondTextureColor.xyz;
+		FragColor = mix(vec4(phong1 + phong2, 1.0), vec4(mixPhong1 + mixPhong2, 1.0), 0.50);
+	}
+	else if (textureSize(samp, 0).x > 1) {
+		phong1 = (ambient + diffuse + specular) * mainTextureColor.xyz;
+		phong2 = (ambient2 + diffuse2 + specular2) * mainTextureColor.xyz;
+		mixPhong1 = (ambient + diffuse + specular) * secondTextureColor.xyz;
+		mixPhong2 = (ambient + diffuse2 +specular2) * secondTextureColor.xyz;
 		FragColor = vec4(phong1 + phong2, 1.0);
-
 	}
 	else {
 	phong1 = (ambient + diffuse + specular);

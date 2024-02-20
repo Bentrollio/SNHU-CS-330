@@ -17,7 +17,7 @@ Sphere::Sphere(int prec) { // prec is precision, or number of slices
 float Sphere::toRadians(float degrees) { return (degrees * 2.0f * 3.14159f) / 360.0f; }
 
 void Sphere::init(int prec) {
-	numVertices = (prec * 1) * (prec + 1);
+	numVertices = (prec + 1) * (prec + 1);
 	numIndices = prec * prec * 6;
 
 	for (int i = 0; i < numVertices; i++) { vertices.push_back(glm::vec3()); }
@@ -30,7 +30,7 @@ void Sphere::init(int prec) {
 		for (int j = 0; j <= prec; j++) {
 			float y = (float)cos(toRadians(180.0f - i * 180.0f / prec));
 			float x = -(float)cos(toRadians(j * 360.0f / prec)) * (float)abs(cos(asin(y)));
-			float z = -(float)sin(toRadians(j * 360.0f / prec)) * (float)abs(cos(asin(y)));
+			float z = (float)sin(toRadians(j * 360.0f / prec)) * (float)abs(cos(asin(y)));
 			vertices[i * (prec + 1) + j] = glm::vec3(x, y, z);
 			texCoords[i * (prec + 1) + j] = glm::vec2(((float)j / prec), ((float)i / prec));
 			normals[i * (prec + 1) + j] = glm::vec3(x, y, z);

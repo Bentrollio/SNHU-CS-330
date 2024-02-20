@@ -100,6 +100,11 @@ float* pearlDiffuse();
 float* pearlSpecular();
 float pearlShininess();
 
+float* pewterAmbient();
+float* pewterDiffuse();
+float* pewterSpecular();
+float pewterShininess();
+
 float* jadeAmbient();
 float* jadeDiffuse();
 float* jadeSpecular();

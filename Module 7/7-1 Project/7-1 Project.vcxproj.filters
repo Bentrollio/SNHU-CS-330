@@ -43,9 +43,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="fragShader.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="lightVertShader.glsl">
       <Filter>Resource Files</Filter>
     </None>
@@ -56,9 +53,6 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="materialVertShader.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="vertShader.glsl">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

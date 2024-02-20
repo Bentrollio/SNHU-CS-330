@@ -49,7 +49,7 @@ public:
 		GLmesh pyramid3Mesh;
 		GLmesh pyramid4Mesh;
 		GLmesh torusMesh;
-		//Sphere sphereMesh2();
+		GLmesh mySphere;
 
 		void CreateMeshes();
 		void DestroyMeshes();
@@ -60,14 +60,14 @@ private:
 		void CreatePrismMesh(GLmesh& mesh);
 		//void CreateBoxMesh(GLmesh& mesh);
 		void CreateConeMesh(GLmesh &mesh);
-		/*void CreateCylinderMesh(GLmesh& mesh);
+		//void CreateCylinderMesh(GLmesh& mesh);
 		void CreateTaperedCylinderMesh(GLmesh &mesh);
-		void CreateTorusMesh(GLmesh &mesh); */
+		//void CreateTorusMesh(GLmesh &mesh);
 		void CreateTaperedPolygonMesh(GLmesh& mesh);
 		void CreatePyramid3Mesh(GLmesh &mesh);
 		void CreatePyramid4Mesh(GLmesh& mesh);
 		void CreateSphereMesh(GLmesh& mesh);
-		void CreateSphereMesh2(void);
+		void CreateSphereMesh2(GLmesh& mesh);
 		void DestroyMesh(GLmesh& mesh);
 
 		void CalculateTriangleNormal(glm::vec3 px, glm::vec3 py, glm::vec3 pz);

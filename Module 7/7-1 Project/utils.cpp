@@ -289,6 +289,12 @@ float* pearlDiffuse() { static float a[4] = { 1.0000f, 0.8290f, 0.8290f, 0.922f 
 float* pearlSpecular() { static float a[4] = { 0.2966f, 0.2966f, 0.2966f, 0.922f }; return (float*)a; }
 float pearlShininess() { return 11.264f; }
 
+// Pewter Material
+float* pewterAmbient() { static float a[4] = { 0.11f, 0.06f, 0.11f, 1.0f }; return (float*)a; }
+float* pewterDiffuse() { static float a[4] = { 0.43f, 0.47f, 0.54f, 1.0f }; return (float*)a; }
+float* pewterSpecular() { static float a[4] = { 0.33f, 0.33f, 0.52f, 1.0f }; return (float*)a; }
+float pewterShininess() { return 9.85f; }
+
 // Jade Material
 float* jadeAmbient() { static float a[4] = { 0.1350f, 0.2225f, 0.1575f, 0.95f }; return (float*)a; }
 float* jadeDiffuse() { static float a[4] = { 0.5400f, 0.8900f, 0.6300f, 0.95f }; return (float*)a; }

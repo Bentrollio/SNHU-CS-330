@@ -1,9 +1,9 @@
 /*
  * SNHU CS-330
- * Module 6 Milestone: Lighting Complex Objects
+ * Module 7 Final Project: Rendering a 3D Scene
  *
  * Alex Baires
- * 2-18-24
+ * 2-25-24
  *
  */
 
@@ -20,20 +20,19 @@ using namespace std;
 Meshes meshes;
 
 // Shader programs
-GLuint renderingProgram, lightedPyramidShaders, materialShaders;
+GLuint lightedPyramidShaders, materialShaders;
 
 // Timing
 float deltaTime = 0.0f; // time between current time and last frame
 float lastFrame = 0.0f;
 
 // Variables to be used in display() function to prevent allocation during rendering
-GLuint projLoc, viewLoc, modelLoc, mvLoc, objectColorLoc, viewPosLoc, ambStrLoc, ambColLoc, light1ColLoc, light1PosLoc,
-light2ColLoc, light2PosLoc, specInt1Loc, highlghtSz1Loc, specInt2Loc, highlghtSz2Loc;
+GLuint modelLoc, projLoc, mvLoc, objectColorLoc;
 
 // Material Variables
 GLuint mAmbLoc, mDiffLoc, mSpecLoc, mShiLoc;
 
-// FIX ME: Advanced lighting variables
+// Advanced lighting variables
 GLuint globalAmbLoc, ambLoc, ambLoc2, diffLoc, diffLoc2, specLoc, specLoc2, posLoc, posLoc2, nLoc; //mAmbLoc, mDiffLoc, mSpecLoc, mShiLoc, nLoc;
 glm::vec3 currentLightPos, currentLightPos2, lightPosV, lightPos2V; // light position as Vector3f, in both model and view space
 float lightPos[3]; // FIRST light position as float array
@@ -41,13 +40,13 @@ float lightPos2[3]; // SECOND light position as float array
 glm::mat4 invTrMat; // Inverse transpose matrix for materialShaders
 
 // initial light location
-glm::vec3 initialLightLoc = glm::vec3(0.0f, 8.0f, 10.0f);
+glm::vec3 initialLightLoc = glm::vec3(10.0f, 4.0f, 10.0f);
 glm::vec3 initialLightLoc2 = glm::vec3(-10.0f, 5.0f, -15.0f);
 
 // Global light
 float globalAmbient[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
 // front white light properties
-float lightAmbient[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+float lightAmbient[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
 float lightDiffuse[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 float lightSpecular[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 // rear blue light properties
@@ -73,44 +72,6 @@ glm::mat4 mMat, mvMat, scale, rotation, translation;
 // Texture variables;
 GLuint seleniteBaseTexture, seleniteTipTexture, fabricTexture, fabricRoughnessTexture, grungeTexture, plasticTexture, walmartLogoTexture,
 blackRubberBaseTexture;
-
-/* Lighting Variables for general objects SNHU tutorial */
-void installLights(GLuint shader) {
-	viewPosLoc = glGetUniformLocation(shader, "viewPosition");
-	ambStrLoc = glGetUniformLocation(shader, "ambientStrength"); 
-	ambColLoc = glGetUniformLocation(shader, "ambientColor");
-	light1ColLoc = glGetUniformLocation(shader, "light1Color");
-	light1PosLoc = glGetUniformLocation(shader, "light1Position");
-	light2ColLoc = glGetUniformLocation(shader, "light2Color");
-	light2PosLoc = glGetUniformLocation(shader, "light2Position");
-	specInt1Loc = glGetUniformLocation(shader, "specularIntensity1");
-	highlghtSz1Loc = glGetUniformLocation(shader, "highlightSize1");
-	specInt2Loc = glGetUniformLocation(shader, "specularIntensity2");
-	highlghtSz2Loc = glGetUniformLocation(shader, "highlightSize2");
-
-	// Set the camera view location
-	glUniform3f(viewPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
-
-	// Set ambient lighting strength
-	glUniform1f(ambStrLoc, 0.3f);
-	// Set ambient color
-	glUniform3f(ambColLoc, globalAmbient[0], globalAmbient[1], globalAmbient[2]); // White natural light
-	//Set color of the first light
-	glUniform3f(light1ColLoc, 0.2f, 0.2f, 1.0f); // Blue light from a monitor
-	// Set position of the first light
-	glUniform3f(light1PosLoc, initialLightLoc2.x, initialLightLoc2.y, initialLightLoc2.z);
-	// Set color of the second light
-	glUniform3f(light2ColLoc, 1.0f, 0.78823529, 0.39215686); // 3900k "yellow" light bulb
-	// Set position of the second light
-	glUniform3f(light2PosLoc, initialLightLoc.x, initialLightLoc.y, initialLightLoc.z);
-
-	// Set specular intensity
-	glUniform1f(specInt1Loc, 0.1f);
-	glUniform1f(specInt2Loc, 1.0f);
-	// Set specular highlight size
-	glUniform1f(highlghtSz1Loc, 2.0f);
-	glUniform1f(highlghtSz2Loc, 6.0f);
-}
 
 // Gordon and Clevenger Tutorial Phong implementation
 void installAdvancedLights(GLuint shader, glm::mat4 vMatrix) {
@@ -168,12 +129,10 @@ void changeMaterialSurfaces(GLuint shader) {
 
 // Hierarchal Matrix Stack for Parent-Child Objects
 stack<glm::mat4> mvStack;
-stack<glm::mat4> modelStack; //FIX ME: REMOVE IN FINAL Model only stack for lighting calculations
 
 // Places application-specific initialization tasks
 void init(GLFWwindow* window) {
 
-	renderingProgram = createShaderProgram("vertShader.glsl", "fragShader.glsl"); // Reads from and compiles GLSL shader files
 	lightedPyramidShaders = createShaderProgram("lightVertShader.glsl", "lightFragShader.glsl"); // Creates the pyramids that represent the lighting position
 	materialShaders = createShaderProgram("materialVertShader.glsl", "materialFragShader.glsl");
 
@@ -257,11 +216,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 3. Scales Plane
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 1.0f, 10.0f));
 
-	// --Model only transforms for lighting calculations--
-	modelStack.push(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f))); // Positions the plane
-	modelStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-	modelStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 1.0f, 10.0f));
-
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 	glUniformMatrix4fv(nLoc, 1, GL_FALSE, glm::value_ptr(invTrMat));
@@ -269,9 +223,8 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, fabricTexture);
 
-	// FIX ME: Add second texture for materialShaders
-	//glActiveTexture(GL_TEXTURE1);
-	//glBindTexture(GL_TEXTURE_2D, fabricRoughnessTexture);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, fabricRoughnessTexture);
 
 	// Draw triangles
 	glDrawElements(GL_TRIANGLES, meshes.planeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
@@ -279,12 +232,11 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	//glActiveTexture(GL_TEXTURE0); // reactivates texture at loc 0
-	//glBindTexture(GL_TEXTURE_2D, 0); // unbinds active texture at 0
+	glActiveTexture(GL_TEXTURE0); // reactivates texture at loc 0
+	glBindTexture(GL_TEXTURE_2D, 0); // unbinds active texture at 0
 
 
 	mvStack.pop(); // Removes Plane transforms from stack
-	modelStack.pop(); // Resets the model matrix for next object
 
 	/////**************************************************
 	//// * START of RENDERING CRYSTAL OBJECT
@@ -292,24 +244,11 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	//// * Uses Pyramid and Cube Objects.
 	//// **************************************************
 	//// */
-	glUseProgram(renderingProgram); // loads compiled shaders into openGL pipeline
-
-	// get the uniform variables for the model/view, model and projection matrices
-	modelLoc = glGetUniformLocation(renderingProgram, "model"); // model only
-	mvLoc = glGetUniformLocation(renderingProgram, "mv_matrix"); // model-view matrix
-	projLoc = glGetUniformLocation(renderingProgram, "proj_matrix"); // projection
-	objectColorLoc = glGetUniformLocation(renderingProgram, "objectColor");
-
-	// Copy projection matrix to the uniform variable
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
-
-
-	installLights(renderingProgram);
 
 	//// --------------DRAWS THE PYRAMID (PARENT)-----------------
 	//The colour and the shape
 	glBindVertexArray(meshes.pyramid4Mesh.vao);
-	glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.50196078f, 1.0f);
+	glProgramUniform4f(materialShaders, objectColorLoc, 1.0f, 0.0f, 0.50196078f, 1.0f);
 
 	mvStack.push(mvStack.top()); // copies view matrix for manipulation
 
@@ -318,18 +257,13 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.push(mvStack.top()); // Copies view * (PYRAMID) position to top of stack
 
 	// 2. Rotates Pyramid 85 degrees along the y-axis
-	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(85.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(-15.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	mvStack.push(mvStack.top()); // Copies view * PYRAMID(position * rotation) to top
 
 	// 3. Scales Pyramid
-	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 1.25f, 0.5f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 2.5f, 1.0f));
+	mvStack.push(mvStack.top()); // Copies scale to top
 
-	// --Model only transforms for lighting calculations--
-	modelStack.push(glm::translate(glm::mat4(1.0f), glm::vec3(6.0f, 2.76f, 3.0f))); // Positions the pyramid
-	modelStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(85.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	modelStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 1.25f, 0.5f)); // Pyramid Scale
-
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	// Activate texture located in 0 (samp in frag shader)
@@ -348,12 +282,12 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindVertexArray(0);
 
 	mvStack.pop(); // Removes PYRAMID scale
-	modelStack.pop(); // Removes PYRAMID scale from model only matrix
+	mvStack.pop(); // Removes PYRAMID rotation
 
 	// --------------DRAWS THE CUBE (CHILD OF PYRAMID)-----------------
 	// The colour and the shape
 	glBindVertexArray(meshes.cubeMesh.vao);
-	glProgramUniform4f(renderingProgram, objectColorLoc, 0.50196078f, 0.0f, 0.50196078f, 1.0f);
+	glProgramUniform4f(materialShaders, objectColorLoc, 0.50196078f, 0.0f, 0.50196078f, 1.0f);
 
 	mvStack.push(mvStack.top()); // Makes copy of PYRAMID(position * rotation)
 
@@ -363,12 +297,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 2. Scale Cube
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.75f, 0.5f));
 
-	// --Model only transforms for lighting calculations--
-	modelStack.push(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, -2.0, 0.0)));
-	modelStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(85.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	modelStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.75f, 0.5f));
-
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	glActiveTexture(GL_TEXTURE0);
@@ -388,7 +316,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.pop();
 	mvStack.pop(); 
 	mvStack.pop(); // All that remains in stack is view matrix
-	modelStack.pop(); // Model stack is empty and ready for next object.
 
 	// **** END of RENDERING CRYSTAL OBJECT ****
 
@@ -396,47 +323,34 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// * START of RENDERING SOLAR SYSTEM GLOBE
 	// **************************************************
 	// */
-	glUseProgram(materialShaders);
+	//glUseProgram(materialShaders);
 
-	installAdvancedLights(materialShaders, vMat);
+	//installAdvancedLights(materialShaders, vMat);
 	// Material variables that reflect light
 	matAmb = silverAmbient();
 	matDif = silverDiffuse();
 	matSpe = silverSpecular();
 	matShi = silverShininess();
 	changeMaterialSurfaces(materialShaders);
-	// get the uniform variables for the projection, model-view matrices
-
-	mvLoc = glGetUniformLocation(materialShaders, "mv_matrix"); // model-view matrix
-	projLoc = glGetUniformLocation(materialShaders, "proj_matrix"); // projection
-	objectColorLoc = glGetUniformLocation(materialShaders, "objectColor");
-	nLoc = glGetUniformLocation(materialShaders, "norm_matrix");
-
-	// Copy projection matrix to the uniform variable
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 
 	 // --------------DRAWS THE SPHERE (PARENT)-----------------
-	glBindVertexArray(meshes.sphereMesh.vao);
+	glBindVertexArray(meshes.mySphere.vao);
 
 	mvStack.push(mvStack.top()); // copies the view matrix to the top for manipulation
 	// 1. Position Sphere
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.5f, 4.2f));
 
-	// --Model only transforms for lighting calculations--
-	modelStack.push(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.5f, 4.2f)));
-
 	invTrMat = glm::transpose(glm::inverse(mvStack.top()));
+
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 	glUniformMatrix4fv(nLoc, 1, GL_FALSE, glm::value_ptr(invTrMat));
 	
-
-	// Draw triangles
-	glDrawElements(GL_TRIANGLES, meshes.sphereMesh.numIndices, GL_UNSIGNED_INT, (void*)0);
+	// Draw
+	glDrawArrays(GL_TRIANGLES, 0, meshes.mySphere.numIndices);
 
 	// Deactivate the VAO
 	glBindVertexArray(0);
-	modelStack.pop();
 
 	// --------------DRAWS THE TAPERED POLYGON PEDESTAL (CHILD OF SPHERE)-----------------
 	// The colour and the shape
@@ -474,13 +388,13 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// * RENDERS THE BOOK
 	// **************************************************
 	// */
-	glUseProgram(renderingProgram);
-	installLights(renderingProgram);
-	// get the uniform variables for the projection, model-view matrices
-	modelLoc = glGetUniformLocation(renderingProgram, "model"); // model only
-	mvLoc = glGetUniformLocation(renderingProgram, "mv_matrix"); // model-view matrix
-	projLoc = glGetUniformLocation(renderingProgram, "proj_matrix"); // projection
-	objectColorLoc = glGetUniformLocation(renderingProgram, "objectColor");
+
+	// The colour and the shape
+	matAmb = jadeAmbient();
+	matDif = jadeDiffuse();
+	matSpe = jadeSpecular();
+	matShi = jadeShininess();
+	changeMaterialSurfaces(materialShaders);
 
 	// Copy projection matrix to the uniform variable
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
@@ -491,7 +405,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// The colour and the shape
 	glBindVertexArray(meshes.cubeMesh.vao);
-	glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 0.0f, 1.0f, 1.0f);
+	glProgramUniform4f(materialShaders, objectColorLoc, 0.0f, 0.0f, 1.0f, 1.0f);
 
 	mvStack.push(mvStack.top()); // copies view matrix for manipulation
 
@@ -504,13 +418,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 3. Scale the cube to be booklike, double in width, taller in height, smaller depth
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.5f, 3.0f, 0.50f));
 
-	// --Model only transforms for lighting calculations--
-	modelStack.push(glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 3.0f, -3.0f)));
-	modelStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.5f, 3.0f, 0.50f));
-
-
 	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	// Draws the cube
@@ -518,7 +426,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindVertexArray(0);
 
 	mvStack.pop(); // All that remains is the view matrix
-	modelStack.pop();
 
 	///**************************************************
 	// * DRAWS THE MINI TRAFFIC CONE
@@ -526,8 +433,13 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// */
 	// // --------------DRAWS THE CONE (PARENT)-----------------
 	// The colour and the shape
+	matAmb = goldAmbient();
+	matDif = goldDiffuse();
+	matSpe = goldSpecular();
+	matShi = goldShininess();
+	changeMaterialSurfaces(materialShaders);
 	glBindVertexArray(meshes.coneMesh.vao);
-	glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.50196078f, 0.0f, 1.0f);
+	glProgramUniform4f(materialShaders, objectColorLoc, 1.0f, 0.50196078f, 0.0f, 1.0f);
 
 	mvStack.push(mvStack.top()); // copies view matrix for manipulation
 
@@ -540,14 +452,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 3. Scale the cone
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 2.0f, 1.0f));
 
-	// --Model only transforms for lighting calculations--
-	modelStack.push(glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 0.11f, 8.0f)));
-	modelStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(-65.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	modelStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 2.0f, 1.0f));
-
-
 	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	glActiveTexture(GL_TEXTURE0);
@@ -563,12 +468,15 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 
-	modelStack.pop();
-
 	// --------------DRAWS THE SQUARE BASE OF TRAFFIC CONE (CHILD OF CONE)-----------------
 	// The colour and the shape
+	matAmb = sapphireAmbient();
+	matDif = sapphireDiffuse();
+	matSpe = sapphireSpecular();
+	matShi = sapphireShininess();
+	changeMaterialSurfaces(materialShaders);
 	glBindVertexArray(meshes.cubeMesh.vao);
-	glProgramUniform4f(renderingProgram, objectColorLoc, 0.0f, 0.0f, 0.0f, 1.0f);
+	glProgramUniform4f(materialShaders, objectColorLoc, 0.0f, 0.0f, 0.0f, 1.0f);
 
 	mvStack.push(mvStack.top()); // Copies Cone position
 
@@ -581,13 +489,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 3. Scale Cube to Cone
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.1f, 0.05f, 1.0f));
 
-	// --Model only transforms for lighting calculations--
-	modelStack.push(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)));
-	modelStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-	modelStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.1f, 0.05f, 1.0f));
-
-	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelStack.top()));
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	glActiveTexture(GL_TEXTURE0);
@@ -600,8 +501,197 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	mvStack.pop();
 	mvStack.pop(); // All that remains is the view matrix
-	modelStack.pop();
 
+	///**************************************************
+	// * DRAWS THE IMPERIAL TIE FIGHTER		|<O>|
+	// **************************************************
+	// */
+	// // --------------DRAWS THE SPHERE COCKPIT (PARENT)-----------------
+	// The colour and the shape
+	glBindVertexArray(meshes.mySphere.vao);
+	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
+
+	glUseProgram(materialShaders);
+
+	//installAdvancedLights(materialShaders, vMat);
+	// Material variables that reflect light
+	matAmb = pewterAmbient();
+	matDif = pewterDiffuse();
+	matSpe = pewterSpecular();
+	matShi = pewterShininess();
+	changeMaterialSurfaces(materialShaders);
+
+	// get the uniform variables for the projection, model-view matrices
+	mvLoc = glGetUniformLocation(materialShaders, "mv_matrix"); // model-view matrix
+	projLoc = glGetUniformLocation(materialShaders, "proj_matrix"); // projection
+	objectColorLoc = glGetUniformLocation(materialShaders, "objectColor");
+	nLoc = glGetUniformLocation(materialShaders, "norm_matrix");
+
+	mvStack.push(mvStack.top()); // copies view matrix for manipulation
+
+	// 1. Position the sphere
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-6.0f, 2.5f, -2.0f));
+
+	// 2. Rotate Cube by 25 degrees on y-axis
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	mvStack.push(mvStack.top()); // copies sphere position
+	// 2. Scale Sphere
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	// Draw
+	glDrawArrays(GL_TRIANGLES, 0, meshes.mySphere.numIndices);
+	glBindVertexArray(0);
+	mvStack.pop(); // remove scale from child shapes
+
+	// --------------DRAWS THE FIRST PYLON PYRAMID-----------------
+	// 
+	mvStack.push(mvStack.top()); // Copies position and rotation of sphere
+
+	// The colour and the shape
+	glBindVertexArray(meshes.pyramid4Mesh.vao);
+	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
+
+	// 1. Position pyramid pylon relative to sphere cockpit
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-1.25f, 0.0f, 0.0f));
+	mvStack.push(mvStack.top()); // copies position of pylon
+
+	// 2. Rotate pyramid
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	mvStack.push(mvStack.top()); // Copy pylon rotation
+	//// 3. Scale Pyramid to Sphere
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.75f, 1.0f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.pyramid4Mesh.numVertices);
+	glBindVertexArray(0);
+	mvStack.pop(); // removes scale of pylon.
+
+	// --------------DRAWS THE FIRST CONNECTING TAPERED CYLINDER-----------------
+	// 
+		// The colour and the shape
+	glBindVertexArray(meshes.taperedCylinderMesh.vao);
+	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f));
+	mvStack.push(mvStack.top()); // copy cylinder position/rotation to stack
+	//// 3. Scale Pyramid to Sphere
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.25f, 0.5f, 0.25f));
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 36);		//bottom
+	glDrawArrays(GL_TRIANGLE_FAN, 36, 72);		//top
+	glDrawArrays(GL_TRIANGLE_STRIP, 72, 146);	//sides
+	glBindVertexArray(0);
+	mvStack.pop(); // Leaves connector position
+	mvStack.pop();
+	mvStack.pop(); // sphere + view
+	//mvStack.pop(); // view
+	//mvStack.pop();// empty
+
+	// --------------DRAWS THE LEFT WING-----------------
+	// 
+	mvStack.push(mvStack.top()); // Copies position of the sphere
+
+	// The colour and the shape
+	glBindVertexArray(meshes.cubeMesh.vao);
+	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
+
+	// 1. Position pyramid pylon relative to sphere cockpit
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-2.4f, 0.0f, 0.0f));
+
+	//3. Scale Wing to pylon
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.15f, 2.5f, 2.0f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	// Draws the cube
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+	glBindVertexArray(0);
+
+	mvStack.pop(); //removes wing positioning
+
+	// --------------DRAWS THE SECOND PYLON PYRAMID-----------------
+	// 
+	mvStack.push(mvStack.top()); // Copies position and rotation of sphere
+	// The colour and the shape
+	glBindVertexArray(meshes.pyramid4Mesh.vao);
+	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
+
+	// 1. Position pyramid pylon relative to sphere cockpit
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(1.25f, 0.0f, 0.0f));
+	mvStack.push(mvStack.top()); // copies position of pylon
+
+	// 2. Rotate pyramid
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	mvStack.push(mvStack.top()); // Copy pylon rotation
+	//// 3. Scale Pyramid to Sphere
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.75f, 1.0f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.pyramid4Mesh.numVertices);
+	glBindVertexArray(0);
+	mvStack.pop(); // removes scale of pylon.
+
+
+	// --------------DRAWS THE FIRST CONNECTING TAPERED CYLINDER-----------------
+	// 
+		// The colour and the shape
+	glBindVertexArray(meshes.taperedCylinderMesh.vao);
+	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f));
+	mvStack.push(mvStack.top()); // copy cylinder position/rotation to stack
+	//// 3. Scale Pyramid to Sphere
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.25f, 0.5f, 0.25f));
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 36);		//bottom
+	glDrawArrays(GL_TRIANGLE_FAN, 36, 72);		//top
+	glDrawArrays(GL_TRIANGLE_STRIP, 72, 146);	//sides
+	glBindVertexArray(0);
+	mvStack.pop(); // Leaves connector position
+	mvStack.pop();
+	mvStack.pop(); // sphere + view
+
+	// --------------DRAWS THE RIGHT WING-----------------
+	// 
+	mvStack.push(mvStack.top()); // Copies position of the sphere
+
+	// The colour and the shape
+	glBindVertexArray(meshes.cubeMesh.vao);
+	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
+
+	// 1. Position pyramid pylon relative to sphere cockpit
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.4f, 0.0f, 0.0f));
+
+	// 2. Rotate Cube by 45 degrees on y-axis
+	//mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+
+	//3. Scale Cube to Cone
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.15f, 2.5f, 2.0f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	// Draws the cube
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+	glBindVertexArray(0);
+
+	mvStack.pop(); //removes wing positioning
+
+	/**************************************************************************************/
 	// Use lighting program for pyramids that denote the direction and source of the lights
 	glUseProgram(lightedPyramidShaders);
 
@@ -671,7 +761,7 @@ int main(void) {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// GLFW: Window creation
-	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "6-5 Milestone: Lighting Complex Objects", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "7-2 Final Project: Rendering a 3D Scene", NULL, NULL);
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
