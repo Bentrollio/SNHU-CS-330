@@ -50,6 +50,7 @@ public:
 		GLmesh pyramid4Mesh;
 		GLmesh torusMesh;
 		GLmesh mySphere;
+		GLmesh wingMesh;
 
 		void CreateMeshes();
 		void DestroyMeshes();
@@ -68,6 +69,7 @@ private:
 		void CreatePyramid4Mesh(GLmesh& mesh);
 		void CreateSphereMesh(GLmesh& mesh);
 		void CreateSphereMesh2(GLmesh& mesh);
+		void CreateWingMesh(GLmesh& mesh);
 		void DestroyMesh(GLmesh& mesh);
 
 		void CalculateTriangleNormal(glm::vec3 px, glm::vec3 py, glm::vec3 pz);

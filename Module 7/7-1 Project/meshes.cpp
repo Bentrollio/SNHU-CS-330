@@ -41,6 +41,7 @@ void Meshes::CreateMeshes()
 	CreatePyramid4Mesh(pyramid4Mesh);
 	CreateSphereMesh(sphereMesh);
 	CreateSphereMesh2(mySphere);
+	CreateWingMesh(wingMesh);
 	//CreateTorusMesh(torusMesh);
 
 }
@@ -57,6 +58,8 @@ void Meshes::DestroyMeshes()
 	DestroyMesh(pyramid3Mesh);
 	DestroyMesh(pyramid4Mesh);
 	DestroyMesh(sphereMesh);
+	DestroyMesh(mySphere);
+	DestroyMesh(wingMesh);
 	DestroyMesh(torusMesh);
 
 }
@@ -508,24 +511,24 @@ GLfloat verts[] = // vertexPositions in the book
 {
 	// Vertex				//Normals				//Texture
 	// Tapered Polygon's Rear side left triangle
-	-0.75f, 1.0f, -0.75f,	0.0f, 0.0f, -1.0f,		1.0f, 1.0f,	// top left corner
-	-1.0f, -1.0f, -1.0f,	0.0f, 0.0f, -1.0f,		1.0f, 0.0f,	// bottom left corner
-	1.0f, -1.0f, -1.0f,		0.0f, 0.0f, -1.0f,		0.0f, 0.0f,	// bottom right corner
+	-0.75f, 1.0f, -0.75f,	-0.699854212f, -0.610435009f, 0.371390669f,		1.0f, 1.0f,	// top left corner
+	-1.0f, -1.0f, -1.0f,	-0.699854212f, -0.610435009f, 0.371390669f,			1.0f, 0.0f,	// bottom left corner
+	1.0f, -1.0f, -1.0f,		-0.699854212f, -0.610435009f, 0.371390669f,			0.0f, 0.0f,	// bottom right corner
 
 	// Tapered Polygon's Rear side right triangle
-	1.0f, -1.0f, -1.0f,		0.0f, 0.0f, -1.0f,		0.0f, 0.0f,	// bottom right corner
-	0.75f, 1.0f, -0.75f,	0.0f, 0.0f, -1.0f,		0.0f, 1.0f,	// top right corner
-	-0.75f, 1.0f, -0.75f,	0.0f, 0.0f, -1.0f,		1.0f, 1.0f,// top left corner 
+	1.0f, -1.0f, -1.0f,		-0.699854212, -0.610435009, 0.371390669,	0.0f, 0.0f,	// bottom right corner
+	0.75f, 1.0f, -0.75f,	-0.699854212f, -0.610435009f, 0.371390669f,		0.0f, 1.0f,	// top right corner
+	-0.75f, 1.0f, -0.75f,	-0.699854212f, -0.610435009f, 0.371390669f,			1.0f, 1.0f,// top left corner 
 
 	// Tapered Polygon's Right side right triangle
-	1.0f, -1.0f, -1.0f,		1.0f, 0.0f, 0.0f,		1.0f, 0.0f,	// bottom right corner
-	1.0f, -1.0f, 1.0f,		1.0f, 0.0f, 0.0f,		0.0f, 0.0f,	// bottom left corner
-	0.75f, 1.0f, -0.75f,	1.0f, 0.0f, 0.0f,		1.0f, 1.0f,	// top right corner
+	1.0f, -1.0f, -1.0f,		0.894427191, 0.0, 0.447213595,		1.0f, 0.0f,	// bottom right corner
+	1.0f, -1.0f, 1.0f,		0.894427191, 0.0, 0.447213595,		0.0f, 0.0f,	// bottom left corner
+	0.75f, 1.0f, -0.75f,	0.894427191, 0.0, 0.447213595,		1.0f, 1.0f,	// top right corner
 
 	// Tapered Polygon's Right side left triangle
-	1.0f, -1.0f, 1.0f,		1.0f, 0.0f, 0.0f,		0.0f, 0.0f,	// bottom left corner
-	0.75f, 1.0f, 0.75f,		1.0f, 0.0f, 0.0f,		0.0f, 1.0f,	// top left corner
-	0.75f, 1.0f, -0.75f,	1.0f, 0.0f, 0.0f,		1.0f, 1.0f,	// top right corner
+	1.0f, -1.0f, 1.0f,		0.894427191, 0.0, 0.447213595,		0.0f, 0.0f,	// bottom left corner
+	0.75f, 1.0f, 0.75f,		0.894427191, 0.0, 0.447213595,		0.0f, 1.0f,	// top left corner
+	0.75f, 1.0f, -0.75f,	0.894427191, 0.0, 0.447213595,		1.0f, 1.0f,	// top right corner
 
 	// Tapered Polygon's Front side right triangle
 	1.0f, -1.0f, 1.0f,		0.0f, 0.0f, 1.0f,		1.0f, 0.0f,	// bottom right corner
@@ -538,14 +541,14 @@ GLfloat verts[] = // vertexPositions in the book
 	0.75f, 1.0f, 0.75f,		0.0f, 0.0f, 1.0f,		1.0f, 1.0f,	// top right corner
 
 	// Tapered Polygon's Left side right triangle
-	-1.0f, -1.0f, 1.0f,		-1.0f, 0.0f, 0.0f,		1.0f, 0.0f,	// bottom right corner
-	-1.0f, -1.0f, -1.0f,	-1.0f, 0.0f, 0.0f,		0.0f, 0.0f,	// bottom left corner
-	-0.75f, 1.0f, 0.75f,	-1.0f, 0.0f, 0.0f,		1.0f, 1.0f,	// top right corner
+	-1.0f, -1.0f, 1.0f,		-0.894427191, 0.0, 0.447213595,		1.0f, 0.0f,	// bottom right corner
+	-1.0f, -1.0f, -1.0f,	-0.894427191, 0.0, 0.447213595,		0.0f, 0.0f,	// bottom left corner
+	-0.75f, 1.0f, 0.75f,	-0.894427191, 0.0, 0.447213595,		1.0f, 1.0f,	// top right corner
 
 	// Tapered Polygon's Left side left triangle
-	-1.0f, -1.0f, -1.0f,	-1.0f, 0.0f, 0.0f,		0.0f, 0.0f,	// bottom left corner
-	-0.75f, 1.0f, -0.75f,	-1.0f, 0.0f, 0.0f,		0.0f, 1.0f,	// top left corner
-	-0.75f, 1.0f, 0.75f,	-1.0f, 0.0f, 0.0f,		1.0f, 1.0f,	// top right corner
+	-1.0f, -1.0f, -1.0f,	-0.894427191, 0.0, 0.447213595,			0.0f, 0.0f,	// bottom left corner
+	-0.75f, 1.0f, -0.75f,	-0.894427191, 0.0, 0.447213595,			0.0f, 1.0f,	// top left corner
+	-0.75f, 1.0f, 0.75f,	-0.894427191, 0.0, 0.447213595,			1.0f, 1.0f,	// top right corner
 
 	// Tapered Polygon's Bottom side right triangle (facing viewer)
 	-1.0f, -1.0f, 1.0f,		0.0f, -1.0f, 0.0f,		0.0f, 1.0f,	// top left corner
@@ -1886,6 +1889,167 @@ void Meshes::CreateTaperedCylinderMesh(GLmesh& mesh)
 	glVertexAttribPointer(2, floatsPerUV, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * (floatsPerVertex + floatsPerNormal)));
 	glEnableVertexAttribArray(2);
 }
+
+void Meshes::CreateWingMesh(GLmesh& mesh) {
+
+	float shift_distance = 2.0f;
+
+	// Specifies Normalized Device Coordinates for triangle vertices
+	GLfloat verts[] = // vertexPositions in the book
+	{
+		// Vertex				//Normals				//Texture
+		// Tapered Polygon's Rear side left triangle
+		-0.5f, 1.0f, -0.5f,	-0.699854212f, -0.610435009f, 0.371390669f,		1.0f, 1.0f,	// top left corner
+		-0.5f, -1.0f, -1.0f,	-0.699854212f, -0.610435009f, 0.371390669f,			1.0f, 0.0f,	// bottom left corner
+		0.5, -1.0f, -1.0f,		-0.699854212f, -0.610435009f, 0.371390669f,			0.0f, 0.0f,	// bottom right corner
+
+		// Tapered Polygon's Rear side right triangle
+		0.5f, -1.0f, -1.0f,		-0.699854212, -0.610435009, 0.371390669,	0.0f, 0.0f,	// bottom right corner
+		0.5f, 1.0f, -0.5f,	-0.699854212f, -0.610435009f, 0.371390669f,		0.0f, 1.0f,	// top right corner
+		-0.5f, 1.0f, -0.5f,	-0.699854212f, -0.610435009f, 0.371390669f,			1.0f, 1.0f,// top left corner 
+
+		// Tapered Polygon's Right side right triangle
+		0.5f, -1.0f, -1.0f,		0.894427191, 0.0, 0.447213595,		1.0f, 0.0f,	// bottom right corner
+		0.5f, -1.0f, 1.0f,		0.894427191, 0.0, 0.447213595,		0.0f, 0.0f,	// bottom left corner
+		0.5f, 1.0f, -0.5f,	0.894427191, 0.0, 0.447213595,		1.0f, 1.0f,	// top right corner
+
+		// Tapered Polygon's Right side left triangle
+		0.5f, -1.0f, 1.0f,		0.894427191, 0.0, 0.447213595,		0.0f, 0.0f,	// bottom left corner
+		0.5f, 1.0f, 0.5f,		0.894427191, 0.0, 0.447213595,		0.0f, 1.0f,	// top left corner
+		0.5f, 1.0f, -0.5f,	0.894427191, 0.0, 0.447213595,		1.0f, 1.0f,	// top right corner
+
+		// Tapered Polygon's Front side right triangle
+		0.5f, -1.0f, 1.0f,		0.0f, 0.0f, 1.0f,		1.0f, 0.0f,	// bottom right corner
+		-0.5f, -1.0f, 1.0f,		0.0f, 0.0f, 1.0f,		0.0f, 0.0f,	// bottom left corner
+		0.5f, 1.0f, 0.5f,		0.0f, 0.0f, 1.0f,		1.0f, 1.0f,	// top right corner
+
+		// Tapered Polygon's Front side left triangle
+		-0.5f, -1.0f, 1.0f,		0.0f, 0.0f, 1.0f,		0.0f, 0.0f,	// bottom left corner
+		-0.5f, 1.0f, 0.5f,	0.0f, 0.0f, 1.0f,		0.0f, 1.0f,	// top left corner
+		0.5f, 1.0f, 0.5f,		0.0f, 0.0f, 1.0f,		1.0f, 1.0f,	// top right corner
+
+		// Tapered Polygon's Left side right triangle
+		-0.5f, -1.0f, 1.0f,		-0.894427191, 0.0, 0.447213595,		1.0f, 0.0f,	// bottom right corner
+		-0.5f, -1.0f, -1.0f,	-0.894427191, 0.0, 0.447213595,		0.0f, 0.0f,	// bottom left corner
+		-0.5f, 1.0f, 0.5f,	-0.894427191, 0.0, 0.447213595,		1.0f, 1.0f,	// top right corner
+
+		// Tapered Polygon's Left side left triangle
+		-0.5f, -1.0f, -1.0f,	-0.894427191, 0.0, 0.447213595,			0.0f, 0.0f,	// bottom left corner
+		-0.5f, 1.0f, -0.5f,	-0.894427191, 0.0, 0.447213595,			0.0f, 1.0f,	// top left corner
+		-0.5f, 1.0f, 0.5f,	-0.894427191, 0.0, 0.447213595,			1.0f, 1.0f,	// top right corner
+
+		// Tapered Polygon's Bottom side right triangle (facing viewer)
+		-0.5f, -1.0f, 1.0f,		0.0f, -1.0f, 0.0f,		0.0f, 1.0f,	// top left corner
+		0.5f, -1.0f, 1.0f,		0.0f, -1.0f, 0.0f,		1.0f, 1.0f,	// top right corner
+		0.5f, -1.0f, -1.0f,		0.0f, -1.0f, 0.0f,		1.0f, 0.0f,	// bottom right corner
+
+		// Tapered Polygon's Bottom side left triangle (facing viewer)
+		0.5f, -1.0f, -1.0f,		0.0f, -1.0f, 0.0f,		1.0f, 0.0f,	// bottom right corner
+		-0.5f, -1.0f, -1.0f,	0.0f, -1.0f, 0.0f,		0.0f, 0.0f,	// bottom left corner
+		-0.5f, -1.0f, 1.0f,		0.0f, -1.0f, 0.0f,		0.0f, 1.0f,	// top left corner
+
+		// Tapered Polygon's Top side right triangle (facing viewer)
+		-0.5f, 1.0f, -0.5f,	0.0f, 1.0f, 0.0f,		0.0f, 1.0f,	// top left corner
+		0.5f, 1.0f, -0.5f,	0.0f, 1.0f, 0.0f,		1.0f, 1.0f,	// top right corner
+		0.5f, 1.0f, 0.5f,		0.0f, 1.0f, 0.0f,		1.0f, 0.0f,// bottom right corner
+
+		// Tapered Polygon's Top side left triangle (facing viewer)
+		0.5f, 1.0f, 0.5f,		0.0f, 1.0f, 0.0f,		1.0f, 0.0f,	// bottom right corner
+		-0.5f, 1.0f, 0.5f,	0.0f, 1.0f, 0.0f,		0.0f, 0.0f,	// bottom left corner
+		-0.5f, 1.0f, -0.5f,	0.0f, 1.0f, 0.0f,		0.0f, 1.0f,	// top left corner
+
+	// SYMMETRICAL BOTTOM SIDE OF MESH
+
+	// Tapered Polygon's Rear side left triangle
+	-0.5f, -1.0f - shift_distance, -0.5f, -0.699854212f, -0.610435009f, 0.371390669f, 1.0f, 1.0f,   // top left corner
+	-0.5f, 1.0f - shift_distance, -1.0f, -0.699854212f, -0.610435009f, 0.371390669f, 1.0f, 0.0f,   // bottom left corner
+	0.5, 1.0f - shift_distance, -1.0f, -0.699854212f, -0.610435009f, 0.371390669f, 0.0f, 0.0f,   // bottom right corner
+
+	// Tapered Polygon's Rear side right triangle
+	0.5f, 1.0f - shift_distance, -1.0f, -0.699854212, -0.610435009, 0.371390669, 0.0f, 0.0f,   // bottom right corner
+	0.5f, -1.0f - shift_distance, -0.5f, -0.699854212f, -0.610435009f, 0.371390669f, 0.0f, 1.0f,   // top right corner
+	-0.5f, -1.0f - shift_distance, -0.5f, -0.699854212f, -0.610435009f, 0.371390669f, 1.0f, 1.0f,   // top left corner 
+
+	// Tapered Polygon's Right side right triangle
+	0.5f, 1.0f - shift_distance, -1.0f, 0.894427191, 0.0, 0.447213595, 1.0f, 0.0f,   // bottom right corner
+	0.5f, 1.0f - shift_distance, 1.0f, 0.894427191, 0.0, 0.447213595, 0.0f, 0.0f,   // bottom left corner
+	0.5f, -1.0f - shift_distance, -0.5f, 0.894427191, 0.0, 0.447213595, 1.0f, 1.0f,   // top right corner
+
+	// Tapered Polygon's Right side left triangle
+	0.5f, 1.0f - shift_distance, 1.0f, 0.894427191, 0.0, 0.447213595, 0.0f, 0.0f,   // bottom left corner
+	0.5f, -1.0f - shift_distance, 0.5f, 0.894427191, 0.0, 0.447213595, 0.0f, 1.0f,   // top left corner
+	0.5f, -1.0f - shift_distance, -0.5f, 0.894427191, 0.0, 0.447213595, 1.0f, 1.0f,   // top right corner
+
+	// Tapered Polygon's Front side right triangle
+	0.5f, 1.0f - shift_distance, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,   // bottom right corner
+	-0.5f, 1.0f - shift_distance, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,   // bottom left corner
+	0.5f, -1.0f - shift_distance, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,   // top right corner
+
+	// Tapered Polygon's Front side left triangle
+	-0.5f, 1.0f - shift_distance, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,   // bottom left corner
+	-0.5f, -1.0f - shift_distance, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,   // top left corner
+	0.5f, -1.0f - shift_distance, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,   // top right corner
+
+	// Tapered Polygon's Left side right triangle
+	-0.5f, 1.0f - shift_distance, 1.0f, -0.894427191, 0.0, 0.447213595, 1.0f, 0.0f,   // bottom right corner
+	-0.5f, 1.0f - shift_distance, -1.0f, -0.894427191, 0.0, 0.447213595, 0.0f, 0.0f,   // bottom left corner
+	-0.5f, -1.0f - shift_distance, 0.5f, -0.894427191, 0.0, 0.447213595, 1.0f, 1.0f,   // top right corner
+
+	// Tapered Polygon's Left side left triangle
+	-0.5f, 1.0f - shift_distance, -1.0f, -0.894427191, 0.0, 0.447213595, 0.0f, 0.0f,   // bottom left corner
+	-0.5f, -1.0f - shift_distance, -0.5f, -0.894427191, 0.0, 0.447213595, 0.0f, 1.0f,   // top left corner
+	-0.5f, -1.0f - shift_distance, 0.5f, -0.894427191, 0.0, 0.447213595, 1.0f, 1.0f,   // top right corner
+
+	// Tapered Polygon's Bottom side right triangle (facing viewer)
+	-0.5f, 1.0f - shift_distance, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,   // top left corner
+	0.5f, 1.0f - shift_distance, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,   // top right corner
+	0.5f, 1.0f - shift_distance, -1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,   // bottom right corner
+
+	// Tapered Polygon's Bottom side left triangle (facing viewer)
+	0.5f, 1.0f - shift_distance, -1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,   // bottom right corner
+	-0.5f, 1.0f - shift_distance, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,   // bottom left corner
+	-0.5f, 1.0f - shift_distance, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,   // top left corner
+
+	// Tapered Polygon's Top side right triangle (facing viewer)
+	-0.5f, -1.0f - shift_distance, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,   // top left corner
+	0.5f, -1.0f - shift_distance, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,   // top right corner
+	0.5f, -1.0f - shift_distance, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,   // bottom right corner
+
+	// Tapered Polygon's Top side left triangle (facing viewer)
+	0.5f, -1.0f - shift_distance, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,   // bottom right corner
+	-0.5f, -1.0f - shift_distance, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,   // bottom left corner
+	-0.5f, -1.0f - shift_distance, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,   // top left corner
+	};
+	glGenVertexArrays(numVAOs, &mesh.vao); // can also generate multiple VAOs or buffers at once
+	glBindVertexArray(mesh.vao);
+	glGenBuffers(numVBOs, mesh.vbo); // Creates buffers
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo[0]); // Activates buffer
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW); // sends vertex or coordinate data to GPU
+
+	// Float values per type
+	const GLuint floatsPerVertex = 3; // Number of coordinates per vertex
+	const GLuint floatsPerColor = 0; // (r, g, b, a) THIS IS SET TO 0 FOR NOW
+	const GLuint floatsPerNormal = 3;
+	const GLuint floatsPerUV = 2;
+
+	// Store the vertex and index count inside the mesh
+	mesh.numVertices = sizeof(verts) / (sizeof(verts[0]) * (floatsPerVertex + floatsPerColor + floatsPerNormal + floatsPerUV));
+
+	// Strides between vertex coordinates is 3 (xyz rgba)
+	GLint stride = sizeof(float) * (floatsPerVertex + floatsPerColor + floatsPerNormal + floatsPerUV);
+
+	glVertexAttribPointer(0, floatsPerVertex, GL_FLOAT, GL_FALSE, stride, 0);
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, floatsPerNormal, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * floatsPerVertex));
+	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, floatsPerUV, GL_FLOAT, GL_FALSE, stride, (void*)(sizeof(float) * (floatsPerVertex + floatsPerNormal)));
+	glEnableVertexAttribArray(2);
+}
+
+
 
 void Meshes::DestroyMesh(GLmesh &mesh) {
 

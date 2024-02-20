@@ -439,7 +439,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	matShi = goldShininess();
 	changeMaterialSurfaces(materialShaders);
 	glBindVertexArray(meshes.coneMesh.vao);
-	glProgramUniform4f(materialShaders, objectColorLoc, 1.0f, 0.50196078f, 0.0f, 1.0f);
+	//glProgramUniform4f(materialShaders, objectColorLoc, 1.0f, 0.50196078f, 0.0f, 1.0f);
 
 	mvStack.push(mvStack.top()); // copies view matrix for manipulation
 
@@ -466,7 +466,11 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glDrawArrays(GL_TRIANGLE_STRIP, 36, 108); // sides
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
+
+	
 
 	// --------------DRAWS THE SQUARE BASE OF TRAFFIC CONE (CHILD OF CONE)-----------------
 	// The colour and the shape
@@ -600,20 +604,20 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.push(mvStack.top()); // Copies position of the sphere
 
 	// The colour and the shape
-	glBindVertexArray(meshes.cubeMesh.vao);
+	glBindVertexArray(meshes.wingMesh.vao);
 	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
 
 	// 1. Position pyramid pylon relative to sphere cockpit
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-2.4f, 0.0f, 0.0f));
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-2.33f, 1.25f, 0.0f));
 
 	//3. Scale Wing to pylon
-	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.15f, 2.5f, 2.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.15f, 1.25f, 2.0f));
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	// Draws the cube
-	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+	glDrawArrays(GL_TRIANGLES, 0, meshes.wingMesh.numVertices);
 	glBindVertexArray(0);
 
 	mvStack.pop(); //removes wing positioning
@@ -670,26 +674,50 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.push(mvStack.top()); // Copies position of the sphere
 
 	// The colour and the shape
-	glBindVertexArray(meshes.cubeMesh.vao);
+	glBindVertexArray(meshes.wingMesh.vao);
 	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
 
 	// 1. Position pyramid pylon relative to sphere cockpit
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.4f, 0.0f, 0.0f));
+	//mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.4f, 0.0f, 0.0f));
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.33f, 1.25f, 0.0f));
 
 	// 2. Rotate Cube by 45 degrees on y-axis
 	//mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 	//3. Scale Cube to Cone
-	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.15f, 2.5f, 2.0f));
+	//mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.15f, 2.5f, 2.0f));
+	//3. Scale Wing to pylon
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.15f, 1.25f, 2.0f));
+
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 	// Draws the cube
-	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+	glDrawArrays(GL_TRIANGLES, 0, meshes.wingMesh.numVertices);
 	glBindVertexArray(0);
 
 	mvStack.pop(); //removes wing positioning
+	//mvStack.pop(); // Removes sphere stuff
+
+
+	////-----------TEST TOP WING
+
+	//glBindVertexArray(meshes.wingMesh.vao);
+	//mvStack.push(mvStack.top());
+	//mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	//mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	//// Copy model matrix to the uniform variables for the shaders
+	//glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	//glUniformMatrix4fv(nLoc, 1, GL_FALSE, glm::value_ptr(invTrMat));
+
+	//// Draw triangles
+	//glDrawArrays(GL_TRIANGLES, 0, meshes.wingMesh.numVertices);
+	//glBindVertexArray(0);
+
+	//mvStack.pop();
+
+
 
 	/**************************************************************************************/
 	// Use lighting program for pyramids that denote the direction and source of the lights
@@ -733,7 +761,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 2. Rotate shape 11 degrees along x axis
 	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(-11.459f), glm::vec3(1.0f, 0.0f, 0.0f));
 	// 3. Place object at origin
-	translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 8.0f, 10.0f));
+	translation = glm::translate(glm::mat4(1.0f), glm::vec3(10.0f, 4.0f, 10.0f));
 
 	mMat = translation * rotation * scale;
 
