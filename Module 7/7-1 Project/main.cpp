@@ -71,7 +71,8 @@ glm::mat4 mMat, mvMat, scale, rotation, translation;
 
 // Texture variables;
 GLuint seleniteBaseTexture, seleniteTipTexture, fabricTexture, fabricRoughnessTexture, grungeTexture, plasticTexture, walmartLogoTexture,
-blackRubberBaseTexture, metalTexture, metalDetailTexture, cockpitTexture, wingTexture, wingTexture2;
+blackRubberBaseTexture, bookFrontTexture, bookRearTexture, bookSpineTexture, bookSideTexture, metalTexture, metalDetailTexture, cockpitTexture, wingTexture, wingTexture2,
+blackPlasticTexture;
 
 // Gordon and Clevenger Tutorial Phong implementation
 void installAdvancedLights(GLuint shader, glm::mat4 vMatrix) {
@@ -153,6 +154,12 @@ void init(GLFWwindow* window) {
 	plasticTexture = loadTexture("Plastic014B_2K-PNG_Color.png");
 	walmartLogoTexture = loadLogoTexture("walmartlogo.png");
 	blackRubberBaseTexture = loadTexture("Rubber004_2K-PNG_Color.png");
+	bookFrontTexture = loadTexture("HTTE.png");
+	bookRearTexture = loadTexture("HTTE-REAR.png");
+	bookSpineTexture = loadTexture("HTTE-Spine.png");
+	bookSideTexture = loadTexture("HTTE-Sides.png");
+	blackPlasticTexture = loadTexture("Porcelain.png");
+
 
 	metalTexture = loadTexture("MetalPlates008_2K-PNG_Metalness.png");
 	metalDetailTexture = loadTexture("MetalPlates008_2K-PNG_Color.png");
@@ -198,10 +205,10 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy projection matrix to the uniform variable
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 
-	matAmb = silverAmbient();
-	matDif = silverDiffuse();
-	matSpe = silverSpecular();
-	matShi = silverShininess();
+	matAmb = pearlAmbient();
+	matDif = pearlDiffuse();
+	matSpe = pearlSpecular();
+	matShi = pearlShininess();
 
 	installAdvancedLights(materialShaders, vMat);
 
@@ -391,41 +398,210 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// */
 
 	// The colour and the shape
-	matAmb = jadeAmbient();
-	matDif = jadeDiffuse();
-	matSpe = jadeSpecular();
-	matShi = jadeShininess();
+	matAmb = sapphireAmbient();
+	matDif = sapphireDiffuse();
+	matSpe = sapphireSpecular();
+	matShi = sapphireShininess();
 	changeMaterialSurfaces(materialShaders);
-
-	// Copy projection matrix to the uniform variable
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
-
-	// Copy model-view matrix to the uniform variable for the shaders
-	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 
 	// The colour and the shape
 	glBindVertexArray(meshes.cubeMesh.vao);
-	glProgramUniform4f(materialShaders, objectColorLoc, 0.0f, 0.0f, 1.0f, 1.0f);
 
 	mvStack.push(mvStack.top()); // copies view matrix for manipulation
 
 	// 1. Position cube
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 3.0f, -3.0f));
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 2.75f, -3.0f));
 
 	// 2. Rotate the cube slightly clockwise
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(-10.0f), glm::vec3(0.0, 1.0f, 0.0f));
-
+	mvStack.push(mvStack.top()); // Copy box position and rotation
 	// 3. Scale the cube to be booklike, double in width, taller in height, smaller depth
-	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.5f, 3.0f, 0.50f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.20f, 2.5f, 0.30f));
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, bookSideTexture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, bookSideTexture);
+
 	// Draws the cube
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
 	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	mvStack.pop(); // Removes book scale
+
+	// // --------------RENDERS FRONT COVER (CHILD)-----------------
+
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.push(mvStack.top()); // Copies book position and rotation
+
+	// 1. Position plane
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.05f, 0.0f, 0.35));
+
+	// 2. Rotate the cube slightly clockwise
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+
+	// 3. Scale Cube
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.25f, 2.75f, 0.05f));
+
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, blackPlasticTexture);
+
+	// Draws the plane
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	//-----
+
+		// Material variables that reflect light
+	matAmb = pearlAmbient();
+	matDif = pearlDiffuse();
+	matSpe = pearlSpecular();
+	matShi = pearlShininess();
+	changeMaterialSurfaces(materialShaders);
+
+	glBindVertexArray(meshes.planeMesh.vao);
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 1.04));
+
+	// 2. Rotate the cube slightly clockwise
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+	// 3. Scale Cube
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, bookFrontTexture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, bookFrontTexture);
+
+	// Draw triangles
+	glDrawElements(GL_TRIANGLES, meshes.planeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+
+	glBindVertexArray(0);
+
+	mvStack.pop(); // Removes child transforms
+
+	// // --------------RENDERS BACK COVER (CHILD)-----------------
+	matAmb = pewterAmbient();
+	matDif = pewterDiffuse();
+	matSpe = pewterSpecular();
+	matShi = pewterShininess();
+	changeMaterialSurfaces(materialShaders);
+
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.push(mvStack.top()); // Copies book position and rotation
+
+	// 1. Position plane
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.05f, 0.0f, -0.35));
+
+	// 2. Rotate the cube slightly clockwise
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+
+	// 3. Scale Cube
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.25f, 2.75f, 0.05f));
+
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, blackPlasticTexture);
+
+	// Draws the plane
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	//-----
+	glBindVertexArray(meshes.planeMesh.vao);
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.04));
+
+	// 2. Rotate the cube slightly clockwise
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+	// 3. Scale Cube
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, bookRearTexture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, bookRearTexture);
+
+	// Draw triangles
+	glDrawElements(GL_TRIANGLES, meshes.planeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	mvStack.pop(); // Removes child transforms
+
+
+	// // --------------RENDERS BOOK SPINE(CHILD)-----------------
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.push(mvStack.top()); // Copies book position and rotation
+
+	// 1. Position plane
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-1.15f, 0.0f, 0.0f));
+
+	// 2. Rotate the cube slightly clockwise
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+
+	// 3. Scale Cube
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.08, 2.75, 0.3));
+
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, bookSpineTexture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, bookSpineTexture);
+
+	// Draws the plane
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+	glBindVertexArray(0);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+
+	mvStack.pop(); // Removes child transforms
 	mvStack.pop(); // All that remains is the view matrix
 
 	///**************************************************
@@ -470,8 +646,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
-
-	
 
 	// --------------DRAWS THE SQUARE BASE OF TRAFFIC CONE (CHILD OF CONE)-----------------
 	// The colour and the shape
@@ -606,8 +780,10 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f));
 	mvStack.push(mvStack.top()); // copy cylinder position/rotation to stack
+
 	//// 3. Scale Pyramid to Sphere
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.25f, 0.5f, 0.25f));
+
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
