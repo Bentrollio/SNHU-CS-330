@@ -71,7 +71,7 @@ glm::mat4 mMat, mvMat, scale, rotation, translation;
 
 // Texture variables;
 GLuint seleniteBaseTexture, seleniteTipTexture, fabricTexture, fabricRoughnessTexture, grungeTexture, plasticTexture, walmartLogoTexture,
-blackRubberBaseTexture;
+blackRubberBaseTexture, metalTexture, metalDetailTexture, cockpitTexture, wingTexture, wingTexture2;
 
 // Gordon and Clevenger Tutorial Phong implementation
 void installAdvancedLights(GLuint shader, glm::mat4 vMatrix) {
@@ -153,6 +153,14 @@ void init(GLFWwindow* window) {
 	plasticTexture = loadTexture("Plastic014B_2K-PNG_Color.png");
 	walmartLogoTexture = loadLogoTexture("walmartlogo.png");
 	blackRubberBaseTexture = loadTexture("Rubber004_2K-PNG_Color.png");
+
+	metalTexture = loadTexture("MetalPlates008_2K-PNG_Metalness.png");
+	metalDetailTexture = loadTexture("MetalPlates008_2K-PNG_Color.png");
+	cockpitTexture = loadTexture("TIE Fighter Texture FINAL.png");
+	wingTexture = loadTexture("MetalPlates009_2K-JPG_Roughness.png");
+	wingTexture2 = loadTexture("TEX00042.png");
+
+
 }
 
 // Draws to GLFW display window
@@ -223,18 +231,11 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, fabricTexture);
 
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, fabricRoughnessTexture);
-
 	// Draw triangles
 	glDrawElements(GL_TRIANGLES, meshes.planeMesh.numIndices, GL_UNSIGNED_SHORT, NULL); // Draws triangle
 	glBindVertexArray(0);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glActiveTexture(GL_TEXTURE0); // reactivates texture at loc 0
-	glBindTexture(GL_TEXTURE_2D, 0); // unbinds active texture at 0
-
 
 	mvStack.pop(); // Removes Plane transforms from stack
 
@@ -534,21 +535,32 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.push(mvStack.top()); // copies view matrix for manipulation
 
 	// 1. Position the sphere
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-6.0f, 2.5f, -2.0f));
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-6.0f, 2.25f, -2.0f));
 
 	// 2. Rotate Cube by 25 degrees on y-axis
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	mvStack.push(mvStack.top()); // copies sphere position
 	// 2. Scale Sphere
-	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 0.75f, 0.75f));
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, metalTexture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, cockpitTexture);
+
 	// Draw
 	glDrawArrays(GL_TRIANGLES, 0, meshes.mySphere.numIndices);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	glBindVertexArray(0);
-	mvStack.pop(); // remove scale from child shapes
+	//mvStack.pop(); // remove scale from child shapes
 
 	// --------------DRAWS THE FIRST PYLON PYRAMID-----------------
 	// 
@@ -573,8 +585,18 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, metalTexture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, metalDetailTexture);
+
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.pyramid4Mesh.numVertices);
 	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	mvStack.pop(); // removes scale of pylon.
 
 	// --------------DRAWS THE FIRST CONNECTING TAPERED CYLINDER-----------------
@@ -589,9 +611,22 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, metalTexture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, metalDetailTexture);
+
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 36);		//bottom
 	glDrawArrays(GL_TRIANGLE_FAN, 36, 72);		//top
 	glDrawArrays(GL_TRIANGLE_STRIP, 72, 146);	//sides
+
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	glBindVertexArray(0);
 	mvStack.pop(); // Leaves connector position
 	mvStack.pop();
@@ -608,16 +643,20 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
 
 	// 1. Position pyramid pylon relative to sphere cockpit
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-2.33f, 1.25f, 0.0f));
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-2.33f, 0.0f, 0.0f));
 
 	//3. Scale Wing to pylon
-	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.15f, 1.25f, 2.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.15f, 3.0f, 2.5f));
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, wingTexture);
+
 	// Draws the cube
 	glDrawArrays(GL_TRIANGLES, 0, meshes.wingMesh.numVertices);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 
 	mvStack.pop(); //removes wing positioning
@@ -644,7 +683,19 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, metalTexture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, metalDetailTexture);
+
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, meshes.pyramid4Mesh.numVertices);
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	glBindVertexArray(0);
 	mvStack.pop(); // removes scale of pylon.
 
@@ -660,10 +711,23 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.25f, 0.5f, 0.25f));
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, metalTexture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, metalDetailTexture);
 
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 36);		//bottom
 	glDrawArrays(GL_TRIANGLE_FAN, 36, 72);		//top
 	glDrawArrays(GL_TRIANGLE_STRIP, 72, 146);	//sides
+
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	glBindVertexArray(0);
 	mvStack.pop(); // Leaves connector position
 	mvStack.pop();
@@ -679,29 +743,28 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// 1. Position pyramid pylon relative to sphere cockpit
 	//mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.4f, 0.0f, 0.0f));
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.33f, 1.25f, 0.0f));
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.33f, 0.0f, 0.0f));
 
-	// 2. Rotate Cube by 45 degrees on y-axis
-	//mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-
-	//3. Scale Cube to Cone
-	//mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.15f, 2.5f, 2.0f));
-	//3. Scale Wing to pylon
-	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.15f, 1.25f, 2.0f));
+	//2. Scale Wing to pylon
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.15f, 3.0f, 2.5f));
 
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, wingTexture);
+
 	// Draws the cube
 	glDrawArrays(GL_TRIANGLES, 0, meshes.wingMesh.numVertices);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 
 	mvStack.pop(); //removes wing positioning
 	//mvStack.pop(); // Removes sphere stuff
 
 
-	////-----------TEST TOP WING
+	////-----------TESTING AREA
 
 	//glBindVertexArray(meshes.wingMesh.vao);
 	//mvStack.push(mvStack.top());

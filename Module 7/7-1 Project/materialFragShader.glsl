@@ -82,13 +82,11 @@ void main(void)
 		phong2 = (ambient2 + diffuse2 + specular2) * mainTextureColor.xyz;
 		mixPhong1 = (ambient + diffuse + specular) * secondTextureColor.xyz;
 		mixPhong2 = (ambient + diffuse2 +specular2) * secondTextureColor.xyz;
-		FragColor = mix(vec4(phong1 + phong2, 1.0), vec4(mixPhong1 + mixPhong2, 1.0), 0.50);
+		FragColor = mix(vec4(phong1 + phong2, 1.0), vec4(mixPhong1 + mixPhong2, 1.0), 0.5);
 	}
 	else if (textureSize(samp, 0).x > 1) {
 		phong1 = (ambient + diffuse + specular) * mainTextureColor.xyz;
 		phong2 = (ambient2 + diffuse2 + specular2) * mainTextureColor.xyz;
-		mixPhong1 = (ambient + diffuse + specular) * secondTextureColor.xyz;
-		mixPhong2 = (ambient + diffuse2 +specular2) * secondTextureColor.xyz;
 		FragColor = vec4(phong1 + phong2, 1.0);
 	}
 	else {
