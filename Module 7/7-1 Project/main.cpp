@@ -33,7 +33,7 @@ GLuint modelLoc, projLoc, mvLoc, objectColorLoc;
 GLuint mAmbLoc, mDiffLoc, mSpecLoc, mShiLoc;
 
 // Advanced lighting variables
-GLuint globalAmbLoc, ambLoc, ambLoc2, diffLoc, diffLoc2, specLoc, specLoc2, posLoc, posLoc2, nLoc; //mAmbLoc, mDiffLoc, mSpecLoc, mShiLoc, nLoc;
+GLuint globalAmbLoc, ambLoc, ambLoc2, diffLoc, diffLoc2, specLoc, specLoc2, posLoc, posLoc2, nLoc, aLoc, fLoc; //mAmbLoc, mDiffLoc, mSpecLoc, mShiLoc, nLoc;
 glm::vec3 currentLightPos, currentLightPos2, lightPosV, lightPos2V; // light position as Vector3f, in both model and view space
 float lightPos[3]; // FIRST light position as float array
 float lightPos2[3]; // SECOND light position as float array
@@ -329,6 +329,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// */
 
 	// Change shaders
+	glEnable(GL_CULL_FACE);
 	glUseProgram(transparentShaders);
 
 	// Install lights to new shaders
@@ -344,7 +345,8 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	projLoc = glGetUniformLocation(transparentShaders, "proj_matrix"); // projection
 	objectColorLoc = glGetUniformLocation(transparentShaders, "objectColor");
 	nLoc = glGetUniformLocation(transparentShaders, "norm_matrix");
-
+	aLoc = glGetUniformLocation(transparentShaders, "alpha");
+	fLoc = glGetUniformLocation(transparentShaders, "flipNormal");
 
 	 // --------------DRAWS THE SPHERE (PARENT)-----------------
 	glBindVertexArray(meshes.mySphere.vao);
@@ -360,8 +362,23 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 	glUniformMatrix4fv(nLoc, 1, GL_FALSE, glm::value_ptr(invTrMat));
 	
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendEquation(GL_FUNC_ADD);
+
+	glCullFace(GL_FRONT); // render sphere back faces first
+	glProgramUniform1f(transparentShaders, aLoc, 0.3f); // back faces, very transparent
+	glProgramUniform1f(transparentShaders, aLoc, -1.0f); // flip normals on back faces
 	// Draw
 	glDrawArrays(GL_TRIANGLES, 0, meshes.mySphere.numIndices);
+
+	glCullFace(GL_BACK); // render sphere front faces
+	glProgramUniform1f(transparentShaders, aLoc, 0.7f); // back faces, very transparent
+	glProgramUniform1f(transparentShaders, aLoc, 1.0f); // flip normals on back faces
+	glDrawArrays(GL_TRIANGLES, 0, meshes.mySphere.numIndices);
+
+	glDisable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
 
 	// Deactivate the VAO
 	glBindVertexArray(0);
@@ -478,7 +495,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	//-----
 
-		// Material variables that reflect light
+	// Material variables that reflect light
 	matAmb = pearlAmbient();
 	matDif = pearlDiffuse();
 	matSpe = pearlSpecular();

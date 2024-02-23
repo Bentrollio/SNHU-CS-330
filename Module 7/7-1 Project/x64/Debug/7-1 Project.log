@@ -1,4 +1,4 @@
 ﻿  main.cpp
-C:\Github Repo\SNHU-CS-330\Module 7\7-1 Project\main.cpp(1449,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 7\7-1 Project\main.cpp(1466,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   7-1 Project.vcxproj -> C:\Github Repo\SNHU-CS-330\Module 7\7-1 Project\x64\Debug\7-1 Project.exe

@@ -37,6 +37,9 @@ uniform mat4 mv_matrix;
 uniform mat4 proj_matrix;
 uniform mat4 norm_matrix; // for transforming normals
 
+uniform float alpha;
+uniform float flipNormal;
+
 void main(void)
 { 
 	//vertexColor = color;
