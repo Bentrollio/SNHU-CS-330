@@ -55,5 +55,11 @@
     <None Include="materialVertShader.glsl">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="transVertShader.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="transFragShader.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

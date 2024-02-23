@@ -20,7 +20,7 @@ using namespace std;
 Meshes meshes;
 
 // Shader programs
-GLuint lightedPyramidShaders, materialShaders;
+GLuint lightedPyramidShaders, materialShaders, transparentShaders;
 
 // Timing
 float deltaTime = 0.0f; // time between current time and last frame
@@ -50,9 +50,9 @@ float lightAmbient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
 float lightDiffuse[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 float lightSpecular[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 // rear blue light properties
-float lightAmbient2[4] = { 0.0f, 0.0f, 1.0f, 1.0f };
-float lightDiffuse2[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-float lightSpecular2[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+float lightAmbient2[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+float lightDiffuse2[4] = { 0.2f, 0.2f, 1.0f, 1.0f };
+float lightSpecular2[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
 
 // Material variables that reflect light
 float* matAmb;
@@ -136,6 +136,7 @@ void init(GLFWwindow* window) {
 
 	lightedPyramidShaders = createShaderProgram("lightVertShader.glsl", "lightFragShader.glsl"); // Creates the pyramids that represent the lighting position
 	materialShaders = createShaderProgram("materialVertShader.glsl", "materialFragShader.glsl");
+	transparentShaders = createShaderProgram("transVertShader.glsl", "transFragShader.glsl");
 
 	glfwGetFramebufferSize(window, &width, &height);
 
@@ -187,7 +188,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	projLoc = glGetUniformLocation(materialShaders, "proj_matrix"); // projection
 	objectColorLoc = glGetUniformLocation(materialShaders, "objectColor");
 	nLoc = glGetUniformLocation(materialShaders, "norm_matrix");
-
 
 	// View matrix calculated once and used for all objects
 	vMat = camera.GetViewMatrix();
@@ -327,15 +327,24 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// * START of RENDERING SOLAR SYSTEM GLOBE
 	// **************************************************
 	// */
-	//glUseProgram(materialShaders);
 
-	//installAdvancedLights(materialShaders, vMat);
+	// Change shaders
+	glUseProgram(transparentShaders);
+
+	// Install lights to new shaders
+	installAdvancedLights(transparentShaders, vMat);
 	// Material variables that reflect light
 	matAmb = silverAmbient();
 	matDif = silverDiffuse();
 	matSpe = silverSpecular();
 	matShi = silverShininess();
-	changeMaterialSurfaces(materialShaders);
+	changeMaterialSurfaces(transparentShaders);
+
+	mvLoc = glGetUniformLocation(transparentShaders, "mv_matrix"); // model-view matrix
+	projLoc = glGetUniformLocation(transparentShaders, "proj_matrix"); // projection
+	objectColorLoc = glGetUniformLocation(transparentShaders, "objectColor");
+	nLoc = glGetUniformLocation(transparentShaders, "norm_matrix");
+
 
 	 // --------------DRAWS THE SPHERE (PARENT)-----------------
 	glBindVertexArray(meshes.mySphere.vao);
@@ -348,6 +357,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 	glUniformMatrix4fv(nLoc, 1, GL_FALSE, glm::value_ptr(invTrMat));
 	
 	// Draw
@@ -357,6 +367,13 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindVertexArray(0);
 
 	// --------------DRAWS THE TAPERED POLYGON PEDESTAL (CHILD OF SPHERE)-----------------
+	
+	// Change shaders
+	glUseProgram(materialShaders);
+
+	// Install lights to new shaders
+	installAdvancedLights(materialShaders, vMat);
+
 	// The colour and the shape
 	matAmb = bronzeAmbient();
 	matDif = bronzeDiffuse();
@@ -379,6 +396,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 	glUniformMatrix4fv(nLoc, 1, GL_FALSE, glm::value_ptr(invTrMat));
 
 	// Draw triangles
@@ -417,7 +435,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, bookSideTexture);
 
@@ -448,10 +465,8 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 3. Scale Cube
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.25f, 2.75f, 0.05f));
 
-
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
-
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, blackPlasticTexture);
@@ -478,7 +493,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// 3. Scale Cube
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
@@ -520,7 +534,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 3. Scale Cube
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.25f, 2.75f, 0.05f));
 
-
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
@@ -541,7 +554,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// 3. Scale Cube
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
@@ -577,7 +589,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// 3. Scale Cube
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.08, 2.75, 0.3));
 
-
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
@@ -612,7 +623,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	matShi = goldShininess();
 	changeMaterialSurfaces(materialShaders);
 	glBindVertexArray(meshes.coneMesh.vao);
-	//glProgramUniform4f(materialShaders, objectColorLoc, 1.0f, 0.50196078f, 0.0f, 1.0f);
 
 	mvStack.push(mvStack.top()); // copies view matrix for manipulation
 
@@ -684,11 +694,9 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// // --------------DRAWS THE SPHERE COCKPIT (PARENT)-----------------
 	// The colour and the shape
 	glBindVertexArray(meshes.mySphere.vao);
-	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
 
 	glUseProgram(materialShaders);
 
-	//installAdvancedLights(materialShaders, vMat);
 	// Material variables that reflect light
 	matAmb = pewterAmbient();
 	matDif = pewterDiffuse();
@@ -730,7 +738,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glBindVertexArray(0);
-	//mvStack.pop(); // remove scale from child shapes
 
 	// --------------DRAWS THE FIRST PYLON PYRAMID-----------------
 	// 
@@ -778,7 +785,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	//mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 1.0f));
 
-
 	mvStack.push(mvStack.top()); // copy cylinder position/rotation to stack
 
 	//// 3. Scale Pyramid to Sphere
@@ -807,8 +813,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.pop(); // Leaves connector position
 	mvStack.pop();
 	mvStack.pop(); // sphere + view
-	//mvStack.pop(); // view
-	//mvStack.pop();// empty
 
 	// --------------DRAWS THE LEFT WING-----------------
 	// 
@@ -836,13 +840,12 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 
-	//mvStack.pop(); //removes wing positioning FIX ME
-
 	//---------------DRAWS FIRST LEFT WING DETAIL
 
 	glBindVertexArray(meshes.cubeMesh.vao);
 	mvStack.push(mvStack.top()); // Copy wing
-	// 1. Position plane relative to wing
+
+	// 1. Position cube relative to wing
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(63.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.05f, 1.1f));
@@ -850,13 +853,13 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-
 	// Draw triangles
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
 
 	glBindVertexArray(0);
 
 	mvStack.pop(); //removes parallel wing info
+
 	//---------DRAWS PARALLEL WING DETAIL
 
 	mvStack.push(mvStack.top()); // copy first left wing detail info
@@ -868,13 +871,11 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-
 	// Draw triangles
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
 
 	glBindVertexArray(0);
 
-	//mvStack.pop(); //removes parallel wing info
 	mvStack.pop(); // removes left wing detail info
 
 	//---------DRAWS PARALLEL WING DETAIL
@@ -888,19 +889,18 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-
 	// Draw triangles
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
 
 	glBindVertexArray(0);
 
-	//mvStack.pop(); //removes parallel wing info
 	mvStack.pop(); // removes left wing detail info
 
 	//---------------DRAWS SECOND LEFT WING DETAIL
 
 	glBindVertexArray(meshes.cubeMesh.vao);
 	mvStack.push(mvStack.top()); // Copy wing
+
 	// 1. Position plane relative to wing
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(-63.0f), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -908,7 +908,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
-
 
 	// Draw triangles
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
@@ -928,19 +927,18 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-
 	// Draw triangles
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
 
 	glBindVertexArray(0);
 
-	//mvStack.pop(); //removes parallel wing info
 	mvStack.pop(); // removes left wing detail info
 
 	//---------DRAWS PARALLEL WING DETAIL
 
 	mvStack.push(mvStack.top()); // copy first left wing detail info
 	glBindVertexArray(meshes.cubeMesh.vao);
+
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.76f));
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.55f, 0.027f));
@@ -961,32 +959,30 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	glBindVertexArray(meshes.cubeMesh.vao);
 	mvStack.push(mvStack.top()); // Copy wing
-	// 1. Position plane relative to wing
+
+	// 1. Position cube relative to wing
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.05f, 1.0f));
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-
 	// Draw triangles
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
 
 	glBindVertexArray(0);
 
-	//mvStack.pop(); //removes 1st left detail positioning
-
 	//-------------DRAWS TOP OUTLINE
 
 	glBindVertexArray(meshes.cubeMesh.vao);
 	mvStack.push(mvStack.top());
-	// 1. Position plane relative to wing
+
+	// 1. Position cube relative to wing
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 19.7f, 0.0f));
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.5f, 0.5f));
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
-
 
 	// Draw triangles
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
@@ -999,13 +995,13 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	glBindVertexArray(meshes.cubeMesh.vao);
 	mvStack.push(mvStack.top());
-	// 1. Position plane relative to wing
+
+	// 1. Position cube relative to wing
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -19.7f, 0.0f));
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.5f, 0.5f));
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
-
 
 	// Draw triangles
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
@@ -1026,12 +1022,11 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	glBindVertexArray(meshes.cylinderMesh.vao);
 	mvStack.push(mvStack.top());
-	// 1. Position plane relative to wing
+
+	// 1. Position cylinder relative to sphere
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-2.225f, 0.0f, 0.0f));
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.35f, 0.5f));
 
 	// Copy model matrix to the uniform variables for the shaders
@@ -1067,9 +1062,9 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	changeMaterialSurfaces(materialShaders);
 
 	mvStack.push(mvStack.top()); // Copies position and rotation of sphere
+
 	// The colour and the shape
 	glBindVertexArray(meshes.pyramid4Mesh.vao);
-	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
 
 	// 1. Position pyramid pylon relative to sphere cockpit
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(1.25f, 0.0f, 0.0f));
@@ -1102,12 +1097,11 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindVertexArray(0);
 	mvStack.pop(); // removes scale of pylon.
 
-
 	// --------------DRAWS THE FIRST CONNECTING TAPERED CYLINDER-----------------
 	// 
-		// The colour and the shape
+	// The colour and the shape
 	glBindVertexArray(meshes.taperedCylinderMesh.vao);
-	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
+
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.10f, 0.0f));
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 1.0f));
 
@@ -1144,15 +1138,12 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// The colour and the shape
 	glBindVertexArray(meshes.wingMesh.vao);
-	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
 
 	// 1. Position pyramid pylon relative to sphere cockpit
-	//mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.4f, 0.0f, 0.0f));
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.4f, 0.0f, 0.0f));
 
 	//2. Scale Wing to pylon
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.15f, 3.0f, 2.5f));
-
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
@@ -1165,10 +1156,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 
-	//mvStack.pop(); //removes wing positioning
-	//mvStack.pop(); // Removes sphere stuff
-
-		//---------------DRAWS FIRST LEFT WING DETAIL
+	//---------------DRAWS FIRST LEFT WING DETAIL
 
 	glBindVertexArray(meshes.cubeMesh.vao);
 	mvStack.push(mvStack.top()); // Copy wing
@@ -1180,13 +1168,13 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-
 	// Draw triangles
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
 
 	glBindVertexArray(0);
 
 	mvStack.pop(); //removes parallel wing info
+
 	//---------DRAWS PARALLEL WING DETAIL
 
 	mvStack.push(mvStack.top()); // copy first left wing detail info
@@ -1198,13 +1186,11 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-
 	// Draw triangles
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
 
 	glBindVertexArray(0);
 
-	//mvStack.pop(); //removes parallel wing info
 	mvStack.pop(); // removes left wing detail info
 
 	//---------DRAWS PARALLEL WING DETAIL
@@ -1218,20 +1204,18 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-
 	// Draw triangles
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
 
 	glBindVertexArray(0);
 
-	//mvStack.pop(); //removes parallel wing info
 	mvStack.pop(); // removes left wing detail info
 
 	//---------------DRAWS SECOND LEFT WING DETAIL
 
 	glBindVertexArray(meshes.cubeMesh.vao);
 	mvStack.push(mvStack.top()); // Copy wing
-	// 1. Position plane relative to wing
+	// 1. Position cube relative to wing
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(-63.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.05f, 1.1f));
@@ -1264,7 +1248,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	glBindVertexArray(0);
 
-	//mvStack.pop(); //removes parallel wing info
 	mvStack.pop(); // removes left wing detail info
 
 	//---------DRAWS PARALLEL WING DETAIL
@@ -1278,26 +1261,23 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-
-	// Draw triangles
+	// Draws triangles
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
 
 	glBindVertexArray(0);
 
-	//mvStack.pop(); //removes parallel wing info
 	mvStack.pop(); // removes left wing detail info
 
 	//---------------DRAWS THIRD LEFT WING DETAIL
 
 	glBindVertexArray(meshes.cubeMesh.vao);
 	mvStack.push(mvStack.top()); // Copy wing
-	// 1. Position plane relative to wing
+	// 1. Position cube relative to wing
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.05f, 1.0f));
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
-
 
 	// Draw triangles
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
@@ -1317,13 +1297,10 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
-
 	// Draw triangles
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
 
 	glBindVertexArray(0);
-
-
 
 	mvStack.pop(); //removes 1st left detail positioning
 
@@ -1337,7 +1314,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
-
 
 	// Draw triangles
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
@@ -1355,10 +1331,10 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	matShi = silverShininess();
 	changeMaterialSurfaces(materialShaders);
 
-
 	glBindVertexArray(meshes.cylinderMesh.vao);
 	mvStack.push(mvStack.top());
-	// 1. Position plane relative to wing
+
+	// 1. Position cylinder relative to sphere cockpit
 	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.58f, 0.0f, 0.0f));
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -1380,6 +1356,9 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	mvStack.pop(); //removes 1st left detail positioning
+	mvStack.pop(); // removes parent shape
+	mvStack.pop(); // removes view matrix
+	mvStack.pop(); // empty stack
 
 	/**************************************************************************************/
 	// Use lighting program for pyramids that denote the direction and source of the lights
