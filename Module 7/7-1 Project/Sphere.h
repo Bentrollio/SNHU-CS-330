@@ -16,11 +16,6 @@
 #include <vector>
 #include "utils.h"
 
-
- // macros used to simplify adjusting vertex array and vertex buffer objects
-//#define numVAOs 1 
-#define numVBOs 3
-
 class Sphere
 {
 
@@ -35,8 +30,6 @@ private:
 	float toRadians(float degrees);
 
 public:
-	//GLuint vao; // Handle for the Vertex Array Object
-	//GLuint vbo[numVBOs]; // Handle for the Vertex Buffer Objects
 	Sphere(); // default constructor
 	Sphere(int prec);
 	int getNumVertices();

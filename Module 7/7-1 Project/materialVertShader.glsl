@@ -11,6 +11,8 @@ out vec3 varyingNormal; // eye-space vertex normal
 out vec3 varyingLightDir; // vector pointing to the light
 out vec3 varyingLightDir2;
 out vec3 varyingVertPos; // vertex position in eye-space
+out vec3 varyingHalfVector; // Blinn-Phong shading
+out vec3 varyingHalfVector2;
 
 layout (binding = 0) uniform sampler2D samp; // not used in vertex shader
 layout (binding = 1) uniform sampler2D samp1;
@@ -46,6 +48,8 @@ void main(void)
 	varyingLightDir = light.position - varyingVertPos;
 	varyingLightDir2 = light2.position - varyingVertPos;
 	varyingNormal = (norm_matrix * vec4(normal,1.0)).xyz;
+	varyingHalfVector = (varyingLightDir + (-varyingVertPos)).xyz;
+	varyingHalfVector2 = (varyingLightDir2 + (-varyingVertPos)).xyz;
 
 	gl_Position = proj_matrix * mv_matrix * vec4(position, 1.0f);
 }

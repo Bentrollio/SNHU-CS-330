@@ -2322,9 +2322,6 @@ void Meshes::CreateCylinderMesh(GLmesh& mesh)
 	glEnableVertexAttribArray(2);
 }
 
-
-
-
 void Meshes::DestroyMesh(GLmesh &mesh) {
 
 	glDeleteVertexArrays(numVAOs, &mesh.vao);

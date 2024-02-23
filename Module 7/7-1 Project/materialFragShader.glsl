@@ -4,6 +4,8 @@ in vec3 varyingNormal;
 in vec3 varyingLightDir;
 in vec3 varyingLightDir2;
 in vec3 varyingVertPos;
+in vec3 varyingHalfVector; // Blinn-Phong shading
+in vec3 varyingHalfVector2;
 
 in vec4 vertexColor; // aka varyingColor
 in vec2 tc;
@@ -49,24 +51,28 @@ void main(void)
 	vec3 N = normalize(varyingNormal);
 	vec3 V = normalize(-varyingVertPos);
 
+	vec3 H = normalize(varyingHalfVector);
+	vec3 H2 = normalize(varyingHalfVector2);
+
+
 	// Compute light reflection vector with respect to N:
-	vec3 R = normalize(reflect(-L, N));
-	vec3 R2 = normalize(reflect(-L2, N));
+	//vec3 R = normalize(reflect(-L, N));
+	//vec3 R2 = normalize(reflect(-L2, N));
 	// Get the angle between the light and surface normal
 	float cosTheta = dot(L,N);
 	float cosTheta2 = dot(L2, N);
 	// angle between the view vector and reflected light:
-	float cosPhi = dot(V,R);
-	float cosPhi2 = dot(V, R2);
+	float cosPhi = dot(H, N);
+	float cosPhi2 = dot(H2, N);
 
 	// Compute ADS contributions (per pixel), and combine to build output color
 	vec3 ambient = ((globalAmbient * material.ambient) + (light.ambient * material.ambient)).xyz;
 	vec3 diffuse = light.diffuse.xyz * material.diffuse.xyz * max(cosTheta,0.0);
-	vec3 specular = light.specular.xyz * material.specular.xyz * pow(max(cosPhi,0.0), material.shininess);
+	vec3 specular = light.specular.xyz * material.specular.xyz * pow(max(cosPhi,0.0), material.shininess * 3.0); // tweak to improve specular highlight
 
 	vec3 ambient2 = ((globalAmbient * material.ambient) + (light2.ambient * material.ambient)).xyz;
 	vec3 diffuse2 = light2.diffuse.xyz * material.diffuse.xyz * max(cosTheta2,0.0);
-	vec3 specular2 = light2.specular.xyz * material.specular.xyz * pow(max(cosPhi2,0.0), material.shininess);
+	vec3 specular2 = light2.specular.xyz * material.specular.xyz * pow(max(cosPhi2,0.0), material.shininess * 3.0);
 
 	//FragColor = vec4((ambient + diffuse + specular), 1.0);
 	vec3 phong1;

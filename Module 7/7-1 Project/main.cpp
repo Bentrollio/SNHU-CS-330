@@ -41,18 +41,18 @@ glm::mat4 invTrMat; // Inverse transpose matrix for materialShaders
 
 // initial light location
 glm::vec3 initialLightLoc = glm::vec3(10.0f, 4.0f, 10.0f);
-glm::vec3 initialLightLoc2 = glm::vec3(-10.0f, 5.0f, -15.0f);
+glm::vec3 initialLightLoc2 = glm::vec3(-10.0f, 5.0f, -10.0f);
 
 // Global light
 float globalAmbient[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
 // front white light properties
-float lightAmbient[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
+float lightAmbient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
 float lightDiffuse[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 float lightSpecular[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 // rear blue light properties
 float lightAmbient2[4] = { 0.0f, 0.0f, 1.0f, 1.0f };
-float lightDiffuse2[4] = { 0.2f, 0.2f, 1.0f, 1.0f };
-float lightSpecular2[4] = { 0.2f, 0.2f, 1.0f, 1.0f };
+float lightDiffuse2[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+float lightSpecular2[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 // Material variables that reflect light
 float* matAmb;
@@ -160,14 +160,11 @@ void init(GLFWwindow* window) {
 	bookSideTexture = loadTexture("HTTE-Sides.png");
 	blackPlasticTexture = loadTexture("Porcelain.png");
 
-
 	metalTexture = loadTexture("MetalPlates008_2K-PNG_Metalness.png");
 	metalDetailTexture = loadTexture("MetalPlates008_2K-PNG_Color.png");
 	cockpitTexture = loadTexture("TIE Fighter Texture FINAL.png");
 	wingTexture = loadTexture("MetalPlates009_2K-JPG_Roughness.png");
 	wingTexture2 = loadTexture("TEX00001.png");
-
-
 }
 
 // Draws to GLFW display window
@@ -211,7 +208,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	matShi = pearlShininess();
 
 	installAdvancedLights(materialShaders, vMat);
-
 
 	// Material variables that reflect light
 	changeMaterialSurfaces(materialShaders);
@@ -500,7 +496,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
-
 
 	glBindVertexArray(0);
 
