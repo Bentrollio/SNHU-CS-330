@@ -165,7 +165,7 @@ void init(GLFWwindow* window) {
 	metalDetailTexture = loadTexture("MetalPlates008_2K-PNG_Color.png");
 	cockpitTexture = loadTexture("TIE Fighter Texture FINAL.png");
 	wingTexture = loadTexture("MetalPlates009_2K-JPG_Roughness.png");
-	wingTexture2 = loadTexture("TEX00042.png");
+	wingTexture2 = loadTexture("TEX00001.png");
 
 
 }
@@ -565,6 +565,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	glBindVertexArray(0);
 	mvStack.pop(); // Removes child transforms
 
 
@@ -595,7 +596,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
 	glBindVertexArray(0);
 
-		glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -709,7 +710,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.push(mvStack.top()); // copies view matrix for manipulation
 
 	// 1. Position the sphere
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-6.0f, 2.25f, -2.0f));
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-6.0f, 2.35f, -2.0f));
 
 	// 2. Rotate Cube by 25 degrees on y-axis
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -778,7 +779,11 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 		// The colour and the shape
 	glBindVertexArray(meshes.taperedCylinderMesh.vao);
 	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f));
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.10f, 0.0f));
+	//mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 1.0f));
+
+
 	mvStack.push(mvStack.top()); // copy cylinder position/rotation to stack
 
 	//// 3. Scale Pyramid to Sphere
@@ -818,8 +823,9 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindVertexArray(meshes.wingMesh.vao);
 	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
 
-	// 1. Position pyramid pylon relative to sphere cockpit
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-2.33f, 0.0f, 0.0f));
+	// 1. Position wing relative to sphere
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-2.4f, 0.0f, 0.0f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 	//3. Scale Wing to pylon
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.15f, 3.0f, 2.5f));
@@ -835,10 +841,236 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 
+	//mvStack.pop(); //removes wing positioning FIX ME
+
+	//---------------DRAWS FIRST LEFT WING DETAIL
+
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.push(mvStack.top()); // Copy wing
+	// 1. Position plane relative to wing
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(63.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.05f, 1.1f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+
+	glBindVertexArray(0);
+
+	mvStack.pop(); //removes parallel wing info
+	//---------DRAWS PARALLEL WING DETAIL
+
+	mvStack.push(mvStack.top()); // copy first left wing detail info
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f,0.76f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(-25.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.55f, 0.027f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+
+	glBindVertexArray(0);
+
+	//mvStack.pop(); //removes parallel wing info
+	mvStack.pop(); // removes left wing detail info
+
+	//---------DRAWS PARALLEL WING DETAIL
+
+	mvStack.push(mvStack.top()); // copy first left wing detail info
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, -0.76f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(-25.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.55f, 0.027f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+
+	glBindVertexArray(0);
+
+	//mvStack.pop(); //removes parallel wing info
+	mvStack.pop(); // removes left wing detail info
+
+	//---------------DRAWS SECOND LEFT WING DETAIL
+
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.push(mvStack.top()); // Copy wing
+	// 1. Position plane relative to wing
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(-63.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.05f, 1.1f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+
+	glBindVertexArray(0);
+
+	mvStack.pop(); //removes 1st left detail positioning
+
+	//---------DRAWS PARALLEL WING DETAIL
+
+	mvStack.push(mvStack.top()); // copy first left wing detail info
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, -0.76f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.55f, 0.027f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+
+	glBindVertexArray(0);
+
+	//mvStack.pop(); //removes parallel wing info
+	mvStack.pop(); // removes left wing detail info
+
+	//---------DRAWS PARALLEL WING DETAIL
+
+	mvStack.push(mvStack.top()); // copy first left wing detail info
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.76f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.55f, 0.027f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+
+	glBindVertexArray(0);
+
+	//mvStack.pop(); //removes parallel wing info
+	mvStack.pop(); // removes left wing detail info
+
+	//---------------DRAWS THIRD LEFT WING DETAIL
+
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.push(mvStack.top()); // Copy wing
+	// 1. Position plane relative to wing
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.05f, 1.0f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+
+	glBindVertexArray(0);
+
+	//mvStack.pop(); //removes 1st left detail positioning
+
+	//-------------DRAWS TOP OUTLINE
+
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.push(mvStack.top());
+	// 1. Position plane relative to wing
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 19.7f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.5f, 0.5f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+
+	glBindVertexArray(0);
+
+	mvStack.pop(); //removes 1st left detail positioning
+
+	//-------------DRAWS BOTTOM OUTLINE
+
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.push(mvStack.top());
+	// 1. Position plane relative to wing
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -19.7f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.5f, 0.5f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+
+	glBindVertexArray(0);
+
+	mvStack.pop(); //removes 1st left detail positioning
+	mvStack.pop();
 	mvStack.pop(); //removes wing positioning
+
+	//---------------DRAWS CONNECTING CYLINDER
+
+	matAmb = silverAmbient();
+	matDif = silverDiffuse();
+	matSpe = silverDiffuse();
+	matShi = silverShininess();
+	changeMaterialSurfaces(materialShaders);
+
+	glBindVertexArray(meshes.cylinderMesh.vao);
+	mvStack.push(mvStack.top());
+	// 1. Position plane relative to wing
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-2.225f, 0.0f, 0.0f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.35f, 0.5f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, wingTexture2);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, wingTexture2);
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 36);		//bottom
+	glDrawArrays(GL_TRIANGLE_FAN, 36, 36);		//top
+	glDrawArrays(GL_TRIANGLE_STRIP, 72, 146);	//sides
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glBindVertexArray(0);
+
+	mvStack.pop(); //removes 1st left detail positioning
 
 	// --------------DRAWS THE SECOND PYLON PYRAMID-----------------
 	// 
+
+	matAmb = pewterAmbient();
+	matDif = pewterDiffuse();
+	matSpe = pewterSpecular();
+	matShi = pewterShininess();
+	changeMaterialSurfaces(materialShaders);
+
 	mvStack.push(mvStack.top()); // Copies position and rotation of sphere
 	// The colour and the shape
 	glBindVertexArray(meshes.pyramid4Mesh.vao);
@@ -881,7 +1113,9 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 		// The colour and the shape
 	glBindVertexArray(meshes.taperedCylinderMesh.vao);
 	//glProgramUniform4f(renderingProgram, objectColorLoc, 1.0f, 0.0f, 0.0f, 1.0f);
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f));
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.10f, 0.0f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 1.0f));
+
 	mvStack.push(mvStack.top()); // copy cylinder position/rotation to stack
 	//// 3. Scale Pyramid to Sphere
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.25f, 0.5f, 0.25f));
@@ -919,7 +1153,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// 1. Position pyramid pylon relative to sphere cockpit
 	//mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.4f, 0.0f, 0.0f));
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.33f, 0.0f, 0.0f));
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.4f, 0.0f, 0.0f));
 
 	//2. Scale Wing to pylon
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.15f, 3.0f, 2.5f));
@@ -936,27 +1170,221 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 
-	mvStack.pop(); //removes wing positioning
+	//mvStack.pop(); //removes wing positioning
 	//mvStack.pop(); // Removes sphere stuff
 
+		//---------------DRAWS FIRST LEFT WING DETAIL
 
-	////-----------TESTING AREA
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.push(mvStack.top()); // Copy wing
+	// 1. Position plane relative to wing
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(63.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.05f, 1.1f));
 
-	//glBindVertexArray(meshes.wingMesh.vao);
-	//mvStack.push(mvStack.top());
-	//mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	//mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-	//// Copy model matrix to the uniform variables for the shaders
-	//glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
-	//glUniformMatrix4fv(nLoc, 1, GL_FALSE, glm::value_ptr(invTrMat));
-
-	//// Draw triangles
-	//glDrawArrays(GL_TRIANGLES, 0, meshes.wingMesh.numVertices);
-	//glBindVertexArray(0);
-
-	//mvStack.pop();
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
 
 
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+
+	glBindVertexArray(0);
+
+	mvStack.pop(); //removes parallel wing info
+	//---------DRAWS PARALLEL WING DETAIL
+
+	mvStack.push(mvStack.top()); // copy first left wing detail info
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.76f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(-25.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.55f, 0.027f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+
+	glBindVertexArray(0);
+
+	//mvStack.pop(); //removes parallel wing info
+	mvStack.pop(); // removes left wing detail info
+
+	//---------DRAWS PARALLEL WING DETAIL
+
+	mvStack.push(mvStack.top()); // copy first left wing detail info
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, -0.76f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(-25.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.55f, 0.027f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+
+	glBindVertexArray(0);
+
+	//mvStack.pop(); //removes parallel wing info
+	mvStack.pop(); // removes left wing detail info
+
+	//---------------DRAWS SECOND LEFT WING DETAIL
+
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.push(mvStack.top()); // Copy wing
+	// 1. Position plane relative to wing
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(-63.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.05f, 1.1f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+
+	glBindVertexArray(0);
+
+	mvStack.pop(); //removes 1st left detail positioning
+
+	//---------DRAWS PARALLEL WING DETAIL
+
+	mvStack.push(mvStack.top()); // copy first left wing detail info
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, -0.76f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.55f, 0.027f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+
+	glBindVertexArray(0);
+
+	//mvStack.pop(); //removes parallel wing info
+	mvStack.pop(); // removes left wing detail info
+
+	//---------DRAWS PARALLEL WING DETAIL
+
+	mvStack.push(mvStack.top()); // copy first left wing detail info
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.76f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.55f, 0.027f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+
+	glBindVertexArray(0);
+
+	//mvStack.pop(); //removes parallel wing info
+	mvStack.pop(); // removes left wing detail info
+
+	//---------------DRAWS THIRD LEFT WING DETAIL
+
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.push(mvStack.top()); // Copy wing
+	// 1. Position plane relative to wing
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.05f, 1.0f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+
+	glBindVertexArray(0);
+
+	//mvStack.pop(); //removes 1st left detail positioning
+
+	//-------------DRAWS TOP OUTLINE
+
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.push(mvStack.top());
+	// 1. Position plane relative to wing
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 19.7f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.5f, 0.5f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+
+	glBindVertexArray(0);
+
+
+
+	mvStack.pop(); //removes 1st left detail positioning
+
+	//-------------DRAWS BOTTOM OUTLINE
+
+	glBindVertexArray(meshes.cubeMesh.vao);
+	mvStack.push(mvStack.top());
+	// 1. Position plane relative to wing
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -19.7f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.5f, 0.5f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.cubeMesh.numVertices);
+
+	glBindVertexArray(0);
+
+	mvStack.pop(); //removes 1st left detail positioning
+	mvStack.pop();
+	mvStack.pop(); //removes wing positioning
+
+	//---------------DRAWS CONNECTING CYLINDER
+	matAmb = silverAmbient();
+	matDif = silverDiffuse();
+	matSpe = silverSpecular();
+	matShi = silverShininess();
+	changeMaterialSurfaces(materialShaders);
+
+
+	glBindVertexArray(meshes.cylinderMesh.vao);
+	mvStack.push(mvStack.top());
+	// 1. Position plane relative to wing
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.58f, 0.0f, 0.0f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.35f, 0.5f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, wingTexture2);
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 36);		//bottom
+	glDrawArrays(GL_TRIANGLE_FAN, 36, 36);		//top
+	glDrawArrays(GL_TRIANGLE_STRIP, 72, 146);	//sides
+
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	mvStack.pop(); //removes 1st left detail positioning
 
 	/**************************************************************************************/
 	// Use lighting program for pyramids that denote the direction and source of the lights

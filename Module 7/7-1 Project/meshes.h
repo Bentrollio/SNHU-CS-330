@@ -61,7 +61,7 @@ private:
 		void CreatePrismMesh(GLmesh& mesh);
 		//void CreateBoxMesh(GLmesh& mesh);
 		void CreateConeMesh(GLmesh &mesh);
-		//void CreateCylinderMesh(GLmesh& mesh);
+		void CreateCylinderMesh(GLmesh& mesh);
 		void CreateTaperedCylinderMesh(GLmesh &mesh);
 		//void CreateTorusMesh(GLmesh &mesh);
 		void CreateTaperedPolygonMesh(GLmesh& mesh);
