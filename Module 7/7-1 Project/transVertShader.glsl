@@ -50,5 +50,7 @@ void main(void)
 	varyingLightDir2 = light2.position - varyingVertPos;
 	varyingNormal = (norm_matrix * vec4(normal,1.0)).xyz;
 
+	if (flipNormal < 0) varyingNormal = -varyingNormal;
+
 	gl_Position = proj_matrix * mv_matrix * vec4(position, 1.0f);
 }

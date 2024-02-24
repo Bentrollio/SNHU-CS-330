@@ -265,6 +265,12 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods, C
 }
 
 // MATERIALS ADS
+// Chrome Material
+float* chromeAmbient() { static float a[4] = { 0.25f, 0.25f, 0.25, 1 }; return (float*)a; }
+float* chromeDiffuse() { static float a[4] = { 0.4f, 0.4f, 0.4f, 1 }; return (float*)a; }
+float* chromeSpecular() { static float a[4] = { 0.774597f, 0.774597f, 0.774597f, 1 }; return (float*)a; }
+float chromeShininess() { return 60.0; }
+
 // Gold material
 float* goldAmbient() { static float a[4] = { 0.2473f, 0.1995f, 0.0745f, 1 }; return (float*)a; }
 float* goldDiffuse() { static float a[4] = { 0.7516f, 0.6065f, 0.2265f, 1 }; return (float*)a; }
@@ -300,6 +306,13 @@ float* jadeAmbient() { static float a[4] = { 0.1350f, 0.2225f, 0.1575f, 0.95f };
 float* jadeDiffuse() { static float a[4] = { 0.5400f, 0.8900f, 0.6300f, 0.95f }; return (float*)a; }
 float* jadeSpecular() { static float a[4] = { 0.3162f, 0.3162f, 0.3162f, 0.95f }; return (float*)a; }
 float jadeShininess() { return 12.800f; }
+
+// Red Plastic Material
+float* redPlasticAmbient() { static float a[4] = { 0.0f, 0.0f, 0.0f, 0.95f }; return (float*)a; }
+float* redPlasticDiffuse() { static float a[4] = { 0.5400f, 0.0f, 0.0f, 0.95f }; return (float*)a; }
+float* redPlasticSpecular() { static float a[4] = { 0.7f, 0.6f, 0.6f, 0.95f }; return (float*)a; }
+float redPlasticShininess() { return 25.0; }
+
 
 // Sapphire Material
 float* sapphireAmbient() { static float a[4] = { 0.05f, 0.05f, 0.1f, 0.95f }; return (float*)a; }

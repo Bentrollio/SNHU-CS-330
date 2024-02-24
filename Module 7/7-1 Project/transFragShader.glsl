@@ -33,6 +33,9 @@ uniform mat4 proj_matrix;
 uniform mat4 norm_matrix;
 uniform vec4 objectColor;
 
+uniform float alpha;
+uniform float flipNormal;
+
 layout (binding = 0) uniform sampler2D samp;
 layout (binding = 1) uniform sampler2D samp1;
 
@@ -75,5 +78,8 @@ void main(void)
 	phong1 = (ambient + diffuse + specular);
 	phong2 = (ambient2 + diffuse2 + specular2);
 	FragColor = vec4(phong1 + phong2, 1.0);
+
+	// added for transparency
+	FragColor = vec4(FragColor.xyz, alpha); // replaces alpha value with the one sent in the uniform variable
 
 }

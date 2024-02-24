@@ -72,7 +72,7 @@ glm::mat4 mMat, mvMat, scale, rotation, translation;
 // Texture variables;
 GLuint seleniteBaseTexture, seleniteTipTexture, fabricTexture, fabricRoughnessTexture, grungeTexture, plasticTexture, walmartLogoTexture,
 blackRubberBaseTexture, bookFrontTexture, bookRearTexture, bookSpineTexture, bookSideTexture, metalTexture, metalDetailTexture, cockpitTexture, wingTexture, wingTexture2,
-blackPlasticTexture;
+blackPlasticTexture, earthTexture, jupiterTexture;
 
 // Gordon and Clevenger Tutorial Phong implementation
 void installAdvancedLights(GLuint shader, glm::mat4 vMatrix) {
@@ -166,6 +166,8 @@ void init(GLFWwindow* window) {
 	cockpitTexture = loadTexture("TIE Fighter Texture FINAL.png");
 	wingTexture = loadTexture("MetalPlates009_2K-JPG_Roughness.png");
 	wingTexture2 = loadTexture("TEX00001.png");
+	earthTexture = loadTexture("earth.jpg");
+	jupiterTexture = loadTexture("jupiter.jpg");
 }
 
 // Draws to GLFW display window
@@ -322,106 +324,6 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.pop(); // All that remains in stack is view matrix
 
 	// **** END of RENDERING CRYSTAL OBJECT ****
-
-	///**************************************************
-	// * START of RENDERING SOLAR SYSTEM GLOBE
-	// **************************************************
-	// */
-
-	// Change shaders
-	glEnable(GL_CULL_FACE);
-	glUseProgram(transparentShaders);
-
-	// Install lights to new shaders
-	installAdvancedLights(transparentShaders, vMat);
-	// Material variables that reflect light
-	matAmb = silverAmbient();
-	matDif = silverDiffuse();
-	matSpe = silverSpecular();
-	matShi = silverShininess();
-	changeMaterialSurfaces(transparentShaders);
-
-	mvLoc = glGetUniformLocation(transparentShaders, "mv_matrix"); // model-view matrix
-	projLoc = glGetUniformLocation(transparentShaders, "proj_matrix"); // projection
-	objectColorLoc = glGetUniformLocation(transparentShaders, "objectColor");
-	nLoc = glGetUniformLocation(transparentShaders, "norm_matrix");
-	aLoc = glGetUniformLocation(transparentShaders, "alpha");
-	fLoc = glGetUniformLocation(transparentShaders, "flipNormal");
-
-	 // --------------DRAWS THE SPHERE (PARENT)-----------------
-	glBindVertexArray(meshes.mySphere.vao);
-
-	mvStack.push(mvStack.top()); // copies the view matrix to the top for manipulation
-	// 1. Position Sphere
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.5f, 4.2f));
-
-	invTrMat = glm::transpose(glm::inverse(mvStack.top()));
-
-	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
-	glUniformMatrix4fv(nLoc, 1, GL_FALSE, glm::value_ptr(invTrMat));
-	
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glBlendEquation(GL_FUNC_ADD);
-
-	glCullFace(GL_FRONT); // render sphere back faces first
-	glProgramUniform1f(transparentShaders, aLoc, 0.3f); // back faces, very transparent
-	glProgramUniform1f(transparentShaders, aLoc, -1.0f); // flip normals on back faces
-	// Draw
-	glDrawArrays(GL_TRIANGLES, 0, meshes.mySphere.numIndices);
-
-	glCullFace(GL_BACK); // render sphere front faces
-	glProgramUniform1f(transparentShaders, aLoc, 0.7f); // back faces, very transparent
-	glProgramUniform1f(transparentShaders, aLoc, 1.0f); // flip normals on back faces
-	glDrawArrays(GL_TRIANGLES, 0, meshes.mySphere.numIndices);
-
-	glDisable(GL_BLEND);
-	glDisable(GL_CULL_FACE);
-
-	// Deactivate the VAO
-	glBindVertexArray(0);
-
-	// --------------DRAWS THE TAPERED POLYGON PEDESTAL (CHILD OF SPHERE)-----------------
-	
-	// Change shaders
-	glUseProgram(materialShaders);
-
-	// Install lights to new shaders
-	installAdvancedLights(materialShaders, vMat);
-
-	// The colour and the shape
-	matAmb = bronzeAmbient();
-	matDif = bronzeDiffuse();
-	matSpe = bronzeSpecular();
-	matShi = bronzeShininess();
-	changeMaterialSurfaces(materialShaders);
-
-	glBindVertexArray(meshes.taperedPolygonMesh.vao);
-
-	mvStack.push(mvStack.top()); // Copies Sphere position
-
-	// 1. Place Cube Relative to Sphere
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.17f, 0.0f));
-
-	// 2. Rotate Cube by 45 degrees on y-axis
-	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-	// 3. Scale Cube
-	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 0.3f, 0.75f));
-
-	// Copy model matrix to the uniform variables for the shaders
-	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
-	glUniformMatrix4fv(nLoc, 1, GL_FALSE, glm::value_ptr(invTrMat));
-
-	// Draw triangles
-	glDrawArrays(GL_TRIANGLES, 0, meshes.taperedPolygonMesh.numVertices);
-	glBindVertexArray(0);
-
-	mvStack.pop();
-	mvStack.pop(); // All that remains is the view matrix
 
 	///**************************************************
 	// * RENDERS THE BOOK
@@ -710,7 +612,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	// */
 	// // --------------DRAWS THE SPHERE COCKPIT (PARENT)-----------------
 	// The colour and the shape
-	glBindVertexArray(meshes.mySphere.vao);
+	glBindVertexArray(meshes.sphereMesh.vao);
 
 	glUseProgram(materialShaders);
 
@@ -748,7 +650,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindTexture(GL_TEXTURE_2D, cockpitTexture);
 
 	// Draw
-	glDrawArrays(GL_TRIANGLES, 0, meshes.mySphere.numIndices);
+	glDrawArrays(GL_TRIANGLES, 0, meshes.sphereMesh.numIndices);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glActiveTexture(GL_TEXTURE0);
@@ -1373,8 +1275,421 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	mvStack.pop(); //removes 1st left detail positioning
+
+	// --------------DRAWS THE LASER CANNON-----------------
+// 
+	mvStack.push(mvStack.top()); // copy cylinder position/rotation to stack
+	matAmb = jadeAmbient();
+	matDif = jadeDiffuse();
+	matSpe = jadeSpecular();
+	matShi = jadeShininess();
+	changeMaterialSurfaces(materialShaders);
+
+	// The colour and the shape
+	glBindVertexArray(meshes.taperedCylinderMesh.vao);
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-0.25f, -0.6f, 0.70f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.05f, 0.15f, 0.05f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 36);		//bottom
+	glDrawArrays(GL_TRIANGLE_FAN, 36, 72);		//top
+	glDrawArrays(GL_TRIANGLE_STRIP, 72, 146);	//sides
+
+	glBindVertexArray(0);
+	mvStack.pop(); // Leaves connector position
+
+	// --------------DRAWS THE LASER CANNON-----------------
+// 
+	mvStack.push(mvStack.top()); // copy cylinder position/rotation to stack
+
+	// The colour and the shape
+	glBindVertexArray(meshes.taperedCylinderMesh.vao);
+
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.20f, -0.6f, 0.72f));
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.05f, 0.15f, 0.05f));
+
+	mvStack.push(mvStack.top()); // copy cylinder position/rotation to stack
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 36);		//bottom
+	glDrawArrays(GL_TRIANGLE_FAN, 36, 72);		//top
+	glDrawArrays(GL_TRIANGLE_STRIP, 72, 146);	//sides
+
+	glBindVertexArray(0);
+	mvStack.pop(); // Leaves connector position
+	mvStack.pop(); // sphere + view
 	mvStack.pop(); // removes parent shape
-	mvStack.pop(); // removes view matrix
+	mvStack.pop();
+
+	
+	///**************************************************
+	// * START of RENDERING SOLAR SYSTEM GLOBE
+	// **************************************************
+	// */
+	// --------------DRAWS THE TAPERED POLYGON PEDESTAL (CHILD OF SPHERE)-----------------
+
+	// Change shaders
+	glUseProgram(materialShaders);
+
+	// The colour and the shape
+	matAmb = chromeAmbient();
+	matDif = chromeDiffuse();
+	matSpe = chromeSpecular();
+	matShi = chromeShininess();
+	changeMaterialSurfaces(materialShaders)
+		;
+	glBindVertexArray(meshes.taperedPolygonMesh.vao);
+
+	mvStack.push(mvStack.top()); // Copies view matrix
+
+	// 1. Place Cube
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.33f, 4.2f));
+	mvStack.push(mvStack.top()); // Copies pedestal position
+	// 2. Rotate Cube by 45 degrees on y-axis
+	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	// 3. Scale Cube
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.75f, 0.3f, 0.75f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+	glUniformMatrix4fv(nLoc, 1, GL_FALSE, glm::value_ptr(invTrMat));
+
+	// Draw triangles
+	glDrawArrays(GL_TRIANGLES, 0, meshes.taperedPolygonMesh.numVertices);
+	glBindVertexArray(0);
+
+	mvStack.pop(); // removes rotation and scale
+
+	// --------------DRAWS THE SPHERICAL "SUN" (CHILD OF PEDESTAL)-----------------
+	glBindVertexArray(meshes.sphereMesh.vao);
+
+	// The colour and the shape
+	matAmb = goldAmbient();
+	matDif = goldDiffuse();
+	matSpe = goldSpecular();
+	matShi = goldShininess();
+	changeMaterialSurfaces(materialShaders);
+
+	mvStack.push(mvStack.top()); // Copies position of pedestal
+
+	// 1. Place Sphere
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.1f, 0.0f));
+	//mvStack.push(mvStack.top()); // copy position of the sun
+
+	// 2. Scale Sphere
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.2f, 0.2f, 0.2f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glDrawArrays(GL_TRIANGLES, 0, meshes.sphereMesh.numIndices);
+
+	glBindVertexArray(0);
+
+	// --------------DRAWS THE PLANET "MERCURY" (CHILD OF SUN)-----------------
+	glBindVertexArray(meshes.sphereMesh.vao);
+
+	// The colour and the shape
+	matAmb = pewterAmbient();
+	matDif = pewterDiffuse();
+	matSpe = pewterSpecular();
+	matShi = pewterShininess();
+	changeMaterialSurfaces(materialShaders);
+
+	mvStack.push(mvStack.top()); // Copies position/scale of sun
+
+	// 1. Place Sphere
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(1.3f, 0.0f, 0.0f));
+	//mvStack.push(mvStack.top()); // copy position of the sun
+
+	// 2. Scale Sphere
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glDrawArrays(GL_TRIANGLES, 0, meshes.sphereMesh.numIndices);
+
+	glBindVertexArray(0);
+
+	mvStack.pop(); // removes Mercury
+
+	// --------------DRAWS THE DRAWS THE PLANET "VENUS" (CHILD OF SUN)-----------------
+	glBindVertexArray(meshes.sphereMesh.vao);
+
+	// The colour and the shape
+	matAmb = pearlAmbient();
+	matDif = pearlDiffuse();
+	matSpe = pearlSpecular();
+	matShi = pearlShininess();
+	changeMaterialSurfaces(materialShaders);
+
+	mvStack.push(mvStack.top()); // Copies position/scale of sun
+
+	// 1. Place Sphere
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 0.0f, 0.0f));
+	//mvStack.push(mvStack.top()); // copy position of the sun
+
+	// 2. Scale Sphere
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.25f, 0.25f, 0.25f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glDrawArrays(GL_TRIANGLES, 0, meshes.sphereMesh.numIndices);
+
+	glBindVertexArray(0);
+
+	mvStack.pop(); // removes Venus
+
+	// --------------DRAWS THE DRAWS THE PLANET "EARTH" (CHILD OF SUN)-----------------
+	glBindVertexArray(meshes.sphereMesh.vao);
+
+	// The colour and the shape
+	matAmb = silverAmbient();
+	matDif = silverDiffuse();
+	matSpe = silverSpecular();
+	matShi = silverShininess();
+	changeMaterialSurfaces(materialShaders);
+
+	mvStack.push(mvStack.top()); // Copies position/scale of sun
+
+	// 1. Place Sphere
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 2.5f));
+	//mvStack.push(mvStack.top()); // copy position of the sun
+
+	// 2. Scale Sphere
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.255f, 0.255f, 0.255f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, earthTexture);
+
+
+	glDrawArrays(GL_TRIANGLES, 0, meshes.sphereMesh.numIndices);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glBindVertexArray(0);
+
+	mvStack.pop(); // removes Earth
+
+	// --------------DRAWS THE PLANET "MARS" (CHILD OF SUN)-----------------
+	glBindVertexArray(meshes.sphereMesh.vao);
+
+	// The colour and the shape
+	matAmb = redPlasticAmbient();
+	matDif = redPlasticDiffuse();
+	matSpe = redPlasticSpecular();
+	matShi = redPlasticShininess();
+	changeMaterialSurfaces(materialShaders);
+
+	mvStack.push(mvStack.top()); // Copies position/scale of sun
+
+	// 1. Place Sphere
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, -3.0f));
+	//mvStack.push(mvStack.top()); // copy position of the sun
+
+	// 2. Scale Sphere
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.15f, 0.15f, 0.15f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glDrawArrays(GL_TRIANGLES, 0, meshes.sphereMesh.numIndices);
+
+	glBindVertexArray(0);
+
+	mvStack.pop(); // removes Mars
+
+	// --------------DRAWS THE PLANET "JUPITER" (CHILD OF SUN)-----------------
+	glBindVertexArray(meshes.sphereMesh.vao);
+
+	// The colour and the shape
+	matAmb = pearlAmbient();
+	matDif = pearlDiffuse();
+	matSpe = pewterSpecular();
+	matShi = pearlShininess();
+	changeMaterialSurfaces(materialShaders);
+
+	mvStack.push(mvStack.top()); // Copies position/scale of sun
+
+	// 1. Place Sphere
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 2.5f, 3.0f));
+	//mvStack.push(mvStack.top()); // copy position of the sun
+
+	// 2. Scale Sphere
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.5f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, jupiterTexture);
+
+	glDrawArrays(GL_TRIANGLES, 0, meshes.sphereMesh.numIndices);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+
+	glBindVertexArray(0);
+
+	mvStack.pop(); // removes Jupiter
+
+	// --------------DRAWS THE PLANET "SATURN" (CHILD OF SUN)-----------------
+	glBindVertexArray(meshes.sphereMesh.vao);
+
+	// The colour and the shape
+	matAmb = bronzeAmbient();
+	matDif = bronzeDiffuse();
+	matSpe = bronzeSpecular();
+	matShi = bronzeShininess();
+	changeMaterialSurfaces(materialShaders);
+
+	mvStack.push(mvStack.top()); // Copies position/scale of sun
+
+	// 1. Place Sphere
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 2.5f, -3.0f));
+	//mvStack.push(mvStack.top()); // copy position of the sun
+
+	// 2. Scale Sphere
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.4f, 0.4f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glDrawArrays(GL_TRIANGLES, 0, meshes.sphereMesh.numIndices);
+
+	glBindVertexArray(0);
+
+	mvStack.pop(); // removes Saturn
+
+	// --------------DRAWS THE PLANET "URANUS" (CHILD OF SUN)-----------------
+	glBindVertexArray(meshes.sphereMesh.vao);
+
+	// The colour and the shape
+	matAmb = jadeAmbient();
+	matDif = jadeDiffuse();
+	matSpe = jadeSpecular();
+	matShi = jadeShininess();
+	changeMaterialSurfaces(materialShaders);
+
+	mvStack.push(mvStack.top()); // Copies position/scale of sun
+
+	// 1. Place Sphere
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, -3.0f, -2.5f));
+	//mvStack.push(mvStack.top()); // copy position of the sun
+
+	// 2. Scale Sphere
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.4f, 0.4f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glDrawArrays(GL_TRIANGLES, 0, meshes.sphereMesh.numIndices);
+
+	glBindVertexArray(0);
+
+	mvStack.pop(); // removes Uranus
+
+	// --------------DRAWS THE PLANET "NEPTUNE" (CHILD OF SUN)-----------------
+	glBindVertexArray(meshes.sphereMesh.vao);
+
+	// The colour and the shape
+	matAmb = sapphireAmbient();
+	matDif = sapphireDiffuse();
+	matSpe = sapphireSpecular();
+	matShi = sapphireShininess();
+	changeMaterialSurfaces(materialShaders);
+
+	mvStack.push(mvStack.top()); // Copies position/scale of sun
+
+	// 1. Place Sphere
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, -2.5f, 3.0f));
+	//mvStack.push(mvStack.top()); // copy position of the sun
+
+	// 2. Scale Sphere
+	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.4f, 0.4f, 0.4f));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+
+	glDrawArrays(GL_TRIANGLES, 0, meshes.sphereMesh.numIndices);
+
+	glBindVertexArray(0);
+
+	mvStack.pop(); // removes Neptune
+	mvStack.pop(); // Removes Sun
+
+
+// Change shaders
+	glEnable(GL_CULL_FACE);
+	glUseProgram(transparentShaders);
+
+	// Install lights to new shaders
+	installAdvancedLights(transparentShaders, vMat);
+	// Material variables that reflect light
+	matAmb = silverAmbient();
+	matDif = silverDiffuse();
+	matSpe = silverSpecular();
+	matShi = silverShininess();
+	changeMaterialSurfaces(transparentShaders);
+
+	mvLoc = glGetUniformLocation(transparentShaders, "mv_matrix"); // model-view matrix
+	projLoc = glGetUniformLocation(transparentShaders, "proj_matrix"); // projection
+	objectColorLoc = glGetUniformLocation(transparentShaders, "objectColor");
+	nLoc = glGetUniformLocation(transparentShaders, "norm_matrix");
+	aLoc = glGetUniformLocation(transparentShaders, "alpha");
+	fLoc = glGetUniformLocation(transparentShaders, "flipNormal");
+
+	// --------------DRAWS THE SPHERE (CHILD)-----------------
+	glBindVertexArray(meshes.sphereMesh.vao);
+
+	mvStack.push(mvStack.top()); // copies the view matrix to the top for manipulation
+	// 1. Position Sphere
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.15f, 0.0f));
+
+	invTrMat = glm::transpose(glm::inverse(mvStack.top()));
+
+	// Copy model matrix to the uniform variables for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+	glUniformMatrix4fv(nLoc, 1, GL_FALSE, glm::value_ptr(invTrMat));
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendEquation(GL_FUNC_ADD);
+
+	glCullFace(GL_FRONT); // render sphere back faces first
+	glProgramUniform1f(transparentShaders, aLoc, 0.3f); // back faces, very transparent
+	glProgramUniform1f(transparentShaders, fLoc, -1.0f); // flip normals on back faces
+	// Draw
+	glDrawArrays(GL_TRIANGLES, 0, meshes.sphereMesh.numIndices);
+
+	glCullFace(GL_BACK); // render sphere front faces
+	glProgramUniform1f(transparentShaders, aLoc, 0.7f); // back faces, very transparent
+	glProgramUniform1f(transparentShaders, fLoc, 1.0f); // flip normals on back faces
+	glDrawArrays(GL_TRIANGLES, 0, meshes.sphereMesh.numIndices);
+
+	glDisable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
+
+	// Deactivate the VAO
+	glBindVertexArray(0);
+
+	mvStack.pop(); // removes sphere info
+	mvStack.pop(); // view matrix only
 	mvStack.pop(); // empty stack
 
 	/**************************************************************************************/

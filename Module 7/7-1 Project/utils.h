@@ -80,6 +80,11 @@ void glfwMouseScrollCallbackWrapper(GLFWwindow* window, double xOffset, double y
 void glfwMouseButtonCallbackWrapper(GLFWwindow* window, int button, int action, int mods);
 
 // Materials ADS
+float* chromeAmbient();
+float* chromeDiffuse();
+float* chromeSpecular();
+float chromeShininess();
+
 float* goldAmbient();
 float* goldDiffuse();
 float* goldSpecular();
@@ -109,6 +114,11 @@ float* jadeAmbient();
 float* jadeDiffuse();
 float* jadeSpecular();
 float jadeShininess();
+
+float* redPlasticAmbient();
+float* redPlasticDiffuse();
+float* redPlasticSpecular();
+float redPlasticShininess();
 
 float* sapphireAmbient();
 float* sapphireDiffuse();
