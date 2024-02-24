@@ -16,6 +16,10 @@ Camera camera(glm::vec3(0.0f, 4.0f, 20.0f)); // Needs work.
 
 using namespace std;
 
+// Hierarchal Matrix Stack for Parent-Child Objects
+stack<glm::mat4> mvStack;
+
+
 // Different shape meshes
 Meshes meshes;
 
@@ -74,6 +78,9 @@ GLuint seleniteBaseTexture, seleniteTipTexture, fabricTexture, fabricRoughnessTe
 blackRubberBaseTexture, bookFrontTexture, bookRearTexture, bookSpineTexture, bookSideTexture, metalTexture, metalDetailTexture, cockpitTexture, wingTexture, wingTexture2,
 blackPlasticTexture, earthTexture, jupiterTexture;
 
+// Object positioning
+glm::vec3 objectPosition;
+
 // Gordon and Clevenger Tutorial Phong implementation
 void installAdvancedLights(GLuint shader, glm::mat4 vMatrix) {
 
@@ -128,82 +135,7 @@ void changeMaterialSurfaces(GLuint shader) {
 	glUniform1f(mShiLoc, matShi);
 }
 
-// Hierarchal Matrix Stack for Parent-Child Objects
-stack<glm::mat4> mvStack;
-
-// Places application-specific initialization tasks
-void init(GLFWwindow* window) {
-
-	lightedPyramidShaders = createShaderProgram("lightVertShader.glsl", "lightFragShader.glsl"); // Creates the pyramids that represent the lighting position
-	materialShaders = createShaderProgram("materialVertShader.glsl", "materialFragShader.glsl");
-	transparentShaders = createShaderProgram("transVertShader.glsl", "transFragShader.glsl");
-
-	glfwGetFramebufferSize(window, &width, &height);
-
-	// Mouse Events
-	glfwSetCursorPosCallback(window, glfwMousePositionCallbackWrapper);
-	glfwSetScrollCallback(window, glfwMouseScrollCallbackWrapper);
-	glfwSetMouseButtonCallback(window, glfwMouseButtonCallbackWrapper);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	meshes.CreateMeshes();
-
-	seleniteBaseTexture = loadTexture("Marble019_2K-PNG_Color.png");
-	seleniteTipTexture = loadTexture("Marble005_2K-PNG_Color.png");
-	fabricTexture = loadTexture("Fabric046_4K-PNG_Color_Advanced.png");
-	grungeTexture = loadTexture("texture_overlays_988_1_Modified.png");
-	plasticTexture = loadTexture("Plastic014B_2K-PNG_Color.png");
-	walmartLogoTexture = loadLogoTexture("walmartlogo.png");
-	blackRubberBaseTexture = loadTexture("Rubber004_2K-PNG_Color.png");
-	bookFrontTexture = loadTexture("HTTE.png");
-	bookRearTexture = loadTexture("HTTE-REAR.png");
-	bookSpineTexture = loadTexture("HTTE-Spine.png");
-	bookSideTexture = loadTexture("HTTE-Sides.png");
-	blackPlasticTexture = loadTexture("Porcelain.png");
-
-	metalTexture = loadTexture("MetalPlates008_2K-PNG_Metalness.png");
-	metalDetailTexture = loadTexture("MetalPlates008_2K-PNG_Color.png");
-	cockpitTexture = loadTexture("TIE Fighter Texture FINAL.png");
-	wingTexture = loadTexture("MetalPlates009_2K-JPG_Roughness.png");
-	wingTexture2 = loadTexture("TEX00001.png");
-	earthTexture = loadTexture("earth.jpg");
-	jupiterTexture = loadTexture("jupiter.jpg");
-}
-
-// Draws to GLFW display window
-void display(GLFWwindow* window, double currentTime) { // AKA urender function in tutorial
-	
-	glClearColor(0.0, 0.0, 0.0, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	currentLightPos = glm::vec3(initialLightLoc.x, initialLightLoc.y, initialLightLoc.z);
-	currentLightPos2 = glm::vec3(initialLightLoc2.x, initialLightLoc2.y, initialLightLoc2.z);
-
-	// adjust OpenGL settings
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-
-	glUseProgram(materialShaders); // loads compiled shaders into openGL pipeline
-
-	// get the uniform variables for the model/view, model and projection matrices
-	mvLoc = glGetUniformLocation(materialShaders, "mv_matrix"); // model-view matrix
-	projLoc = glGetUniformLocation(materialShaders, "proj_matrix"); // projection
-	objectColorLoc = glGetUniformLocation(materialShaders, "objectColor");
-	nLoc = glGetUniformLocation(materialShaders, "norm_matrix");
-
-	// View matrix calculated once and used for all objects
-	vMat = camera.GetViewMatrix();
-	// Projection matrix (DEFAULT)
-	pMat = glm::perspective(glm::radians(camera.Zoom), (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 1000.0f);
-	// Orthographic matrix (If user presses P key)
-	activateOrtho(window, pMat);
-	
-	// Copy view matrix to stack
-	mvStack.push(vMat);
-	
-	// Copy projection matrix to the uniform variable
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
-
+void drawPlane(glm::vec3(&position)) {
 	matAmb = pearlAmbient();
 	matDif = pearlDiffuse();
 	matSpe = pearlSpecular();
@@ -218,11 +150,11 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	//// The colour and the shape
 	glBindVertexArray(meshes.planeMesh.vao);
 	//glProgramUniform4f(materialShaders, objectColorLoc, 0.0f, 0.50196078f, 1.0f, 1.0f);
-	
+
 	mvStack.push(mvStack.top()); // Places a copy of the view matrix at top of stack to add model info to
 	// 1. Places plane at origin
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)); // Positions the plane
-	
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(position)); // Positions the plane
+
 	// 2. Rotates Plane
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
@@ -244,22 +176,27 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	mvStack.pop(); // Removes Plane transforms from stack
 
-	/////**************************************************
-	//// * START of RENDERING CRYSTAL OBJECT
-	//// *
-	//// * Uses Pyramid and Cube Objects.
-	//// **************************************************
-	//// */
 
-	//// --------------DRAWS THE PYRAMID (PARENT)-----------------
-	//The colour and the shape
+}
+
+void drawSeleniteCrystal(glm::vec3(&position)) {
+
+	/////**************************************************
+//// * START of RENDERING CRYSTAL OBJECT
+//// *
+//// * Uses Pyramid and Cube Objects.
+//// **************************************************
+//// */
+
+//// --------------DRAWS THE PYRAMID (PARENT)-----------------
+//The colour and the shape
 	glBindVertexArray(meshes.pyramid4Mesh.vao);
 	glProgramUniform4f(materialShaders, objectColorLoc, 1.0f, 0.0f, 0.50196078f, 1.0f);
 
 	mvStack.push(mvStack.top()); // copies view matrix for manipulation
 
 	// 1. Place Pyramid
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(6.0f, 2.76f, 3.0f)); // Positions the pyramid
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(position)); // Positions the pyramid
 	mvStack.push(mvStack.top()); // Copies view * (PYRAMID) position to top of stack
 
 	// 2. Rotates Pyramid 85 degrees along the y-axis
@@ -284,7 +221,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	glActiveTexture(GL_TEXTURE0); // reactivates texture at loc 0
 	glBindTexture(GL_TEXTURE_2D, 0); // unbinds active texture at 0
-	
+
 	glBindVertexArray(0);
 
 	mvStack.pop(); // Removes PYRAMID scale
@@ -320,17 +257,22 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glBindVertexArray(0);
 
 	mvStack.pop();
-	mvStack.pop(); 
+	mvStack.pop();
 	mvStack.pop(); // All that remains in stack is view matrix
 
 	// **** END of RENDERING CRYSTAL OBJECT ****
 
-	///**************************************************
-	// * RENDERS THE BOOK
-	// **************************************************
-	// */
 
-	// The colour and the shape
+}
+
+void drawBook(glm::vec3(&position)) {
+
+	///**************************************************
+// * RENDERS THE BOOK
+// **************************************************
+// */
+
+// The colour and the shape
 	matAmb = sapphireAmbient();
 	matDif = sapphireDiffuse();
 	matSpe = sapphireSpecular();
@@ -343,7 +285,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.push(mvStack.top()); // copies view matrix for manipulation
 
 	// 1. Position cube
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 2.75f, -3.0f));
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(position));
 
 	// 2. Rotate the cube slightly clockwise
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(-10.0f), glm::vec3(0.0, 1.0f, 0.0f));
@@ -530,12 +472,16 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.pop(); // Removes child transforms
 	mvStack.pop(); // All that remains is the view matrix
 
+}
+
+void drawTrafficCone(glm::vec3(&position)) {
+
 	///**************************************************
-	// * DRAWS THE MINI TRAFFIC CONE
-	// **************************************************
-	// */
-	// // --------------DRAWS THE CONE (PARENT)-----------------
-	// The colour and the shape
+// * DRAWS THE MINI TRAFFIC CONE
+// **************************************************
+// */
+// // --------------DRAWS THE CONE (PARENT)-----------------
+// The colour and the shape
 	matAmb = goldAmbient();
 	matDif = goldDiffuse();
 	matSpe = goldSpecular();
@@ -546,7 +492,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.push(mvStack.top()); // copies view matrix for manipulation
 
 	// 1. Position the cone
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-2.0f, 0.11f, 8.0f));
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(position));
 
 	// 2. Rotate the cone
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -562,7 +508,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	// Draws the cone
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 36); // bottom
-	
+
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, walmartLogoTexture);
 	glDrawArrays(GL_TRIANGLE_STRIP, 36, 108); // sides
@@ -606,12 +552,15 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.pop();
 	mvStack.pop(); // All that remains is the view matrix
 
+}
+
+void drawTIEFighter(glm::vec3(&position)) {
 	///**************************************************
-	// * DRAWS THE IMPERIAL TIE FIGHTER		|<O>|
-	// **************************************************
-	// */
-	// // --------------DRAWS THE SPHERE COCKPIT (PARENT)-----------------
-	// The colour and the shape
+// * DRAWS THE IMPERIAL TIE FIGHTER		|<O>|
+// **************************************************
+// */
+// // --------------DRAWS THE SPHERE COCKPIT (PARENT)-----------------
+// The colour and the shape
 	glBindVertexArray(meshes.sphereMesh.vao);
 
 	glUseProgram(materialShaders);
@@ -632,7 +581,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.push(mvStack.top()); // copies view matrix for manipulation
 
 	// 1. Position the sphere
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(-6.0f, 2.35f, -2.0f));
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(position));
 
 	// 2. Rotate Cube by 25 degrees on y-axis
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -783,7 +732,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	mvStack.push(mvStack.top()); // copy first left wing detail info
 	glBindVertexArray(meshes.cubeMesh.vao);
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f,0.76f));
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.76f));
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(-25.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 0.55f, 0.027f));
 
@@ -1029,7 +978,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.top() *= glm::scale(glm::mat4(1.0f), glm::vec3(0.25f, 0.5f, 0.25f));
 	// Copy model matrix to the uniform variables for the shaders
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvStack.top()));
-	
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, metalTexture);
 
@@ -1326,16 +1275,15 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.pop(); // sphere + view
 	mvStack.pop(); // removes parent shape
 	mvStack.pop();
+}
 
-	
+void drawSolarSystemGlobe(glm::vec3(&position)) {
+
 	///**************************************************
-	// * START of RENDERING SOLAR SYSTEM GLOBE
-	// **************************************************
-	// */
-	// --------------DRAWS THE TAPERED POLYGON PEDESTAL (CHILD OF SPHERE)-----------------
-
-	// Change shaders
-	glUseProgram(materialShaders);
+// * START of RENDERING SOLAR SYSTEM GLOBE
+// **************************************************
+// */
+// --------------DRAWS THE TAPERED POLYGON PEDESTAL (CHILD OF SPHERE)-----------------
 
 	// The colour and the shape
 	matAmb = chromeAmbient();
@@ -1349,7 +1297,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.push(mvStack.top()); // Copies view matrix
 
 	// 1. Place Cube
-	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.33f, 4.2f));
+	mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(position));
 	mvStack.push(mvStack.top()); // Copies pedestal position
 	// 2. Rotate Cube by 45 degrees on y-axis
 	mvStack.top() *= glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -1632,8 +1580,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	mvStack.pop(); // removes Neptune
 	mvStack.pop(); // Removes Sun
 
-
-// Change shaders
+	// Change shaders
 	glEnable(GL_CULL_FACE);
 	glUseProgram(transparentShaders);
 
@@ -1690,7 +1637,130 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	mvStack.pop(); // removes sphere info
 	mvStack.pop(); // view matrix only
-	mvStack.pop(); // empty stack
+
+}
+
+void drawLightingPyramid(glm::vec3(&position)) {
+	// --------------DRAWS THE FIRST LIGHTING PYRAMID (KEY LIGHT)-----------------
+	glBindVertexArray(meshes.pyramid4Mesh.vao);
+
+	// 1. Scale object by .1 (I built my mesh with different vertices than the tutorial)
+	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f));
+	// 2. Rotate shape 11 degrees along x axis
+	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(-11.459f), glm::vec3(1.0f, 0.0f, 0.0f));
+	// 3. Place object at origin
+	translation = glm::translate(glm::mat4(1.0f), glm::vec3(position));//glm::vec3(-10.0f, 5.0f, -15.0f));
+
+	mMat = translation * rotation * scale;
+
+	// Build the MODEL-VIEW matrix by concatenating matrixes v and m
+	mvMat = vMat * mMat;
+
+	// Copy model-view matrix to the uniform variable for the shaders
+	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 18);
+	glBindVertexArray(0);
+
+
+}
+
+// Places application-specific initialization tasks
+void init(GLFWwindow* window) {
+
+	lightedPyramidShaders = createShaderProgram("lightVertShader.glsl", "lightFragShader.glsl"); // Creates the pyramids that represent the lighting position
+	materialShaders = createShaderProgram("materialVertShader.glsl", "materialFragShader.glsl");
+	transparentShaders = createShaderProgram("transVertShader.glsl", "transFragShader.glsl");
+
+	glfwGetFramebufferSize(window, &width, &height);
+
+	// Mouse Events
+	glfwSetCursorPosCallback(window, glfwMousePositionCallbackWrapper);
+	glfwSetScrollCallback(window, glfwMouseScrollCallbackWrapper);
+	glfwSetMouseButtonCallback(window, glfwMouseButtonCallbackWrapper);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	meshes.CreateMeshes();
+
+	seleniteBaseTexture = loadTexture("Marble019_2K-PNG_Color.png");
+	seleniteTipTexture = loadTexture("Marble005_2K-PNG_Color.png");
+	fabricTexture = loadTexture("Fabric046_4K-PNG_Color_Advanced.png");
+	grungeTexture = loadTexture("texture_overlays_988_1_Modified.png");
+	plasticTexture = loadTexture("Plastic014B_2K-PNG_Color.png");
+	walmartLogoTexture = loadLogoTexture("walmartlogo.png");
+	blackRubberBaseTexture = loadTexture("Rubber004_2K-PNG_Color.png");
+	bookFrontTexture = loadTexture("HTTE.png");
+	bookRearTexture = loadTexture("HTTE-REAR.png");
+	bookSpineTexture = loadTexture("HTTE-Spine.png");
+	bookSideTexture = loadTexture("HTTE-Sides.png");
+	blackPlasticTexture = loadTexture("Porcelain.png");
+
+	metalTexture = loadTexture("MetalPlates008_2K-PNG_Metalness.png");
+	metalDetailTexture = loadTexture("MetalPlates008_2K-PNG_Color.png");
+	cockpitTexture = loadTexture("TIE Fighter Texture FINAL.png");
+	wingTexture = loadTexture("MetalPlates009_2K-JPG_Roughness.png");
+	wingTexture2 = loadTexture("TEX00001.png");
+	earthTexture = loadTexture("earth.jpg");
+	jupiterTexture = loadTexture("jupiter.jpg");
+}
+
+// Draws to GLFW display window
+void display(GLFWwindow* window, double currentTime) { // AKA urender function in tutorial
+	
+	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	currentLightPos = glm::vec3(initialLightLoc.x, initialLightLoc.y, initialLightLoc.z);
+	currentLightPos2 = glm::vec3(initialLightLoc2.x, initialLightLoc2.y, initialLightLoc2.z);
+
+	// adjust OpenGL settings
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+	glUseProgram(materialShaders); // loads compiled shaders into openGL pipeline
+
+	// get the uniform variables for the model/view, model and projection matrices
+	mvLoc = glGetUniformLocation(materialShaders, "mv_matrix"); // model-view matrix
+	projLoc = glGetUniformLocation(materialShaders, "proj_matrix"); // projection
+	objectColorLoc = glGetUniformLocation(materialShaders, "objectColor");
+	nLoc = glGetUniformLocation(materialShaders, "norm_matrix");
+
+	// View matrix calculated once and used for all objects
+	vMat = camera.GetViewMatrix();
+	// Projection matrix (DEFAULT)
+	pMat = glm::perspective(glm::radians(camera.Zoom), (GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT, 0.1f, 1000.0f);
+	// Orthographic matrix (If user presses P key)
+	activateOrtho(window, pMat);
+	
+	// Copy view matrix to stack
+	mvStack.push(vMat);
+	
+	// Copy projection matrix to the uniform variable
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
+
+	// Draws plane at (0,0,0)
+	objectPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+	drawPlane(objectPosition);
+
+	// Draws crystal object at (6, 2.76, 3)
+	objectPosition = glm::vec3(6.0f, 2.76f, 3.0f);
+	drawSeleniteCrystal(objectPosition);
+
+	// Draws book at (2, 2.75, -3)
+	objectPosition = glm::vec3(2.0f, 2.75f, -3.0f);
+	drawBook(objectPosition);
+
+	// Draws traffic cone at (-2, 0.11, 8)
+	objectPosition = glm::vec3(-2.0f, 0.11f, 8.0f);
+	drawTrafficCone(objectPosition);
+
+	// Draws TIE Fighter at (-6, 2.35, -2)
+	objectPosition = glm::vec3(-6.0f, 2.35f, -2.0f);
+	drawTIEFighter(objectPosition);
+	
+	// Draws solar system globe at (0, 0.33, 4.2)
+	objectPosition = glm::vec3(0.0f, 0.33f, 4.2f);
+	drawSolarSystemGlobe(objectPosition);
 
 	/**************************************************************************************/
 	// Use lighting program for pyramids that denote the direction and source of the lights
@@ -1705,47 +1775,8 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
 	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(pMat));
 
-	// --------------DRAWS THE FIRST LIGHTING PYRAMID (KEY LIGHT)-----------------
-	glBindVertexArray(meshes.pyramid4Mesh.vao);
-
-	// 1. Scale object by .1 (I built my mesh with different vertices than the tutorial)
-	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f));
-	// 2. Rotate shape 11 degrees along x axis
-	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(-11.459f), glm::vec3(1.0f, 0.0f, 0.0f));
-	// 3. Place object at origin
-	translation = glm::translate(glm::mat4(1.0f), glm::vec3(-10.0f, 5.0f, -15.0f));
-
-	mMat = translation * rotation * scale;
-
-	// Build the MODEL-VIEW matrix by concatenating matrixes v and m
-	mvMat = vMat * mMat;
-
-	// Copy model-view matrix to the uniform variable for the shaders
-	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
-
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 18);
-	glBindVertexArray(0);
-
-	// --------------DRAWS THE SECOND LIGHTING PYRAMID (FILL LIGHT)-----------------
-	glBindVertexArray(meshes.pyramid4Mesh.vao);
-
-	// 1. Scale object by .1 (I built my mesh with different vertices than the tutorial)
-	scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f));
-	// 2. Rotate shape 11 degrees along x axis
-	rotation = glm::rotate(glm::mat4(1.0f), glm::radians(-11.459f), glm::vec3(1.0f, 0.0f, 0.0f));
-	// 3. Place object at origin
-	translation = glm::translate(glm::mat4(1.0f), glm::vec3(10.0f, 4.0f, 10.0f));
-
-	mMat = translation * rotation * scale;
-
-	// Build the MODEL-VIEW matrix by concatenating matrixes v and m
-	mvMat = vMat * mMat;
-
-	// Copy model-view matrix to the uniform variable for the shaders
-	glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mvMat));
-
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 18);
-	glBindVertexArray(0);
+	drawLightingPyramid(initialLightLoc);
+	drawLightingPyramid(initialLightLoc2);
 
 }
 
