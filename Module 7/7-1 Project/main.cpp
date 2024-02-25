@@ -37,15 +37,17 @@ GLuint modelLoc, projLoc, mvLoc, objectColorLoc;
 GLuint mAmbLoc, mDiffLoc, mSpecLoc, mShiLoc;
 
 // Advanced lighting variables
-GLuint globalAmbLoc, ambLoc, ambLoc2, diffLoc, diffLoc2, specLoc, specLoc2, posLoc, posLoc2, nLoc, aLoc, fLoc; //mAmbLoc, mDiffLoc, mSpecLoc, mShiLoc, nLoc;
-glm::vec3 currentLightPos, currentLightPos2, lightPosV, lightPos2V; // light position as Vector3f, in both model and view space
+GLuint globalAmbLoc, ambLoc, ambLoc2, ambLoc3, diffLoc, diffLoc2, diffLoc3, specLoc, specLoc2, specLoc3, posLoc, posLoc2, posLoc3, nLoc, aLoc, fLoc; 
+glm::vec3 currentLightPos, currentLightPos2, currentLightPos3, lightPosV, lightPos2V, lightPos3V; // light position as Vector3f, in both model and view space
 float lightPos[3]; // FIRST light position as float array
 float lightPos2[3]; // SECOND light position as float array
+float lightPos3[3]; // SECOND light position as float array
 glm::mat4 invTrMat; // Inverse transpose matrix for materialShaders
 
 // initial light location
 glm::vec3 initialLightLoc = glm::vec3(10.0f, 4.0f, 10.0f);
 glm::vec3 initialLightLoc2 = glm::vec3(-10.0f, 5.0f, -10.0f);
+glm::vec3 initialLightLoc3 = glm::vec3(-10.0f, 4.0f, 10.0f);
 
 // Global light
 float globalAmbient[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
@@ -57,6 +59,10 @@ float lightSpecular[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 float lightAmbient2[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 float lightDiffuse2[4] = { 0.2f, 0.2f, 1.0f, 1.0f };
 float lightSpecular2[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
+// fill light
+float lightAmbient3[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
+float lightDiffuse3[4] = { 1.0f, 0.2f, 0.2f, 1.0f };
+float lightSpecular3[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 // Material variables that reflect light
 float* matAmb;
@@ -96,27 +102,41 @@ void installAdvancedLights(GLuint shader, glm::mat4 vMatrix) {
 	lightPos2[1] = lightPos2V.y;
 	lightPos2[2] = lightPos2V.z;
 
+	// Convert light's position to view space and save it in a float array
+	lightPos3V = glm::vec3(vMatrix * glm::vec4(currentLightPos2, 1.0));
+	lightPos3[0] = lightPos3V.x;
+	lightPos3[1] = lightPos3V.y;
+	lightPos3[2] = lightPos3V.z;
+
 	// Get the locations of the light and material fields in the shader
 	globalAmbLoc = glGetUniformLocation(shader, "globalAmbient");
 	ambLoc = glGetUniformLocation(shader, "light.ambient");
 	ambLoc2 = glGetUniformLocation(shader, "light2.ambient");
+	ambLoc3 = glGetUniformLocation(shader, "light3.ambiient");
 	diffLoc = glGetUniformLocation(shader, "light.diffuse");
 	diffLoc2 = glGetUniformLocation(shader, "light2.diffuse");
+	diffLoc3 = glGetUniformLocation(shader, "light3.diffuse");
 	specLoc = glGetUniformLocation(shader, "light.specular");
 	specLoc2 = glGetUniformLocation(shader, "light2.specular");
+	specLoc3 = glGetUniformLocation(shader, "light3.specular");
 	posLoc = glGetUniformLocation(shader, "light.position");
 	posLoc2 = glGetUniformLocation(shader, "light2.position");
+	posLoc3 = glGetUniformLocation(shader, "light3.position");
 
 	// Set the uniform light and material values in the shader
 	glProgramUniform4fv(shader, globalAmbLoc, 1, globalAmbient);
 	glProgramUniform4fv(shader, ambLoc, 1, lightAmbient);
 	glProgramUniform4fv(shader, ambLoc2, 1, lightAmbient2);
+	glProgramUniform4fv(shader, ambLoc3, 1, lightAmbient3);
 	glProgramUniform4fv(shader, diffLoc, 1, lightDiffuse);
 	glProgramUniform4fv(shader, diffLoc2, 1, lightDiffuse2);
+	glProgramUniform4fv(shader, diffLoc3, 1, lightDiffuse3);
 	glProgramUniform4fv(shader, specLoc, 1, lightSpecular);
 	glProgramUniform4fv(shader, specLoc2, 1, lightSpecular2);
+	glProgramUniform4fv(shader, specLoc3, 1, lightSpecular3);
 	glProgramUniform3fv(shader, posLoc, 1, lightPos);
 	glProgramUniform3fv(shader, posLoc2, 1, lightPos2);
+	glProgramUniform3fv(shader, posLoc3, 1, lightPos3);
 }
 
 // Sets up uniforms for reflective surfaces
@@ -1777,6 +1797,7 @@ void display(GLFWwindow* window, double currentTime) { // AKA urender function i
 
 	drawLightingPyramid(initialLightLoc);
 	drawLightingPyramid(initialLightLoc2);
+	drawLightingPyramid(initialLightLoc3);
 
 }
 

@@ -3,6 +3,7 @@
 in vec3 varyingNormal;
 in vec3 varyingLightDir;
 in vec3 varyingLightDir2;
+in vec3 varyingLightDir3;
 in vec3 varyingVertPos;
 
 in vec4 vertexColor; // aka varyingColor
@@ -26,6 +27,8 @@ struct Material
 uniform vec4 globalAmbient;
 uniform PositionalLight light;
 uniform PositionalLight light2;
+uniform PositionalLight light3;
+
 uniform Material material;
 
 uniform mat4 mv_matrix;
@@ -46,18 +49,22 @@ void main(void)
 	// Normalize the light, normal and view vectors
 	vec3 L = normalize(varyingLightDir);
 	vec3 L2 = normalize(varyingLightDir2);
+	vec3 L3 = normalize(varyingLightDir3);
 	vec3 N = normalize(varyingNormal);
 	vec3 V = normalize(-varyingVertPos);
 
 	// Compute light reflection vector with respect to N:
 	vec3 R = normalize(reflect(-L, N));
 	vec3 R2 = normalize(reflect(-L2, N));
+	vec3 R3 = normalize(reflect(-L3, N));
 	// Get the angle between the light and surface normal
 	float cosTheta = dot(L,N);
 	float cosTheta2 = dot(L2, N);
+	float cosTheta3 = dot(L3, N);
 	// angle between the view vector and reflected light:
 	float cosPhi = dot(V,R);
 	float cosPhi2 = dot(V, R2);
+	float cosPhi3 = dot(V, R3);
 
 	// Compute ADS contributions (per pixel), and combine to build output color
 	vec3 ambient = ((globalAmbient * material.ambient) + (light.ambient * material.ambient)).xyz;
@@ -68,11 +75,18 @@ void main(void)
 	vec3 diffuse2 = light2.diffuse.xyz * material.diffuse.xyz * max(cosTheta2,0.0);
 	vec3 specular2 = light2.specular.xyz * material.specular.xyz * pow(max(cosPhi2,0.0), material.shininess);
 
+	vec3 ambient3 = ((globalAmbient * material.ambient) + (light3.ambient * material.ambient)).xyz;
+	vec3 diffuse3 = light3.diffuse.xyz * material.diffuse.xyz * max(cosTheta2,0.0);
+	vec3 specular3 = light3.specular.xyz * material.specular.xyz * pow(max(cosPhi2,0.0), material.shininess);
+
+
 	//FragColor = vec4((ambient + diffuse + specular), 1.0);
 	vec3 phong1;
 	vec3 phong2;
+	vec3 phong3;
 	vec3 mixPhong1;
 	vec3 mixPhong2;
+	vec3 mixPhong3;
 
 	// Check if the width of the texture at mipmap level 0 is greater than 1 and
 	// the there is an alpha level for the second texture
@@ -80,19 +94,25 @@ void main(void)
 	if ((textureSize(samp, 0).x > 1) && (secondTextureColor.a > 0.0)) {
 		phong1 = (ambient + diffuse + specular) * mainTextureColor.xyz;
 		phong2 = (ambient2 + diffuse2 + specular2) * mainTextureColor.xyz;
+		phong3 = (ambient3 + diffuse3 + specular3) * mainTextureColor.xyz;
 		mixPhong1 = (ambient + diffuse + specular) * secondTextureColor.xyz;
-		mixPhong2 = (ambient + diffuse2 +specular2) * secondTextureColor.xyz;
-		FragColor = mix(vec4(phong1 + phong2, 1.0), vec4(mixPhong1 + mixPhong2, 1.0), 0.5);
+		mixPhong2 = (ambient2 + diffuse2 +specular2) * secondTextureColor.xyz;
+		mixPhong3 = (ambient3 + diffuse3 +specular3) * secondTextureColor.xyz;
+
+		FragColor = mix(vec4(phong1 + phong2 + phong3, 1.0), vec4(mixPhong1 + mixPhong2 + mixPhong3, 1.0), 0.5);
 	}
 	else if (textureSize(samp, 0).x > 1) {
 		phong1 = (ambient + diffuse + specular) * mainTextureColor.xyz;
 		phong2 = (ambient2 + diffuse2 + specular2) * mainTextureColor.xyz;
-		FragColor = vec4(phong1 + phong2, 1.0);
+		phong3 = (ambient3 + diffuse3 + specular3) * mainTextureColor.xyz;
+
+		FragColor = vec4(phong1 + phong2 + phong3, 1.0);
 	}
 	else {
 	phong1 = (ambient + diffuse + specular);
 	phong2 = (ambient2 + diffuse2 + specular2);
-	FragColor = vec4(phong1 + phong2, 1.0);
+	phong3 = (ambient3 + diffuse3 + specular3);
+	FragColor = vec4(phong1 + phong2 + phong3, 1.0);
 
 	}
 
