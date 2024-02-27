@@ -45,24 +45,24 @@ float lightPos3[3]; // SECOND light position as float array
 glm::mat4 invTrMat; // Inverse transpose matrix for materialShaders
 
 // initial light location
-glm::vec3 initialLightLoc = glm::vec3(10.0f, 4.0f, 10.0f);
+glm::vec3 initialLightLoc = glm::vec3(5.0f, 4.0f, 10.0f);
 glm::vec3 initialLightLoc2 = glm::vec3(-10.0f, 5.0f, -10.0f);
-glm::vec3 initialLightLoc3 = glm::vec3(-10.0f, 4.0f, 10.0f);
+glm::vec3 initialLightLoc3 = glm::vec3(-10.0f, 8.0f, 12.0f);
 
 // Global light
 float globalAmbient[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
 // front white light properties
-float lightAmbient[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
-float lightDiffuse[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+float lightAmbient[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
+float lightDiffuse[4] = { 0.7f, 0.7f, 0.7f, 0.7f };
 float lightSpecular[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 // rear blue light properties
-float lightAmbient2[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+float lightAmbient2[4] = { 0.0f, 0.0f, 0.2f, 1.0f };
 float lightDiffuse2[4] = { 0.2f, 0.2f, 1.0f, 1.0f };
 float lightSpecular2[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
 // fill light
 float lightAmbient3[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
-float lightDiffuse3[4] = { 1.0f, 0.2f, 0.2f, 1.0f };
-float lightSpecular3[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+float lightDiffuse3[4] = { 0.7f, 0.7f, 0.7f, 0.7f };
+float lightSpecular3[4] = { 1.0f, 1.0, 1.0, 1.0f };
 
 // Material variables that reflect light
 float* matAmb;
@@ -196,7 +196,6 @@ void drawPlane(glm::vec3(&position)) {
 
 	mvStack.pop(); // Removes Plane transforms from stack
 
-
 }
 
 void drawSeleniteCrystal(glm::vec3(&position)) {
@@ -281,7 +280,6 @@ void drawSeleniteCrystal(glm::vec3(&position)) {
 	mvStack.pop(); // All that remains in stack is view matrix
 
 	// **** END of RENDERING CRYSTAL OBJECT ****
-
 
 }
 
@@ -1304,7 +1302,6 @@ void drawSolarSystemGlobe(glm::vec3(&position)) {
 // **************************************************
 // */
 // --------------DRAWS THE TAPERED POLYGON PEDESTAL (CHILD OF SPHERE)-----------------
-
 	// The colour and the shape
 	matAmb = chromeAmbient();
 	matDif = chromeDiffuse();

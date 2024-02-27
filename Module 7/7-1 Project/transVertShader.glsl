@@ -10,6 +10,7 @@ out vec2 tc; // texture coordinate output to rasterizer for interpolation
 out vec3 varyingNormal; // eye-space vertex normal
 out vec3 varyingLightDir; // vector pointing to the light
 out vec3 varyingLightDir2;
+out vec3 varyingLightDir3;
 out vec3 varyingVertPos; // vertex position in eye-space
 
 layout (binding = 0) uniform sampler2D samp; // not used in vertex shader
@@ -32,6 +33,7 @@ struct Material
 uniform vec4 globalAmbient;
 uniform PositionalLight light;
 uniform PositionalLight light2;
+uniform PositionalLight light3;
 uniform Material material;
 uniform mat4 mv_matrix;
 uniform mat4 proj_matrix;
@@ -48,6 +50,7 @@ void main(void)
 	varyingVertPos = (mv_matrix * vec4(position, 1.0)).xyz;
 	varyingLightDir = light.position - varyingVertPos;
 	varyingLightDir2 = light2.position - varyingVertPos;
+	varyingLightDir3 = light3.position - varyingVertPos;
 	varyingNormal = (norm_matrix * vec4(normal,1.0)).xyz;
 
 	if (flipNormal < 0) varyingNormal = -varyingNormal;

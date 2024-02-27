@@ -68,8 +68,6 @@ private:
 		void CreateWingMesh(GLmesh& mesh);
 		void DestroyMesh(GLmesh& mesh);
 
-		void CalculateTriangleNormal(glm::vec3 px, glm::vec3 py, glm::vec3 pz);
-
 };
 
 #endif /* MESHES_H*/

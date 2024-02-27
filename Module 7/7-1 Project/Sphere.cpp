@@ -1,3 +1,15 @@
+/*
+ * Sphere.CPP
+ *
+ * Procedurally generates a sphere mesh object.
+ *
+ * Adapted from the book:
+ * Computer Graphics Programming in OpenGL with C++ 2nd Edition
+ * By V. Scott Gordon and John Clevenger
+ *
+ *
+ */
+
 #include <iostream>
 #include "Sphere.h"
 

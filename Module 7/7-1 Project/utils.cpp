@@ -1,10 +1,17 @@
 /*
- * utils.cpp
+ * utils.h
  *
- * Alex Baires
- * 1-21-24
+ * Reusable OpenGL functions for error checking and reading GLSL shader programs
+ *
+ *
+ *
+ * Adapted from:
+ * Computer Graphics Programming in OpenGL with C++
+ * By Gordon and Clevenger
+ * 
  *
  */
+
 
 #include "utils.h"
 
