@@ -57,13 +57,14 @@ C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(236,29): warning C43
 C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(237,41): warning C4305: 'argument': truncation from 'double' to 'float'
 C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(237,31): warning C4305: 'argument': truncation from 'double' to 'float'
 C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(251,21): warning C4018: '<': signed/unsigned mismatch
-C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(284,2): warning C4551: function call missing argument list
-C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(302,51): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(302,48): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(302,45): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(302,39): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(314,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(316,19): warning C4305: '+=': truncation from 'double' to 'float'
-C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(322,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(324,19): warning C4305: '-=': truncation from 'double' to 'float'
+C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(268,22): warning C4018: '<': signed/unsigned mismatch
+C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(301,2): warning C4551: function call missing argument list
+C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(319,51): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(319,48): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(319,45): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(319,39): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(331,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(333,19): warning C4305: '+=': truncation from 'double' to 'float'
+C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(339,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\main.cpp(341,19): warning C4305: '-=': truncation from 'double' to 'float'
   8-3 Assignment.vcxproj -> C:\Github Repo\SNHU-CS-330\Module 8\8-3 Assignment\Debug\8-3 Assignment.exe

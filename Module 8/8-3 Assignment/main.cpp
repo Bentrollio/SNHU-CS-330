@@ -265,6 +265,23 @@ int main(void) {
 			world[i].MoveOneStep();
 			world[i].DrawCircle();
 
+			for (int j = 0; j < world.size(); j++)
+			{
+
+				Circle* ptrA = &world[i];
+				Circle* ptrB = &world[j];
+
+				if (ptrA != ptrB)
+				{
+					if (((world[i].x > world[j].x - world[j].radius && world[i].x <= world[j].x + world[j].radius)
+						&& (world[i].y > world[j].y - world[j].radius && world[i].y <= world[j].y + world[j].radius)))
+					{
+						world[i].direction = world[i].onoff = OFF;
+						world[j].direction = world[j].onoff = ON;
+					}
+				}
+			}
+
 		}
 		brick.drawBrick();
 		brick2.drawBrick();
